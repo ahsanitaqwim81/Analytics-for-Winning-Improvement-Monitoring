@@ -1,0 +1,2084 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWIM — Match Report</title>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --blue-dark:   #0d3a52;
+            --blue-main:   #1a6b8c;
+            --blue-light:  #2a8ab5;
+            --orange:      #f39c12;
+            --orange-dark: #e08a00;
+            --green:       #27ae60;
+            --green-dark:  #1e8449;
+            --red:         #e74c3c;
+            --yellow:      #f1c40f;
+            --purple:      #9b59b6;
+            --gray-bg:     #f0f4f7;
+            --gray-mid:    #bdc3c7;
+            --gray-text:   #7f8c8d;
+            --white:       #ffffff;
+            --shadow-md:   0 4px 20px rgba(0,0,0,0.12);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Barlow', 'Segoe UI', sans-serif;
+            background: var(--gray-bg);
+            color: #333;
+            min-height: 100vh;
+        }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--gray-mid); border-radius: 10px; }
+
+        /* ===== NAV ===== */
+        .nav-bar {
+            background: var(--blue-dark);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            height: 44px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+        }
+        .nav-left, .nav-right { display: flex; align-items: center; gap: 8px; }
+        .nav-logo {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 20px; font-weight: 800;
+            color: white; letter-spacing: 3px;
+            margin-right: 14px;
+        }
+        .nav-logo span { color: var(--orange); }
+        .nav-btn {
+            color: rgba(255,255,255,0.75);
+            background: none; border: none;
+            font-size: 12px; font-weight: 600; letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 6px 14px; border-radius: 4px;
+            cursor: pointer; transition: 0.15s;
+            font-family: inherit;
+        }
+        .nav-btn:hover { color: white; background: rgba(255,255,255,0.1); }
+        .nav-btn.primary {
+            background: var(--orange); color: white;
+            border-radius: 6px; padding: 6px 16px;
+        }
+        .nav-btn.primary:hover { background: var(--orange-dark); }
+        .nav-period-chip {
+            background: rgba(255,255,255,0.12);
+            color: white;
+            font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+            padding: 4px 12px; border-radius: 20px;
+            font-family: 'Barlow Condensed', sans-serif;
+        }
+        .live-dot {
+            width: 8px; height: 8px;
+            background: #2ecc71;
+            border-radius: 50%;
+            animation: livePulse 1.5s ease-in-out infinite;
+            display: inline-block; margin-right: 4px;
+        }
+        @keyframes livePulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.7); }
+        }
+
+        /* ===== LAYOUT ===== */
+        .report-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 24px 20px 48px;
+        }
+
+        /* ===== HEADER MATCH ===== */
+        .match-header {
+            background: linear-gradient(135deg, var(--blue-dark) 0%, #1a4a6b 100%);
+            border-radius: 16px;
+            padding: 28px 32px;
+            color: white;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+        .match-header::before {
+            content: '';
+            position: absolute;
+            top: -40px; right: -40px;
+            width: 200px; height: 200px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 50%;
+        }
+        .match-meta {
+            display: flex; gap: 20px; flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .match-meta-item {
+            font-size: 12px; color: rgba(255,255,255,0.55);
+            font-weight: 500; letter-spacing: 0.5px;
+        }
+        .match-meta-item span {
+            color: rgba(255,255,255,0.85); font-weight: 600;
+        }
+        .match-score-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+        .match-team {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex: 1;
+        }
+        .match-team.away { flex-direction: row-reverse; }
+        .jersey-dot {
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.4);
+            flex-shrink: 0;
+        }
+        .match-team-name {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 28px; font-weight: 800;
+            letter-spacing: 2px;
+        }
+        .match-team-coach {
+            font-size: 11px; color: rgba(255,255,255,0.5);
+            margin-top: 2px; letter-spacing: 0.5px;
+        }
+        .match-score-center {
+            display: flex; flex-direction: column;
+            align-items: center; gap: 4px;
+        }
+        .score-display {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 64px; font-weight: 800;
+            color: var(--orange);
+            letter-spacing: 8px;
+            line-height: 1;
+        }
+        .period-badge {
+            background: rgba(255,255,255,0.1);
+            font-size: 11px; font-weight: 700; letter-spacing: 2px;
+            color: rgba(255,255,255,0.7);
+            padding: 4px 14px; border-radius: 20px;
+        }
+
+        /* ===== SECTION ===== */
+        .section-title {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 18px; font-weight: 700; letter-spacing: 2px;
+            color: var(--blue-dark);
+            text-transform: uppercase;
+            margin-bottom: 14px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 2px;
+            background: linear-gradient(to right, var(--blue-main), transparent);
+            border-radius: 2px;
+        }
+
+        /* ===== TEAM STATS OVERVIEW ===== */
+        .team-stats-grid {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 0;
+            background: white;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 24px;
+        }
+        .team-col-header {
+            padding: 16px 20px;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 18px; font-weight: 700; letter-spacing: 1px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .team-col-header.home { background: var(--blue-dark); color: white; }
+        .team-col-header.away { background: #2c3e50; color: white; flex-direction: row-reverse; text-align: right; }
+        .stat-divider-header {
+            background: var(--gray-bg);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 10px; font-weight: 700; color: var(--gray-text);
+            letter-spacing: 1px; text-transform: uppercase;
+        }
+        .stat-row {
+            display: contents;
+        }
+        .stat-row:hover > * { background: #f8fbff; }
+        .stat-val {
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--gray-bg);
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 22px; font-weight: 700;
+            color: var(--blue-dark);
+        }
+        .stat-val.home { text-align: left; }
+        .stat-val.away { text-align: right; }
+        .stat-val.highlight { color: var(--green); }
+        .stat-val.danger { color: var(--red); }
+        .stat-divider-val {
+            padding: 12px 10px;
+            background: var(--gray-bg);
+            border-bottom: 1px solid white;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 10px; font-weight: 700; color: var(--gray-text);
+            letter-spacing: 0.5px; text-transform: uppercase;
+            white-space: nowrap;
+            min-width: 120px;
+        }
+        .stat-bar-row {
+            padding: 4px 20px 12px;
+            border-bottom: 1px solid var(--gray-bg);
+        }
+        .stat-bar {
+            height: 5px; border-radius: 4px;
+            background: var(--gray-bg);
+            overflow: hidden;
+        }
+        .stat-bar-fill {
+            height: 100%; border-radius: 4px;
+            background: var(--blue-main);
+            transition: width 0.8s ease;
+        }
+        .stat-bar-fill.home { background: var(--blue-main); }
+        .stat-bar-fill.away { background: #2c3e50; float: right; }
+
+        /* ===== SHOT ZONE HEATMAP ===== */
+        .shot-charts {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .shot-chart-card {
+            background: white;
+            border-radius: 14px;
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+        }
+        .shot-chart-header {
+            padding: 14px 20px;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 15px; font-weight: 700; letter-spacing: 1px;
+            border-bottom: 1px solid var(--gray-bg);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .shot-chart-body {
+            padding: 16px;
+        }
+        .goal-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4px;
+            border: 3px solid #555;
+            border-radius: 4px;
+            padding: 4px;
+            background: #e8f4e8;
+            max-width: 280px;
+            margin: 0 auto 12px;
+        }
+        .goal-cell {
+            height: 60px;
+            border-radius: 3px;
+            background: rgba(26, 107, 140, 0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1px;
+            position: relative;
+            transition: background 0.2s;
+            cursor: default;
+            border: 1px solid rgba(0,0,0,0.08);
+        }
+        .goal-cell .cell-goals {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 18px; font-weight: 800;
+            color: var(--green);
+            line-height: 1;
+        }
+        .goal-cell .cell-miss {
+            font-size: 10px; color: var(--red);
+            font-weight: 600;
+        }
+        .goal-cell .cell-label {
+            font-size: 8px; color: rgba(0,0,0,0.35); letter-spacing: 0.3px;
+        }
+        .goal-cell.has-goals {
+            background: rgba(39, 174, 96, 0.12);
+        }
+        .goal-cell.has-miss {
+            background: rgba(231, 76, 60, 0.08);
+        }
+        .shot-legend {
+            display: flex; gap: 12px; justify-content: center; font-size: 11px;
+        }
+        .legend-item { display: flex; align-items: center; gap: 4px; color: var(--gray-text); }
+        .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+        /* ===== ATTACK TYPE BREAKDOWN ===== */
+        .attack-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .attack-card {
+            background: white;
+            border-radius: 14px;
+            padding: 20px;
+            box-shadow: var(--shadow-md);
+        }
+        .attack-card-title {
+            font-size: 12px; font-weight: 700; color: var(--gray-text);
+            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px;
+        }
+        .attack-type-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--gray-bg);
+        }
+        .attack-type-row:last-child { border-bottom: none; }
+        .attack-type-label { font-size: 13px; font-weight: 600; color: #444; display: flex; align-items: center; gap: 6px; }
+        .attack-type-bars { display: flex; align-items: center; gap: 8px; flex: 1; padding: 0 12px; }
+        .attack-mini-bar {
+            height: 6px; border-radius: 4px;
+            background: linear-gradient(to right, var(--blue-main), var(--blue-light));
+            transition: width 0.6s ease;
+            min-width: 4px;
+        }
+        .attack-type-count { font-family: 'Barlow Condensed', sans-serif; font-size: 18px; font-weight: 700; color: var(--blue-dark); min-width: 24px; text-align: right; }
+
+        /* ===== PLAYER TABLE ===== */
+        .player-table-card {
+            background: white;
+            border-radius: 14px;
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+        .player-table-header {
+            padding: 14px 20px;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 16px; font-weight: 700; letter-spacing: 1px;
+            background: var(--blue-dark); color: white;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .player-table-header .jersey-mini {
+            width: 14px; height: 14px; border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.5);
+        }
+        table.rpt-table {
+            width: 100%; border-collapse: collapse;
+        }
+        .rpt-table thead tr {
+            background: var(--gray-bg);
+        }
+        .rpt-table th {
+            padding: 10px 14px;
+            font-size: 10px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 1px;
+            color: var(--gray-text); text-align: center;
+        }
+        .rpt-table th:first-child { text-align: left; }
+        .rpt-table th:nth-child(2) { text-align: left; }
+        .rpt-table td {
+            padding: 10px 14px;
+            font-size: 13px;
+            border-bottom: 1px solid var(--gray-bg);
+            text-align: center;
+        }
+        .rpt-table td:first-child { text-align: left; }
+        .rpt-table td:nth-child(2) { text-align: left; font-weight: 600; }
+        .rpt-table tbody tr:hover { background: #f8fbff; }
+        .rpt-table tbody tr:last-child td { border-bottom: none; }
+        .stat-num {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 18px; font-weight: 700; color: var(--blue-dark);
+        }
+        .stat-num.green { color: var(--green); }
+        .stat-num.red { color: var(--red); }
+        .stat-num.orange { color: var(--orange); }
+        .stat-num.zero { color: var(--gray-mid); font-size: 14px; }
+        .card-chip {
+            display: inline-block; border-radius: 3px;
+            font-size: 9px; font-weight: 700; letter-spacing: 0.5px;
+            padding: 2px 5px; margin: 0 1px;
+        }
+        .chip-yellow { background: #f1c40f; color: #333; }
+        .chip-2min   { background: #e67e22; color: white; }
+        .chip-red    { background: var(--red); color: white; }
+        .chip-blue   { background: #2980b9; color: white; }
+        .acc-pill {
+            display: inline-block;
+            padding: 2px 8px; border-radius: 20px;
+            font-size: 10px; font-weight: 700;
+            background: var(--gray-bg); color: var(--gray-text);
+        }
+        .acc-pill.good { background: rgba(39,174,96,0.15); color: var(--green); }
+        .acc-pill.mid  { background: rgba(243,156,18,0.15); color: var(--orange-dark); }
+        .acc-pill.bad  { background: rgba(231,76,60,0.12); color: var(--red); }
+
+        /* ===== EVENT LOG ===== */
+        .log-card {
+            background: white;
+            border-radius: 14px;
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+        .log-card-header {
+            padding: 14px 20px;
+            background: var(--blue-dark); color: white;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 16px; font-weight: 700; letter-spacing: 1px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .log-list { padding: 6px; max-height: 380px; overflow-y: auto; }
+        .log-item {
+            display: flex; gap: 10px; align-items: flex-start;
+            padding: 8px 12px;
+            border-radius: 6px; margin-bottom: 4px;
+            font-size: 12px;
+            border-left: 3px solid var(--gray-mid);
+            background: var(--gray-bg);
+        }
+        .log-item.goal   { border-left-color: var(--green); background: #f4fff8; }
+        .log-item.miss   { border-left-color: #e67e22; }
+        .log-item.foul   { border-left-color: var(--red); }
+        .log-item.card   { border-left-color: #f1c40f; background: #fffde7; }
+        .log-item.redcard{ border-left-color: var(--red); background: #fff5f5; }
+        .log-item.bluecard{ border-left-color: #2980b9; background: #f0f7ff; }
+        .log-item.period { border-left-color: var(--purple); background: #f5f0ff; text-align: center; justify-content: center; font-weight: 700; letter-spacing: 1px; }
+        .log-icon { font-size: 14px; flex-shrink: 0; line-height: 1.4; }
+        .log-text { flex: 1; line-height: 1.5; }
+        .log-time { font-size: 10px; color: var(--gray-text); }
+        .log-chip {
+            display: inline-block;
+            background: rgba(26,107,140,0.1);
+            color: var(--blue-main);
+            border-radius: 3px; font-size: 9px;
+            font-weight: 600; padding: 1px 5px;
+        }
+        .log-chip.attack { background: rgba(155,89,182,0.12); color: var(--purple); }
+        .log-chip.zone { background: rgba(243,156,18,0.12); color: var(--orange-dark); }
+
+        /* ===== FOOTER ===== */
+        .report-footer {
+            text-align: center;
+            font-size: 11px; color: var(--gray-text);
+            padding: 20px 0;
+            letter-spacing: 0.5px;
+        }
+
+        /* ===== PLAYER DETAIL MODAL (PREMIUM GLASSMORPHISM) ===== */
+        .player-modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(13, 58, 82, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 1000;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .player-modal-overlay.show {
+            opacity: 1; pointer-events: auto;
+        }
+        .player-modal-box {
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 20px;
+            width: 90%; max-width: 480px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.4);
+            overflow: hidden;
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .player-modal-overlay.show .player-modal-box {
+            transform: scale(1);
+        }
+        
+        .player-profile-header {
+            background: linear-gradient(135deg, var(--blue-dark) 0%, #1c5270 100%);
+            padding: 24px;
+            color: white;
+            display: flex; justify-content: space-between; align-items: center;
+            position: relative;
+        }
+        .player-profile-main {
+            display: flex; align-items: center; gap: 16px;
+        }
+        .player-avatar {
+            width: 56px; height: 56px;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            background: var(--blue-main);
+            color: white;
+            display: flex; justify-content: center; align-items: center;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 24px; font-weight: 800;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .player-name-club {
+            display: flex; flex-direction: column;
+        }
+        .player-profile-name {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 22px; font-weight: 800;
+            letter-spacing: 1.5px;
+            line-height: 1.2;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .player-profile-club {
+            font-size: 12px; color: rgba(255,255,255,0.7);
+            margin-top: 4px; font-weight: 500;
+        }
+        
+        .player-rating-container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 8px 12px;
+            border: 1px solid rgba(255,255,255,0.15);
+            min-width: 70px;
+        }
+        .player-rating-label {
+            font-size: 9px; font-weight: 700;
+            color: var(--orange);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+        .player-rating-value {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 24px; font-weight: 800;
+            color: white;
+            line-height: 1;
+        }
+        
+        .player-modal-body {
+            padding: 24px;
+        }
+        .player-stats-section-title {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 14px; font-weight: 700;
+            color: var(--blue-dark);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .player-stats-section-title::after {
+            content: ''; flex: 1; height: 1px; background: #ddd;
+        }
+        
+        .player-stat-bar-row {
+            margin-bottom: 16px;
+        }
+        .player-stat-bar-labels {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 6px;
+            font-size: 13px; font-weight: 600;
+            color: #444;
+        }
+        .player-stat-bar-label {
+            display: flex; align-items: center; gap: 6px;
+        }
+        .player-stat-bar-value {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 16px; font-weight: 700;
+            color: var(--blue-dark);
+        }
+        .player-stat-progress-bar {
+            height: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+        }
+        .player-stat-progress-fill {
+            height: 100%;
+            border-radius: 5px;
+            width: 0;
+            transition: width 1s cubic-bezier(0.1, 0.8, 0.2, 1);
+        }
+        
+        .player-cards-row {
+            display: flex; gap: 8px;
+            justify-content: flex-start;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid #eee;
+        }
+        .player-card-badge {
+            flex: 1;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+            padding: 8px; border-radius: 8px;
+            font-size: 11px; font-weight: 700;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            color: #555;
+        }
+        .player-card-badge.yellow { border-color: rgba(241, 196, 15, 0.3); background: rgba(241, 196, 15, 0.05); }
+        .player-card-badge.two-min { border-color: rgba(230, 126, 34, 0.3); background: rgba(230, 126, 34, 0.05); }
+        .player-card-badge.red     { border-color: rgba(231, 76, 60, 0.3); background: rgba(231, 76, 60, 0.05); }
+        .player-card-badge.blue    { border-color: rgba(41, 128, 185, 0.3); background: rgba(41, 128, 185, 0.05); }
+        
+        .player-card-icon {
+            width: 12px; height: 16px; border-radius: 2px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+        }
+        .player-card-icon.yellow { background: #f1c40f; }
+        .player-card-icon.orange { background: #e67e22; }
+        .player-card-icon.red    { background: var(--red); }
+        .player-card-icon.blue   { background: #2980b9; }
+
+        .player-modal-close-btn {
+            background: none; border: none;
+            color: rgba(255,255,255,0.7);
+            font-size: 28px; font-weight: 300;
+            cursor: pointer; line-height: 1;
+            padding: 4px;
+            transition: color 0.15s;
+            position: absolute;
+            top: 12px; right: 12px;
+        }
+        .player-modal-close-btn:hover {
+            color: white;
+        }
+        
+        .player-row-clickable {
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+        .player-row-clickable:hover {
+            background: rgba(26, 107, 140, 0.06) !important;
+        }
+
+        .player-modal-print-btn {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.25);
+            color: white;
+            font-size: 12px; font-weight: 600;
+            padding: 6px 12px; border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            position: absolute;
+            top: 16px; right: 48px;
+            display: flex; align-items: center; gap: 4px;
+        }
+        .player-modal-print-btn:hover {
+            background: rgba(255,255,255,0.25);
+            border-color: rgba(255,255,255,0.4);
+        }
+
+        /* ===== GK STATS PANEL ===== */
+        .gk-stats-section {
+            margin-bottom: 24px;
+        }
+        .gk-panel-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .gk-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+        }
+        .gk-card-header {
+            background: linear-gradient(135deg, #1a2a4a 0%, #1a4a6b 100%);
+            padding: 16px 20px;
+            display: flex; align-items: center; gap: 12px;
+            position: relative;
+        }
+        .gk-jersey-badge {
+            width: 40px; height: 40px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.15);
+            border: 2px solid rgba(255,255,255,0.3);
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 16px; font-weight: 800;
+            color: white;
+        }
+        .gk-header-info { flex: 1; }
+        .gk-header-name {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 18px; font-weight: 800;
+            color: white; letter-spacing: 1px;
+            line-height: 1.2;
+        }
+        .gk-header-team {
+            font-size: 11px; color: rgba(255,255,255,0.6);
+            margin-top: 2px;
+        }
+        .gk-rating-pill {
+            background: var(--orange);
+            color: white;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 18px; font-weight: 800;
+            padding: 4px 10px; border-radius: 8px;
+        }
+        .gk-card-body { padding: 16px 20px; }
+        .gk-main-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .gk-stat-box {
+            background: var(--gray-bg);
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+        }
+        .gk-stat-box-value {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 28px; font-weight: 800;
+            color: var(--blue-dark);
+            line-height: 1;
+        }
+        .gk-stat-box-value.green { color: var(--green); }
+        .gk-stat-box-value.red   { color: var(--red); }
+        .gk-stat-box-label {
+            font-size: 9px; font-weight: 700;
+            color: var(--gray-text);
+            text-transform: uppercase; letter-spacing: 0.5px;
+            margin-top: 4px;
+        }
+        .gk-save-bar-section { margin-top: 4px; }
+        .gk-save-bar-label {
+            display: flex; justify-content: space-between;
+            font-size: 12px; color: #555; font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .gk-save-bar-track {
+            height: 12px; background: #e9ecef;
+            border-radius: 6px; overflow: hidden;
+        }
+        .gk-save-bar-fill {
+            height: 100%; border-radius: 6px;
+            background: linear-gradient(to right, #1abc9c, #16a085);
+            transition: width 1s ease;
+        }
+        .gk-zone-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4px;
+            margin-top: 14px;
+        }
+        .gk-zone-cell {
+            background: #f0f4f7;
+            border-radius: 6px;
+            padding: 8px 4px;
+            text-align: center;
+            font-family: 'Barlow Condensed', sans-serif;
+        }
+        .gk-zone-cell-val {
+            font-size: 20px; font-weight: 800;
+            color: var(--blue-dark);
+        }
+        .gk-zone-cell-val.green { color: var(--green); }
+        .gk-zone-cell-lbl {
+            font-size: 8px; color: var(--gray-text);
+            letter-spacing: 0.3px; margin-top: 1px;
+        }
+        .gk-zone-section-title {
+            font-size: 10px; font-weight: 700;
+            color: var(--gray-text); text-transform: uppercase;
+            letter-spacing: 1px; margin-top: 14px; margin-bottom: 6px;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .gk-zone-section-title::after {
+            content: ''; flex: 1; height: 1px; background: #ddd;
+        }
+        .gk-no-data {
+            padding: 32px 0; text-align: center;
+            color: var(--gray-mid); font-size: 13px;
+        }
+
+        /* ===== COURT EVENT MAP ===== */
+        .court-map-section { margin-bottom: 24px; }
+        .court-map-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .court-map-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+        }
+        .court-map-header {
+            padding: 14px 20px;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 15px; font-weight: 700; letter-spacing: 1px;
+            background: var(--blue-dark); color: white;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .court-map-body { padding: 12px 16px; }
+        .court-map-svg-wrap {
+            width: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .court-map-legend {
+            display: flex; gap: 16px; justify-content: center;
+            margin-top: 10px; font-size: 11px; color: var(--gray-text);
+        }
+        .court-map-legend-dot {
+            width: 12px; height: 12px; border-radius: 50%;
+            display: inline-block; margin-right: 4px;
+            vertical-align: middle;
+        }
+        .court-map-tab-bar {
+            display: flex; gap: 0;
+            border-bottom: 1px solid #eee;
+        }
+        .court-map-tab {
+            flex: 1; padding: 10px; font-size: 12px;
+            font-weight: 700; color: var(--gray-text);
+            background: none; border: none;
+            cursor: pointer; text-align: center;
+            text-transform: uppercase; letter-spacing: 0.8px;
+            border-bottom: 3px solid transparent;
+            transition: all 0.15s;
+        }
+        .court-map-tab.active {
+            color: var(--blue-main);
+            border-bottom-color: var(--blue-main);
+            background: rgba(26,107,140,0.04);
+        }
+        .court-map-stats-row {
+            display: flex; gap: 12px; margin-top: 10px;
+            justify-content: center;
+        }
+        .court-map-stat-chip {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 14px; font-weight: 700;
+            padding: 4px 12px; border-radius: 20px;
+        }
+
+        /* ===== PRINT ===== */
+        @media print {
+            .nav-bar { display: none; }
+            .report-container { padding: 0; }
+            .match-header { break-inside: avoid; }
+            .player-table-card { break-inside: avoid; }
+
+            /* Cetak Single Player */
+            body.print-single-player .report-container,
+            body.print-single-player .nav-bar,
+            body.print-single-player .player-modal-close-btn,
+            body.print-single-player .player-modal-print-btn {
+                display: none !important;
+            }
+            body.print-single-player .player-modal-overlay {
+                position: absolute !important;
+                top: 0 !important; left: 0 !important;
+                width: 100% !important; height: auto !important;
+                background: white !important;
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+                display: block !important;
+                opacity: 1 !important;
+                pointer-events: auto !important;
+            }
+            body.print-single-player .player-modal-box {
+                box-shadow: none !important;
+                border: none !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                transform: none !important;
+                margin: 0 !important;
+                background: white !important;
+            }
+            body.print-single-player .player-stat-progress-bar {
+                border: 1px solid #ddd !important;
+                background: #f0f0f0 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            body.print-single-player .player-stat-progress-fill {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            body.print-single-player .player-card-badge {
+                border: 1px solid #ddd !important;
+                background: #fafafa !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            body.print-single-player .player-card-icon {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAV -->
+<div class="nav-bar">
+    <div class="nav-left">
+        <span class="nav-logo">AW<span>I</span>M</span>
+        <button class="nav-btn" onclick="window.close()">&#8592; Kembali</button>
+        <button class="nav-btn" onclick="location.reload()">&#8635; Refresh</button>
+    </div>
+    <div class="nav-right">
+        <span class="nav-period-chip" id="nav-live"><span class="live-dot"></span>LIVE DATA</span>
+        <span class="nav-period-chip" id="nav-score">0 – 0</span>
+        <button class="nav-btn primary" onclick="window.print()">&#128438; Print / PDF</button>
+    </div>
+</div>
+
+<!-- CONTENT -->
+<div class="report-container" id="report-root">
+    <div style="text-align:center;padding:80px 0;color:#aaa;font-size:16px;">
+        ⏳ Memuat data pertandingan...
+    </div>
+</div>
+
+<script>
+// ============================================================
+// CONSTANTS
+// ============================================================
+const COURT_ZONE_NAMES = {
+    'L1':'Kiri - 6m Atas','L2':'Kiri - 6m Atas-Tengah','L3':'Kiri - 6m Tengah',
+    'L4':'Kiri - 6m Bawah-Tengah','L5':'Kiri - 6m Bawah',
+    'L6':'Kiri - 9m+ Atas','L7':'Kiri - 9m+ Atas-Tengah','L8':'Kiri - 9m+ Tengah',
+    'L9':'Kiri - 9m+ Bawah-Tengah','L10':'Kiri - 9m+ Bawah',
+    'R1':'Kanan - 6m Atas','R2':'Kanan - 6m Atas-Tengah','R3':'Kanan - 6m Tengah',
+    'R4':'Kanan - 6m Bawah-Tengah','R5':'Kanan - 6m Bawah',
+    'R6':'Kanan - 9m+ Atas','R7':'Kanan - 9m+ Atas-Tengah','R8':'Kanan - 9m+ Tengah',
+    'R9':'Kanan - 9m+ Bawah-Tengah','R10':'Kanan - 9m+ Bawah'
+};
+
+const EVENT_ICONS = {
+    GOAL:'⚽', MISS:'✕', SAVE:'🧤', FOUL:'⚠️',
+    TIMEOUT:'⏸', SUB:'⇄', PERIOD_START:'▶', PERIOD_END:'⏹', MATCH_END:'🏁'
+};
+
+const GOAL_ZONE_ORDER = [
+    'Atas Kiri','Atas Tengah','Atas Kanan',
+    'Tengah Kiri','Tengah','Tengah Kanan',
+    'Bawah Kiri','Bawah Tengah','Bawah Kanan'
+];
+
+// ============================================================
+// LOAD & RENDER
+// ============================================================
+let md = null;
+
+function loadAndRender() {
+    const raw = localStorage.getItem('matchData');
+    if (!raw) {
+        document.getElementById('report-root').innerHTML =
+            '<div style="text-align:center;padding:80px 0;color:#e74c3c;font-size:16px;">❌ Tidak ada data pertandingan. Mulai pertandingan terlebih dahulu.</div>';
+        return;
+    }
+    md = JSON.parse(raw);
+    render();
+}
+
+function render() {
+    // Update nav
+    document.getElementById('nav-score').innerText = `${md.scoreA} – ${md.scoreB}`;
+    document.title = `AWIM Report — ${md.teamA?.name || 'A'} vs ${md.teamB?.name || 'B'}`;
+
+    const root = document.getElementById('report-root');
+    root.innerHTML = buildMatchHeader()
+        + buildTeamOverview()
+        + buildAttackBreakdown()
+        + buildShotZones()
+        + buildCourtMap()
+        + buildGKSection()
+        + buildPlayerTable('A')
+        + buildPlayerTable('B')
+        + buildEventLog()
+        + `<div class="report-footer">AWIM Handball Stats · Generated ${new Date().toLocaleString('id-ID')} · Data from localStorage</div>`;
+
+    // Animate bars after DOM update
+    setTimeout(animateBars, 100);
+}
+
+// ============================================================
+// COURT EVENT MAP (Heatmap Lapangan)
+// ============================================================
+function buildCourtMap() {
+    const evs = md.events || [];
+
+    const ZONES = [
+        { id:'L1',  cx:90,  cy:65  }, { id:'L2',  cx:120, cy:145 },
+        { id:'L3',  cx:130, cy:225 }, { id:'L4',  cx:120, cy:305 },
+        { id:'L5',  cx:90,  cy:385 }, { id:'L6',  cx:280, cy:65  },
+        { id:'L7',  cx:300, cy:145 }, { id:'L8',  cx:310, cy:225 },
+        { id:'L9',  cx:300, cy:305 }, { id:'L10', cx:280, cy:385 },
+        { id:'R1',  cx:790, cy:65  }, { id:'R2',  cx:760, cy:145 },
+        { id:'R3',  cx:750, cy:225 }, { id:'R4',  cx:760, cy:305 },
+        { id:'R5',  cx:790, cy:385 }, { id:'R6',  cx:600, cy:65  },
+        { id:'R7',  cx:580, cy:145 }, { id:'R8',  cx:570, cy:225 },
+        { id:'R9',  cx:580, cy:305 }, { id:'R10', cx:600, cy:385 },
+    ];
+
+    const ZONE_PATHS = {
+        'L1':  'M 40,20 L 99.2,20 A 180,180 0 0,1 155.9,100 L 40,100 Z',
+        'L2':  'M 40,100 L 155.9,100 A 180,180 0 0,1 219.7,180 L 40,180 Z',
+        'L3':  'M 40,180 L 219.7,180 A 180,180 0 0,1 220,190 L 220,250 A 180,180 0 0,1 219.7,260 L 40,260 Z',
+        'L4':  'M 40,260 L 219.7,260 A 180,180 0 0,1 155.9,340 L 40,340 Z',
+        'L5':  'M 40,340 L 155.9,340 A 180,180 0 0,1 99.2,420 L 40,420 Z',
+        'L6':  'M 99.2,20 L 440,20 L 440,100 L 155.9,100 A 180,180 0 0,0 99.2,20 Z',
+        'L7':  'M 155.9,100 L 440,100 L 440,180 L 219.7,180 A 180,180 0 0,0 155.9,100 Z',
+        'L8':  'M 219.7,180 A 180,180 0 0,1 220,190 L 220,250 A 180,180 0 0,1 219.7,260 L 440,260 L 440,180 Z',
+        'L9':  'M 219.7,260 L 440,260 L 440,340 L 155.9,340 A 180,180 0 0,0 219.7,260 Z',
+        'L10': 'M 155.9,340 L 440,340 L 440,420 L 99.2,420 A 180,180 0 0,0 155.9,340 Z',
+        'R1':  'M 840,20 L 780.8,20 A 180,180 0 0,0 724.1,100 L 840,100 Z',
+        'R2':  'M 840,100 L 724.1,100 A 180,180 0 0,0 660.3,180 L 840,180 Z',
+        'R3':  'M 840,180 L 660.3,180 A 180,180 0 0,0 660,190 L 660,250 A 180,180 0 0,0 660.3,260 L 840,260 Z',
+        'R4':  'M 840,260 L 660.3,260 A 180,180 0 0,0 724.1,340 L 840,340 Z',
+        'R5':  'M 840,340 L 724.1,340 A 180,180 0 0,0 780.8,420 L 840,420 Z',
+        'R6':  'M 780.8,20 L 440,20 L 440,100 L 724.1,100 A 180,180 0 0,1 780.8,20 Z',
+        'R7':  'M 724.1,100 L 440,100 L 440,180 L 660.3,180 A 180,180 0 0,1 724.1,100 Z',
+        'R8':  'M 660.3,180 A 180,180 0 0,0 660,190 L 660,250 A 180,180 0 0,0 660.3,260 L 440,260 L 440,180 Z',
+        'R9':  'M 660.3,260 L 440,260 L 440,340 L 724.1,340 A 180,180 0 0,1 660.3,260 Z',
+        'R10': 'M 724.1,340 L 440,340 L 440,420 L 780.8,420 A 180,180 0 0,1 724.1,340 Z',
+    };
+
+    function buildMapSVG(teamChar, filterType) {
+        const teamEvs = evs.filter(e =>
+            (e.type === 'GOAL' || e.type === 'MISS') &&
+            e.team === teamChar && e.courtZone &&
+            (filterType === 'all' || e.type === filterType)
+        );
+
+        const zoneGoals = {}, zoneMisses = {};
+        teamEvs.forEach(e => {
+            const z = e.courtZone;
+            if (e.type === 'GOAL') zoneGoals[z] = (zoneGoals[z] || 0) + 1;
+            if (e.type === 'MISS') zoneMisses[z] = (zoneMisses[z] || 0) + 1;
+        });
+
+        const totalGoals  = Object.values(zoneGoals).reduce((a,b)=>a+b,0);
+        const totalMisses = Object.values(zoneMisses).reduce((a,b)=>a+b,0);
+        const maxCount    = Math.max(...ZONES.map(z => (zoneGoals[z.id]||0)+(zoneMisses[z.id]||0)), 1);
+
+        const zoneFills = ZONES.map(z => {
+            const g = zoneGoals[z.id] || 0;
+            const m = zoneMisses[z.id] || 0;
+            const total = g + m;
+            const path = `<path d="${ZONE_PATHS[z.id]}" `;
+            if (total === 0) return path + `fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.10)" stroke-width="1"/>`;
+            const intensity = Math.min(total / maxCount, 1);
+            let fillColor;
+            if (filterType === 'GOAL') {
+                fillColor = `rgba(46,204,113,${(0.2+intensity*0.6).toFixed(2)})`;
+            } else if (filterType === 'MISS') {
+                fillColor = `rgba(231,76,60,${(0.2+intensity*0.6).toFixed(2)})`;
+            } else if (g > m) {
+                fillColor = `rgba(46,204,113,${(0.15+intensity*0.55).toFixed(2)})`;
+            } else if (m > g) {
+                fillColor = `rgba(231,76,60,${(0.15+intensity*0.55).toFixed(2)})`;
+            } else {
+                fillColor = `rgba(241,196,15,${(0.2+intensity*0.5).toFixed(2)})`;
+            }
+            return path + `fill="${fillColor}" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>`;
+        }).join('');
+
+        const zoneLabels = ZONES.map(z => {
+            const g = zoneGoals[z.id] || 0;
+            const m = zoneMisses[z.id] || 0;
+            if (g === 0 && m === 0) return '';
+            const showG = filterType !== 'MISS' && g > 0;
+            const showM = filterType !== 'GOAL' && m > 0;
+            const bothShown = showG && showM;
+            const dy1 = bothShown ? -9 : 0;
+            let content = '';
+            if (showG) content += `<tspan x="${z.cx}" dy="${dy1}" fill="#2ecc71" font-size="14" font-weight="800">⚽${g}</tspan>`;
+            if (showM) content += `<tspan x="${z.cx}" dy="${bothShown?18:0}" fill="#ff6b6b" font-size="13" font-weight="700">✕${m}</tspan>`;
+            return `<text y="${z.cy}" text-anchor="middle" pointer-events="none" font-family="'Barlow Condensed',sans-serif">${content}</text>`;
+        }).join('');
+
+        return { svg: zoneFills + zoneLabels, totalGoals, totalMisses };
+    }
+
+    function makeCourtSVG(overlaySVG) {
+        return `<svg viewBox="0 0 880 440" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;border-radius:8px">
+  <rect width="880" height="440" fill="#1a3a5c"/>
+  <rect x="40" y="20" width="800" height="400" fill="#1f4e79" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
+  <line x1="440" y1="20" x2="440" y2="420" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+  <circle cx="440" cy="220" r="60" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+  <path d="M 40,70 A 120,120 0 0,1 160,190 L 160,250 A 120,120 0 0,1 40,370 Z" fill="rgba(241,196,15,0.12)"/>
+  <path d="M 840,70 A 120,120 0 0,0 720,190 L 720,250 A 120,120 0 0,0 840,370 Z" fill="rgba(241,196,15,0.12)"/>
+  <path d="M 40,70 A 120,120 0 0,1 160,190 L 160,250 A 120,120 0 0,1 40,370" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="2"/>
+  <path d="M 840,70 A 120,120 0 0,0 720,190 L 720,250 A 120,120 0 0,0 840,370" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="2"/>
+  <path d="M 40,10 A 180,180 0 0,1 220,190 L 220,250 A 180,180 0 0,1 40,430" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2" stroke-dasharray="6,5"/>
+  <path d="M 840,10 A 180,180 0 0,0 660,190 L 660,250 A 180,180 0 0,0 840,430" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2" stroke-dasharray="6,5"/>
+  <rect x="25" y="190" width="15" height="60" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>
+  <rect x="840" y="190" width="15" height="60" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>
+  ${overlaySVG}
+</svg>`;
+    }
+
+    function buildCard(teamChar) {
+        const team  = teamChar === 'A' ? md.teamA : md.teamB;
+        const color = team?.color || (teamChar === 'A' ? '#e74c3c' : '#1abc9c');
+        const name  = team?.name  || (teamChar === 'A' ? 'HOME' : 'AWAY');
+        const uid   = `cmap-${teamChar}`;
+
+        const { svg: svgAll,  totalGoals, totalMisses } = buildMapSVG(teamChar, 'all');
+        const { svg: svgGoal }  = buildMapSVG(teamChar, 'GOAL');
+        const { svg: svgMiss }  = buildMapSVG(teamChar, 'MISS');
+
+        const acc = (totalGoals + totalMisses) > 0
+            ? Math.round(totalGoals / (totalGoals + totalMisses) * 100) : 0;
+
+        return `
+        <div class="court-map-card">
+            <div class="court-map-header">
+                <div style="display:flex;align-items:center;gap:8px">
+                    <div style="width:11px;height:11px;border-radius:50%;background:${color}"></div>
+                    ${name.toUpperCase()} — Peta Tembakan
+                </div>
+                <div style="font-size:11px;opacity:.75;font-weight:600">⚽${totalGoals} ✕${totalMisses} · Akurasi ${acc}%</div>
+            </div>
+            <div class="court-map-tab-bar">
+                <button class="court-map-tab active" onclick="switchCourtTab('${uid}','all',this)">Semua</button>
+                <button class="court-map-tab" onclick="switchCourtTab('${uid}','GOAL',this)">⚽ Goal</button>
+                <button class="court-map-tab" onclick="switchCourtTab('${uid}','MISS',this)">✕ Miss</button>
+            </div>
+            <div class="court-map-body">
+                <div class="court-map-svg-wrap">
+                    <div id="${uid}-all">${makeCourtSVG(svgAll)}</div>
+                    <div id="${uid}-GOAL" style="display:none">${makeCourtSVG(svgGoal)}</div>
+                    <div id="${uid}-MISS" style="display:none">${makeCourtSVG(svgMiss)}</div>
+                </div>
+                <div class="court-map-legend">
+                    <span><span class="court-map-legend-dot" style="background:#2ecc71"></span>Goal</span>
+                    <span><span class="court-map-legend-dot" style="background:#e74c3c"></span>Miss</span>
+                    <span><span class="court-map-legend-dot" style="background:#f1c40f"></span>Seimbang</span>
+                    <span style="color:#bbb;font-size:10px">warna makin terang = lebih sering</span>
+                </div>
+            </div>
+        </div>`;
+    }
+
+    return `
+    <div class="court-map-section">
+        <div class="section-title">🏃 Peta Kejadian di Lapangan</div>
+        <div class="court-map-grid">
+            ${buildCard('A')}
+            ${buildCard('B')}
+        </div>
+    </div>`;
+}
+
+function switchCourtTab(uid, mode, btn) {
+    ['all','GOAL','MISS'].forEach(m => {
+        const el = document.getElementById(`${uid}-${m}`);
+        if (el) el.style.display = 'none';
+    });
+    const target = document.getElementById(`${uid}-${mode}`);
+    if (target) target.style.display = 'block';
+    const tabs = btn.closest('.court-map-tab-bar').querySelectorAll('.court-map-tab');
+    tabs.forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+}
+
+// ============================================================
+// GK STATS SECTION
+// ============================================================
+function buildGKSection() {
+    const evs = md.events || [];
+    const INNER_ZONES = [
+        'Atas Kiri','Atas Tengah','Atas Kanan',
+        'Tengah Kiri','Tengah','Tengah Kanan',
+        'Bawah Kiri','Bawah Tengah','Bawah Kanan'
+    ];
+
+    function buildGKCard(teamChar) {
+        const team = teamChar === 'A' ? md.teamA : md.teamB;
+        const oppTeamChar = teamChar === 'A' ? 'B' : 'A';
+        if (!team) return '';
+
+        // Temukan semua GK di tim ini
+        const gkPlayers = (team.players || []).filter(p => p.posisi === 'GK');
+        if (!gkPlayers.length) return `
+        <div class="gk-card">
+            <div class="gk-card-header">
+                <div class="gk-jersey-badge" style="background:${team.color || '#ccc'}">GK</div>
+                <div class="gk-header-info">
+                    <div class="gk-header-name">${team.name.toUpperCase()}</div>
+                    <div class="gk-header-team">🧤 Goalkeeper</div>
+                </div>
+            </div>
+            <div class="gk-card-body"><div class="gk-no-data">Tidak ada pemain GK terdaftar</div></div>
+        </div>`;
+
+        return gkPlayers.map(gk => {
+            const st = team.stats?.[gk.nomor] || {};
+            const saves = st.saves || 0;
+
+            // Hitung berapa tembakan yang datang ke gawang tim ini (dari lawan) ke zona dalam
+            const incomingInnerShots = evs.filter(e =>
+                (e.type === 'GOAL' || e.type === 'MISS') &&
+                e.team === oppTeamChar &&
+                INNER_ZONES.includes(e.zone)
+            );
+            const goalsConceded = incomingInnerShots.filter(e => e.type === 'GOAL').length;
+            const totalFaced = incomingInnerShots.length;
+            const savePct = totalFaced > 0 ? Math.round((saves / totalFaced) * 100) : 0;
+
+            // Perincian save per zona (berapa kali shot ke zona itu tapi tidak jadi gol)
+            const zoneLabels = [
+                { key:'Atas Kiri', lbl:'AT KI' }, { key:'Atas Tengah', lbl:'AT TG' }, { key:'Atas Kanan', lbl:'AT KN' },
+                { key:'Tengah Kiri', lbl:'TG KI' }, { key:'Tengah', lbl:'TG' }, { key:'Tengah Kanan', lbl:'TG KN' },
+                { key:'Bawah Kiri', lbl:'BW KI' }, { key:'Bawah Tengah', lbl:'BW TG' }, { key:'Bawah Kanan', lbl:'BW KN' },
+            ];
+            const zoneCells = zoneLabels.map(z => {
+                const shots = incomingInnerShots.filter(e => e.zone === z.key);
+                const zSave = shots.filter(e => e.type === 'MISS').length;
+                const zGoal = shots.filter(e => e.type === 'GOAL').length;
+                const isSaved = zSave > 0 && zGoal === 0;
+                return `<div class="gk-zone-cell">
+                    <div class="gk-zone-cell-val${isSaved ? ' green' : (zGoal > 0 ? ' red' : '')}">${shots.length > 0 ? (zSave + '/' + shots.length) : '—'}</div>
+                    <div class="gk-zone-cell-lbl">${z.lbl}</div>
+                </div>`;
+            }).join('');
+
+            // Rating GK sederhana
+            let gkRating = 6.0 + (saves * 0.4) - (goalsConceded * 0.3);
+            if (savePct >= 60) gkRating += 0.5;
+            gkRating = Math.min(10.0, Math.max(1.0, gkRating));
+
+            return `
+            <div class="gk-card">
+                <div class="gk-card-header">
+                    <div class="gk-jersey-badge" style="background:${team.color || '#1a6b8c'}">${gk.nomor}</div>
+                    <div class="gk-header-info">
+                        <div class="gk-header-name">${gk.nama}</div>
+                        <div class="gk-header-team">🧤 GK · ${team.name.toUpperCase()}</div>
+                    </div>
+                    <div class="gk-rating-pill">${gkRating.toFixed(1)}</div>
+                </div>
+                <div class="gk-card-body">
+                    <div class="gk-main-stats">
+                        <div class="gk-stat-box">
+                            <div class="gk-stat-box-value green">${saves}</div>
+                            <div class="gk-stat-box-label">🧤 Saves</div>
+                        </div>
+                        <div class="gk-stat-box">
+                            <div class="gk-stat-box-value red">${goalsConceded}</div>
+                            <div class="gk-stat-box-label">⚽ Kemasukan</div>
+                        </div>
+                        <div class="gk-stat-box">
+                            <div class="gk-stat-box-value">${totalFaced}</div>
+                            <div class="gk-stat-box-label">🎯 Shot Dihadapi</div>
+                        </div>
+                    </div>
+                    <div class="gk-save-bar-section">
+                        <div class="gk-save-bar-label">
+                            <span>Save Rate (vs shot dalam gawang)</span>
+                            <strong>${savePct}%</strong>
+                        </div>
+                        <div class="gk-save-bar-track">
+                            <div class="gk-save-bar-fill" style="width:${savePct}%"></div>
+                        </div>
+                    </div>
+                    <div class="gk-zone-section-title">Peta Zona (Save/Shot)</div>
+                    <div class="gk-zone-grid">${zoneCells}</div>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    const cardA = buildGKCard('A');
+    const cardB = buildGKCard('B');
+    if (!cardA && !cardB) return '';
+
+    return `
+    <div class="gk-stats-section">
+        <div class="section-title">🧤 Statistik Kiper (GK)</div>
+        <div class="gk-panel-grid">
+            ${cardA || ''}
+            ${cardB || ''}
+        </div>
+    </div>`;
+}
+
+// ============================================================
+// MATCH HEADER
+// ============================================================
+function buildMatchHeader() {
+    const info = md.info || {};
+    const metaItems = [
+        info.competition && `<span>🏆 <span>${info.competition}</span></span>`,
+        info.date        && `<span>📅 <span>${info.date}</span></span>`,
+        info.venue       && `<span>📍 <span>${info.venue}</span></span>`,
+        info.referee     && `<span>🧑‍⚖️ <span>${info.referee}</span></span>`,
+        `<span>⏱ <span>${info.duration||30} mnt × ${info.periods||2} babak</span></span>`
+    ].filter(Boolean).join('');
+
+    const timeLeft = md.timeLeft != null ? md.timeLeft : (info.duration||30)*60;
+    const m = Math.floor(timeLeft/60).toString().padStart(2,'0');
+    const s = (timeLeft%60).toString().padStart(2,'0');
+
+    return `
+    <div class="match-header">
+        <div class="match-meta">${metaItems}</div>
+        <div class="match-score-row">
+            <div class="match-team home">
+                <div class="jersey-dot" style="background:${md.teamA?.color||'#e74c3c'}"></div>
+                <div>
+                    <div class="match-team-name">${(md.teamA?.name||'HOME').toUpperCase()}</div>
+                    <div class="match-team-coach">Coach: ${md.teamA?.coach||'-'}</div>
+                </div>
+            </div>
+            <div class="match-score-center">
+                <div class="score-display">${md.scoreA} – ${md.scoreB}</div>
+                <div class="period-badge">BABAK ${md.currentPeriod||1} · ${m}:${s}</div>
+            </div>
+            <div class="match-team away">
+                <div class="jersey-dot" style="background:${md.teamB?.color||'#1abc9c'}"></div>
+                <div style="text-align:right">
+                    <div class="match-team-name">${(md.teamB?.name||'AWAY').toUpperCase()}</div>
+                    <div class="match-team-coach">Coach: ${md.teamB?.coach||'-'}</div>
+                </div>
+            </div>
+        </div>
+    </div>`;
+}
+
+// ============================================================
+// TEAM OVERVIEW
+// ============================================================
+function buildTeamOverview() {
+    const evs = md.events || [];
+    const stats = (team) => {
+        const ev = evs.filter(e => e.team === team);
+        const goals  = ev.filter(e=>e.type==='GOAL').length;
+        const misses = ev.filter(e=>e.type==='MISS').length;
+        const shots  = goals + misses;
+        const saves  = ev.filter(e=>e.type==='SAVE').length;
+        const fouls  = ev.filter(e=>e.type==='FOUL').length;
+        const yCards = ev.filter(e=>e.type==='FOUL'&&e.subtype==='Kartu Kuning').length;
+        const twoMin = ev.filter(e=>e.type==='FOUL'&&e.subtype==='2 Menit').length;
+        const rCards = ev.filter(e=>e.type==='FOUL'&&e.subtype==='Kartu Merah').length;
+        const bCards = ev.filter(e=>e.type==='FOUL'&&e.subtype==='Kartu Biru').length;
+        const acc    = shots > 0 ? Math.round((goals/shots)*100) : 0;
+        const to     = md[`timeouts${team}`] != null ? 3 - md[`timeouts${team}`] : 0;
+        return { goals, misses, shots, saves, fouls, yCards, twoMin, rCards, bCards, acc, to };
+    };
+    const a = stats('A'), b = stats('B');
+
+    const rows = [
+        { label:'GOL', ka: a.goals, kb: b.goals, cls:'highlight' },
+        { label:'TEMBAKAN', ka: a.shots, kb: b.shots, cls:'' },
+        { label:'AKURASI', ka: a.acc+'%', kb: b.acc+'%', cls:'' },
+        { label:'MISS', ka: a.misses, kb: b.misses, cls:'danger' },
+        { label:'SAVE', ka: a.saves, kb: b.saves, cls:'' },
+        { label:'FOUL', ka: a.fouls, kb: b.fouls, cls:'danger' },
+        { label:'TIMEOUT', ka: a.to, kb: b.to, cls:'' },
+        { label:'KARTU KUNING', ka: a.yCards, kb: b.yCards, cls:'' },
+        { label:'2 MENIT', ka: a.twoMin, kb: b.twoMin, cls:'' },
+        { label:'KARTU MERAH', ka: a.rCards, kb: b.rCards, cls:'danger' },
+    ];
+
+    const rowHTML = rows.map(r => {
+        const cls = r.cls ? `stat-val ${r.cls}` : 'stat-val';
+        return `
+        <div class="stat-row">
+            <div class="${cls} home">${r.ka}</div>
+            <div class="stat-divider-val">${r.label}</div>
+            <div class="${cls} away">${r.kb}</div>
+        </div>`;
+    }).join('');
+
+    return `
+    <div class="section-title">📊 Statistik Tim</div>
+    <div class="team-stats-grid">
+        <div class="team-col-header home">
+            <div class="jersey-mini" style="background:${md.teamA?.color||'#e74c3c'};width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,0.5)"></div>
+            ${(md.teamA?.name||'HOME').toUpperCase()}
+        </div>
+        <div class="stat-divider-header">VS</div>
+        <div class="team-col-header away">
+            ${(md.teamB?.name||'AWAY').toUpperCase()}
+            <div class="jersey-mini" style="background:${md.teamB?.color||'#1abc9c'};width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,0.5)"></div>
+        </div>
+        ${rowHTML}
+    </div>`;
+}
+
+// ============================================================
+// ATTACK TYPE BREAKDOWN
+// ============================================================
+function buildAttackBreakdown() {
+    const evs = md.events || [];
+    const types = ['Set-play','Fastbreak'];
+
+    const buildTeamData = (team) => {
+        const shots = evs.filter(e => (e.type==='GOAL'||e.type==='MISS') && e.team===team && e.attackType);
+        const total = shots.length || 1;
+        return types.map(t => {
+            const ev = shots.filter(e=>e.attackType===t);
+            const goals = ev.filter(e=>e.type==='GOAL').length;
+            const miss  = ev.filter(e=>e.type==='MISS').length;
+            const pct = Math.round((ev.length/total)*100);
+            return { type: t, goals, miss, total: ev.length, pct };
+        });
+    };
+
+    const renderAttack = (team) => {
+        const data = buildTeamData(team);
+        const name = team==='A' ? (md.teamA?.name||'HOME') : (md.teamB?.name||'AWAY');
+        const maxCount = Math.max(...data.map(d=>d.total), 1);
+        const rows = data.map(d => `
+            <div class="attack-type-row">
+                <div class="attack-type-label">${d.type==='Set-play'?'🔄':'⚡'} ${d.type}</div>
+                <div class="attack-type-bars">
+                    <div class="attack-mini-bar" style="width:${(d.total/maxCount)*80}%"></div>
+                </div>
+                <div style="display:flex;gap:5px;align-items:center">
+                    <span class="stat-num">${d.total}</span>
+                    <span style="font-size:10px;color:#aaa">(${d.goals}⚽ ${d.miss}✕)</span>
+                </div>
+            </div>`).join('');
+        return `
+        <div class="attack-card">
+            <div class="attack-card-title" style="display:flex;align-items:center;gap:8px">
+                <div style="width:10px;height:10px;border-radius:50%;background:${team==='A'?(md.teamA?.color||'#e74c3c'):(md.teamB?.color||'#1abc9c')}"></div>
+                ${name.toUpperCase()} — Tipe Serangan
+            </div>
+            ${rows}
+        </div>`;
+    };
+
+    return `
+    <div class="section-title">⚡ Tipe Serangan</div>
+    <div class="attack-cards">
+        ${renderAttack('A')}
+        ${renderAttack('B')}
+    </div>`;
+}
+
+// ============================================================
+// SHOT ZONES (goal-grid visual)
+// ============================================================
+function buildShotZones() {
+    const evs = md.events || [];
+
+    const buildGrid = (team) => {
+        const shots = evs.filter(e => (e.type==='GOAL'||e.type==='MISS') && e.team===team && e.zone);
+        const cellData = {};
+        GOAL_ZONE_ORDER.forEach(z => { cellData[z] = { g:0, m:0 }; });
+        shots.forEach(e => {
+            if (cellData[e.zone]) {
+                if (e.type==='GOAL') cellData[e.zone].g++;
+                else cellData[e.zone].m++;
+            }
+        });
+
+        return GOAL_ZONE_ORDER.map(z => {
+            const d = cellData[z];
+            const cls = d.g > 0 ? 'goal-cell has-goals' : d.m > 0 ? 'goal-cell has-miss' : 'goal-cell';
+            const short = z.replace('Atas','AT').replace('Tengah','TG').replace('Bawah','BW').replace(' Kiri','K').replace(' Kanan','KN').replace('Kiri','K').replace('Kanan','KN');
+            return `<div class="${cls}">
+                ${d.g>0 ? `<div class="cell-goals">${d.g}</div>` : ''}
+                ${d.m>0 ? `<div class="cell-miss">✕${d.m}</div>` : ''}
+                <div class="cell-label">${short}</div>
+            </div>`;
+        }).join('');
+    };
+
+    const offTarget = (team) => {
+        const evs2 = evs.filter(e=>(e.type==='GOAL'||e.type==='MISS')&&e.team===team);
+        const lk = evs2.filter(e=>e.zone==='Luar Kiri').length;
+        const la = evs2.filter(e=>e.zone==='Luar Atas').length;
+        const lkn = evs2.filter(e=>e.zone==='Luar Kanan').length;
+        const tm = evs2.filter(e=>e.zone==='Tiang/Mistar').length;
+        const skip = evs2.filter(e=>!e.zone).length;
+        const items = [lk&&`Luar Kiri: ${lk}`, la&&`Luar Atas: ${la}`, lkn&&`Luar Kanan: ${lkn}`, tm&&`Tiang: ${tm}`, skip&&`Tanpa zona: ${skip}`].filter(Boolean);
+        return items.length ? `<div style="font-size:10px;color:var(--gray-text);margin-top:8px;text-align:center">Off-target: ${items.join(' · ')}</div>` : '';
+    };
+
+    const buildCard = (team) => {
+        const name = team==='A' ? (md.teamA?.name||'HOME') : (md.teamB?.name||'AWAY');
+        const color = team==='A' ? (md.teamA?.color||'#e74c3c') : (md.teamB?.color||'#1abc9c');
+        const goals = evs.filter(e=>e.type==='GOAL'&&e.team===team).length;
+        const shots = evs.filter(e=>(e.type==='GOAL'||e.type==='MISS')&&e.team===team).length;
+        return `
+        <div class="shot-chart-card">
+            <div class="shot-chart-header">
+                <div style="display:flex;align-items:center;gap:8px">
+                    <div style="width:10px;height:10px;border-radius:50%;background:${color}"></div>
+                    <strong>${name.toUpperCase()}</strong>
+                </div>
+                <div style="font-size:11px;color:var(--gray-text)">${goals}⚽ / ${shots} tembakan</div>
+            </div>
+            <div class="shot-chart-body">
+                <div class="goal-grid">${buildGrid(team)}</div>
+                ${offTarget(team)}
+                <div class="shot-legend" style="margin-top:10px">
+                    <div class="legend-item"><div class="legend-dot" style="background:rgba(39,174,96,0.5)"></div> Gol</div>
+                    <div class="legend-item"><div class="legend-dot" style="background:rgba(231,76,60,0.4)"></div> Miss</div>
+                </div>
+            </div>
+        </div>`;
+    };
+
+    return `
+    <div class="section-title">🎯 Peta Tembakan ke Gawang</div>
+    <div class="shot-charts">
+        ${buildCard('A')}
+        ${buildCard('B')}
+    </div>`;
+}
+
+// ============================================================
+// PLAYER PLAYING TIME CALCULATION
+// ============================================================
+function getPlayingMinutes(teamChar) {
+    const team = teamChar === 'A' ? md.teamA : md.teamB;
+    const teamName = team?.name;
+    const players = team?.players || [];
+    const stats = team?.stats || {};
+    const playerState = team?.playerState || {};
+    const duration = md.info?.duration || 30; // duration per period in minutes
+    const events = md.events || [];
+
+    // Initialize playing time in seconds
+    const playingSeconds = {};
+    players.forEach(p => {
+        playingSeconds[p.nomor] = 0;
+    });
+
+    // Determine state at the end of the match
+    const states = {};
+    players.forEach(p => {
+        const st = stats[p.nomor] || {};
+        const isSuspended = st.redCard || st.blueCard;
+        states[p.nomor] = isSuspended ? 'bench' : (playerState[p.nomor] || 'bench');
+    });
+
+    // Convert time string to seconds remaining
+    function timeToSec(timeStr) {
+        if (!timeStr) return 0;
+        const parts = timeStr.split(':');
+        if (parts.length !== 2) return 0;
+        return parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
+    }
+
+    // Build checkpoints in reverse chronological order
+    const checkpoints = [];
+
+    // 1. Current state of the timer if the match is still running
+    const hasMatchEnd = events.some(e => e.type === 'MATCH_END');
+    if (!hasMatchEnd) {
+        checkpoints.push({
+            period: md.currentPeriod || 1,
+            seconds: md.timeLeft != null ? md.timeLeft : duration * 60,
+            type: 'CURRENT_TIME'
+        });
+    }
+
+    // 2. Add checkpoints from events
+    events.forEach(ev => {
+        if (ev.type === 'PERIOD_START' || ev.type === 'PERIOD_END' || ev.type === 'MATCH_END') {
+            checkpoints.push({
+                period: ev.period || 1,
+                seconds: timeToSec(ev.time),
+                type: ev.type
+            });
+        } else if (ev.type === 'SUB' && ev.teamName === teamName) {
+            checkpoints.push({
+                period: ev.period || 1,
+                seconds: timeToSec(ev.time),
+                type: 'SUB',
+                event: ev
+            });
+        } else if (ev.type === 'FOUL' && ev.teamName === teamName && (ev.subtype === 'Kartu Merah' || ev.subtype === 'Kartu Biru')) {
+            checkpoints.push({
+                period: ev.period || 1,
+                seconds: timeToSec(ev.time),
+                type: 'CARD',
+                event: ev
+            });
+        } else if (ev.type === 'FOUL' && ev.teamName === teamName && ev.subtype === '2 Menit') {
+            const T_susp = timeToSec(ev.time);
+            checkpoints.push({
+                period: ev.period || 1,
+                seconds: T_susp,
+                type: 'SUSPEND_START',
+                event: ev
+            });
+            checkpoints.push({
+                period: ev.period || 1,
+                seconds: Math.max(0, T_susp - 120),
+                type: 'SUSPEND_END',
+                event: ev
+            });
+        }
+    });
+
+    // Sort checkpoints: newest to oldest
+    // Higher period first; within same period, smaller remaining seconds first
+    checkpoints.sort((a, b) => {
+        if (a.period !== b.period) {
+            return b.period - a.period;
+        }
+        return a.seconds - b.seconds;
+    });
+
+    // Backwards pass
+    let currentPeriod = null;
+    let currentSeconds = null;
+
+    checkpoints.forEach(cp => {
+        if (currentPeriod === null) {
+            currentPeriod = cp.period;
+            currentSeconds = cp.seconds;
+            return;
+        }
+
+        if (cp.period !== currentPeriod) {
+            // Close the current period (add remaining time to start of period)
+            const interval = (duration * 60) - currentSeconds;
+            if (interval > 0) {
+                players.forEach(p => {
+                    if (states[p.nomor] === 'court') {
+                        playingSeconds[p.nomor] += interval;
+                    }
+                });
+            }
+            // Transition to new period
+            currentPeriod = cp.period;
+            currentSeconds = cp.seconds;
+        } else {
+            // Same period, different time checkpoint
+            const interval = cp.seconds - currentSeconds;
+            if (interval > 0) {
+                players.forEach(p => {
+                    if (states[p.nomor] === 'court') {
+                        playingSeconds[p.nomor] += interval;
+                    }
+                });
+            }
+            currentSeconds = cp.seconds;
+        }
+
+        // Process state updates for this checkpoint (going backwards in time)
+        if (cp.type === 'SUB' && cp.event) {
+            if (cp.event.subOut) {
+                states[cp.event.subOut.nomor] = 'court';
+            }
+            if (cp.event.subIn) {
+                states[cp.event.subIn.nomor] = 'bench';
+            }
+        } else if (cp.type === 'CARD' && cp.event && cp.event.player) {
+            states[cp.event.player.nomor] = 'court';
+        } else if (cp.type === 'SUSPEND_START' && cp.event && cp.event.player) {
+            states[cp.event.player.nomor] = 'court';
+        } else if (cp.type === 'SUSPEND_END' && cp.event && cp.event.player) {
+            states[cp.event.player.nomor] = 'bench';
+        }
+    });
+
+    // Close the final period (oldest period, down to start of that period)
+    if (currentPeriod !== null && currentSeconds !== null) {
+        const interval = (duration * 60) - currentSeconds;
+        if (interval > 0) {
+            players.forEach(p => {
+                if (states[p.nomor] === 'court') {
+                    playingSeconds[p.nomor] += interval;
+                }
+            });
+        }
+    }
+
+    // Convert seconds to formatted minutes and seconds (e.g. 23' 15" or 0')
+    const playingMinutes = {};
+    players.forEach(p => {
+        const totalSecs = playingSeconds[p.nomor] || 0;
+        const mins = Math.floor(totalSecs / 60);
+        const secs = totalSecs % 60;
+        playingMinutes[p.nomor] = totalSecs > 0 ? `${mins}' ${secs.toString().padStart(2, '0')}"` : "0'";
+    });
+
+    return playingMinutes;
+}
+
+// ============================================================
+// PLAYER TABLE
+// ============================================================
+function buildPlayerTable(team) {
+    const data = team==='A' ? md.teamA : md.teamB;
+    const name = data?.name || (team==='A'?'HOME':'AWAY');
+    const color = data?.color || (team==='A'?'#e74c3c':'#1abc9c');
+    const players = data?.players || [];
+    const stats = data?.stats || {};
+    const playingMinutes = getPlayingMinutes(team);
+
+    const rows = players.map(p => {
+        const s = stats[p.nomor] || {};
+        const goals  = s.goals || 0;
+        const misses = s.misses || 0;
+        const saves  = s.saves || 0;
+        const fouls  = s.fouls || 0;
+        const shots  = goals + misses;
+        const acc    = shots > 0 ? Math.round((goals/shots)*100) : null;
+        const yCards = s.yellowCards || 0;
+        const twoMin = s.twoMins || 0;
+        const rCard  = s.redCard || false;
+        const bCard  = s.blueCard || false;
+
+        const state = data?.playerState?.[p.nomor] || 'bench';
+        const suspended = rCard || bCard;
+
+        const statusDot = suspended
+            ? `<span style="color:var(--red);font-size:10px">SUSPEND</span>`
+            : state === 'court'
+            ? `<span style="width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block"></span>`
+            : `<span style="width:7px;height:7px;border-radius:50%;background:var(--gray-mid);display:inline-block"></span>`;
+
+        const cardHTML = [
+            yCards > 0 ? `<span class="card-chip chip-yellow">${yCards}K</span>` : '',
+            twoMin > 0 ? `<span class="card-chip chip-2min">${twoMin}×2'</span>` : '',
+            rCard ? `<span class="card-chip chip-red">RED</span>` : '',
+            bCard ? `<span class="card-chip chip-blue">BLU</span>` : '',
+        ].join('');
+
+        const accHTML = acc === null ? `<span class="acc-pill">-</span>` :
+            acc >= 60 ? `<span class="acc-pill good">${acc}%</span>` :
+            acc >= 40 ? `<span class="acc-pill mid">${acc}%</span>` :
+            `<span class="acc-pill bad">${acc}%</span>`;
+
+        const numCls = n => n===0 ? 'stat-num zero' : 'stat-num';
+
+        return `<tr onclick="showPlayerDetail('${team}', '${p.nomor}')" class="player-row-clickable" title="Klik untuk melihat detail statistik ${p.nama}">
+            <td><strong style="font-family:'Barlow Condensed',sans-serif;font-size:16px">${p.nomor}</strong>
+                <br><span style="font-size:9px;color:var(--gray-text)">${p.posisi}</span></td>
+            <td>${p.nama}<br><span style="font-size:10px">${statusDot}</span></td>
+            <td><span class="stat-num" style="font-size:14px;color:var(--blue-main)">${playingMinutes[p.nomor] || "0'"}</span></td>
+            <td><span class="${goals>0?'stat-num green':numCls(goals)}">${goals}</span></td>
+            <td><span class="${misses>0?'stat-num red':numCls(misses)}">${misses}</span></td>
+            <td>${accHTML}</td>
+            <td><span class="${numCls(saves)}">${saves}</span></td>
+            <td><span class="${fouls>0?'stat-num orange':numCls(fouls)}">${fouls}</span></td>
+            <td>${cardHTML || '<span style="color:var(--gray-mid);font-size:11px">—</span>'}</td>
+        </tr>`;
+    }).join('');
+
+    return `
+    <div class="section-title">👤 Pemain — ${name.toUpperCase()}</div>
+    <div class="player-table-card">
+        <div class="player-table-header">
+            <div class="jersey-mini" style="background:${color}"></div>
+            ${name.toUpperCase()}
+            <span style="font-size:11px;font-weight:400;opacity:.65;margin-left:6px">Coach: ${data?.coach||'-'}</span>
+        </div>
+        <div style="overflow-x:auto">
+        <table class="rpt-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Nama</th>
+                    <th>MAIN</th>
+                    <th>GOL</th>
+                    <th>MISS</th>
+                    <th>ACC</th>
+                    <th>SAVE</th>
+                    <th>FOUL</th>
+                    <th>KARTU</th>
+                </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+        </table>
+        </div>
+    </div>`;
+}
+
+// ============================================================
+// EVENT LOG
+// ============================================================
+function buildEventLog() {
+    const evs = [...(md.events||[])].reverse();
+
+    const items = evs.map(ev => {
+        const icon = EVENT_ICONS[ev.type] || '•';
+        if (ev.type==='PERIOD_START'||ev.type==='PERIOD_END'||ev.type==='MATCH_END') {
+            const lbl = ev.type==='MATCH_END'?'PERTANDINGAN SELESAI':ev.type==='PERIOD_END'?'AKHIR BABAK':'MULAI BABAK';
+            return `<div class="log-item period">${icon} ${lbl} ${ev.period||''}</div>`;
+        }
+        if (ev.type==='SUB') {
+            return `<div class="log-item">
+                <div class="log-icon">⇄</div>
+                <div class="log-text"><strong>SUB</strong> ${ev.teamName||''} — #${ev.subOut?.nomor||'?'} → #${ev.subIn?.nomor||'?'}
+                <br><span class="log-time">Babak ${ev.period} · ${ev.time}</span></div>
+            </div>`;
+        }
+
+        const playerStr = ev.player ? ` <strong>#${ev.player.nomor}</strong> ${ev.player.nama}` : '';
+        const subtypeStr = ev.subtype ? ` <span class="log-chip">${ev.subtype}</span>` : '';
+        const attackStr = ev.attackType ? ` <span class="log-chip attack">⚡${ev.attackType}</span>` : '';
+        const zoneStr = ev.zone ? ` <span class="log-chip zone">📍${ev.zone}</span>` : '';
+
+        const cls = ev.type==='GOAL'?'goal':ev.type==='MISS'?'miss':
+            ev.type==='FOUL'?(ev.subtype==='Kartu Merah'?'redcard':ev.subtype==='Kartu Biru'?'bluecard':ev.subtype==='Kartu Kuning'?'card':'foul'):'';
+
+        return `<div class="log-item ${cls}">
+            <div class="log-icon">${icon}</div>
+            <div class="log-text">
+                <strong>${ev.type}</strong> <span style="color:var(--blue-main)">${ev.teamName||''}</span>${playerStr}${subtypeStr}${attackStr}${zoneStr}
+                <br><span class="log-time">Babak ${ev.period} · ${ev.time}</span>
+            </div>
+        </div>`;
+    }).join('');
+
+    return `
+    <div class="section-title">📋 Event Log</div>
+    <div class="log-card">
+        <div class="log-card-header">
+            Kronologi Aksi
+            <span style="font-size:11px;font-weight:400;opacity:.65">${evs.length} kejadian</span>
+        </div>
+        <div class="log-list">${items || '<p style="text-align:center;padding:20px;color:#aaa">Belum ada aksi tercatat.</p>'}</div>
+    </div>`;
+}
+
+function animateBars() {
+    // bars animated via CSS transition
+}
+
+// ============================================================
+// INDIVIDUAL PLAYER DETAIL MODAL LOGIC
+// ============================================================
+function parseMins(minStr) {
+    if (!minStr || minStr === "0'") return 0;
+    const parts = minStr.split("'");
+    const mins = parseFloat(parts[0]) || 0;
+    let secs = 0;
+    if (parts[1]) {
+        secs = parseFloat(parts[1].replace('"', '')) || 0;
+    }
+    return mins + (secs / 60);
+}
+
+function showPlayerDetail(teamChar, nomor) {
+    const team = teamChar === 'A' ? md.teamA : md.teamB;
+    const player = team.players.find(p => p.nomor === nomor);
+    if (!player) return;
+    
+    const s = team.stats?.[nomor] || { goals:0, misses:0, saves:0, fouls:0, yellowCards:0, twoMins:0, redCard:false, blueCard:false };
+    const playingMinutes = getPlayingMinutes(teamChar);
+    const playTimeStr = playingMinutes[nomor] || "0'";
+    const minVal = parseMins(playTimeStr);
+
+    const goals = s.goals || 0;
+    const misses = s.misses || 0;
+    const saves = s.saves || 0;
+    const fouls = s.fouls || 0;
+    const shots = goals + misses;
+    const acc = shots > 0 ? Math.round((goals / shots) * 100) : 0;
+    const yCards = s.yellowCards || 0;
+    const twoMin = s.twoMins || 0;
+    const rCard = s.redCard || false;
+    const bCard = s.blueCard || false;
+
+    // Hitung rating bola tangan dinamis (skala 1 - 10)
+    let rating = 6.0;
+    rating += (goals * 0.8);
+    rating -= (misses * 0.4);
+    rating += (saves * 0.9);
+    rating -= (fouls * 0.2);
+    if (minVal > 0) {
+        rating += (minVal * 0.04);
+    }
+    rating = Math.min(10.0, Math.max(1.0, rating));
+
+    // Dapatkan max stats dari seluruh pemain di tim untuk rasio bar yang dinamis
+    let maxGoals = 1;
+    let maxMisses = 1;
+    let maxSaves = 1;
+    let maxFouls = 1;
+    for (const pNo in team.stats) {
+        const pst = team.stats[pNo];
+        if (pst.goals > maxGoals) maxGoals = pst.goals;
+        if (pst.misses > maxMisses) maxMisses = pst.misses;
+        if (pst.saves > maxSaves) maxSaves = pst.saves;
+        if (pst.fouls > maxFouls) maxFouls = pst.fouls;
+    }
+    
+    maxGoals = Math.max(maxGoals, 5);
+    maxMisses = Math.max(maxMisses, 5);
+    maxSaves = Math.max(maxSaves, 5);
+    maxFouls = Math.max(maxFouls, 5);
+
+    // Render Header
+    const headerEl = document.getElementById('modal-player-header');
+    headerEl.innerHTML = `
+        <button class="player-modal-close-btn" onclick="closePlayerDetailModal()" title="Tutup">&times;</button>
+        <button class="player-modal-print-btn" onclick="printPlayerDetail()" title="Cetak Laporan Pemain">🖨️ Cetak</button>
+        <div class="player-profile-main">
+            <div class="player-avatar" style="background:${team.color || (teamChar === 'A' ? '#e74c3c' : '#1abc9c')}">
+                ${nomor}
+            </div>
+            <div class="player-name-club">
+                <div class="player-profile-name">${player.nama}</div>
+                <div class="player-profile-club">🏃 ${player.posisi} · 🛡️ ${team.name.toUpperCase()}</div>
+            </div>
+        </div>
+        <div class="player-rating-container">
+            <div class="player-rating-label">RATING</div>
+            <div class="player-rating-value">${rating.toFixed(1)}</div>
+        </div>
+    `;
+
+    // Render Body (Progress bars horizontal dengan label kiri dan nilai kanan)
+    const bodyEl = document.getElementById('modal-player-body');
+    bodyEl.innerHTML = `
+        <div class="player-stats-section-title">Statistik Utama</div>
+        
+        <div class="player-stat-bar-row">
+            <div class="player-stat-bar-labels">
+                <div class="player-stat-bar-label">⚽ Goals (Gol)</div>
+                <div class="player-stat-bar-value">${goals}</div>
+            </div>
+            <div class="player-stat-progress-bar">
+                <div class="player-stat-progress-fill" style="width: 0%; background: linear-gradient(to right, #2ecc71, #27ae60)" data-target="${(goals / maxGoals) * 100}%"></div>
+            </div>
+        </div>
+
+        <div class="player-stat-bar-row">
+            <div class="player-stat-bar-labels">
+                <div class="player-stat-bar-label">✕ Misses (Gagal)</div>
+                <div class="player-stat-bar-value">${misses}</div>
+            </div>
+            <div class="player-stat-progress-bar">
+                <div class="player-stat-progress-fill" style="width: 0%; background: linear-gradient(to right, #e74c3c, #c0392b)" data-target="${(misses / maxMisses) * 100}%"></div>
+            </div>
+        </div>
+
+        <div class="player-stat-bar-row">
+            <div class="player-stat-bar-labels">
+                <div class="player-stat-bar-label">🎯 Accuracy (Akurasi)</div>
+                <div class="player-stat-bar-value">${acc}%</div>
+            </div>
+            <div class="player-stat-progress-bar">
+                <div class="player-stat-progress-fill" style="width: 0%; background: linear-gradient(to right, #3498db, #2980b9)" data-target="${acc}%"></div>
+            </div>
+        </div>
+
+        <div class="player-stat-bar-row">
+            <div class="player-stat-bar-labels">
+                <div class="player-stat-bar-label">🧤 Saves (Penyelamatan)</div>
+                <div class="player-stat-bar-value">${saves}</div>
+            </div>
+            <div class="player-stat-progress-bar">
+                <div class="player-stat-progress-fill" style="width: 0%; background: linear-gradient(to right, #1abc9c, #16a085)" data-target="${(saves / maxSaves) * 100}%"></div>
+            </div>
+        </div>
+
+        <div class="player-stat-bar-row">
+            <div class="player-stat-bar-labels">
+                <div class="player-stat-bar-label">⚠ Fouls (Pelanggaran)</div>
+                <div class="player-stat-bar-value">${fouls}</div>
+            </div>
+            <div class="player-stat-progress-bar">
+                <div class="player-stat-progress-fill" style="width: 0%; background: linear-gradient(to right, #f39c12, #d35400)" data-target="${(fouls / maxFouls) * 100}%"></div>
+            </div>
+        </div>
+
+        <div style="font-size: 13px; color: var(--gray-text); display: flex; justify-content: space-between; margin-top: 12px; margin-bottom: 20px;">
+            <span>⏱ Menit Bermain:</span>
+            <strong style="color: var(--blue-dark); font-weight: 700;">${playTimeStr}</strong>
+        </div>
+
+        <div class="player-stats-section-title">Disiplin & Kartu</div>
+        <div class="player-cards-row">
+            <div class="player-card-badge yellow">
+                <div class="player-card-icon yellow"></div>
+                Kuning: ${yCards}
+            </div>
+            <div class="player-card-badge two-min">
+                <div class="player-card-icon orange"></div>
+                2' (×${twoMin})
+            </div>
+            <div class="player-card-badge red">
+                <div class="player-card-icon red"></div>
+                Merah: ${rCard ? 'YA' : 'TIDAK'}
+            </div>
+            <div class="player-card-badge blue">
+                <div class="player-card-icon blue"></div>
+                Biru: ${bCard ? 'YA' : 'TIDAK'}
+            </div>
+        </div>
+    `;
+
+    const modal = document.getElementById('player-detail-modal');
+    modal.classList.add('show');
+
+    setTimeout(() => {
+        const fills = bodyEl.querySelectorAll('.player-stat-progress-fill');
+        fills.forEach(f => {
+            f.style.width = f.getAttribute('data-target');
+        });
+    }, 150);
+}
+
+function closePlayerDetailModal() {
+    const modal = document.getElementById('player-detail-modal');
+    modal.classList.remove('show');
+}
+
+function closePlayerDetail(e) {
+    if (e.target === document.getElementById('player-detail-modal')) {
+        closePlayerDetailModal();
+    }
+}
+
+function printPlayerDetail() {
+    document.body.classList.add('print-single-player');
+    window.print();
+}
+
+window.onafterprint = function() {
+    document.body.classList.remove('print-single-player');
+};
+
+// ============================================================
+// AUTO-REFRESH every 10s to get live data
+// ============================================================
+loadAndRender();
+setInterval(loadAndRender, 10000);
+</script>
+
+<!-- MODAL DETAIL PEMAIN INDIVIDU -->
+<div class="player-modal-overlay" id="player-detail-modal" onclick="closePlayerDetail(event)">
+    <div class="player-modal-box" onclick="event.stopPropagation()">
+        <div class="player-profile-header" id="modal-player-header"></div>
+        <div class="player-modal-body" id="modal-player-body"></div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWIM — Live Stats</title>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<header>
+    <div class="nav-bar">
+        <div class="nav-left">
+            <span class="nav-logo">AW<span>I</span>M</span>
+            <button class="nav-menu-btn" onclick="goBack()">&#8592; SETUP</button>
+            <button class="nav-menu-btn" onclick="openUndoModal()">&#8635; UNDO</button>
+            <button class="nav-menu-btn" onclick="window.open('report.html','awim_report')" title="Buka Report di tab baru">&#128202; REPORT</button>
+            <button class="nav-menu-btn" onclick="exportReport()" title="Download .txt">&#128196; TXT</button>
+        </div>
+        <div class="nav-right">
+            <button class="nav-menu-btn" id="nav-period-label">BABAK 1</button>
+            <button class="nav-menu-btn" onclick="openScoreEdit()">&#9998; EDIT SKOR</button>
+        </div>
+    </div>
+
+    <!-- SCOREBOARD -->
+    <div class="scoreboard-bar">
+
+        <!-- Home Panel -->
+        <div class="team-panel home-panel" id="home-panel">
+            <div class="jersey-indicator" id="jersey-home"></div>
+            <div class="team-info">
+                <div class="team-name" id="team-name-home">HOME</div>
+                <div class="team-coach" id="team-coach-home">Coach: -</div>
+                <div class="team-timeout-count" id="timeout-home">TO: ●●●</div>
+            </div>
+            <div class="team-score" id="score-home" onclick="quickGoal('A')" title="Klik untuk gol cepat">0</div>
+        </div>
+
+        <!-- Timer Center -->
+        <div class="timer-center">
+            <div class="period-badge" id="period-label">BABAK 1</div>
+            <div class="timer-main">
+                <button class="timer-adj-btn" onclick="adjustTimer(-60)" title="-1 menit">&#9664;&#9664;</button>
+                <button class="timer-adj-btn" onclick="adjustTimer(-10)" title="-10 detik">&#9664;</button>
+                <div class="timer-display stopped" id="match-timer">30:00</div>
+                <button class="timer-adj-btn" onclick="adjustTimer(10)" title="+10 detik">&#9654;</button>
+                <button class="timer-adj-btn" onclick="adjustTimer(60)" title="+1 menit">&#9654;&#9654;</button>
+            </div>
+            <div class="timer-controls">
+                <button class="btn-timer-toggle start" id="timer-btn" onclick="toggleTimer()">START</button>
+                <button class="btn-next-period" onclick="confirmNextPeriod()">NEXT &rarr;</button>
+            </div>
+        </div>
+
+        <!-- Away Panel -->
+        <div class="team-panel away-panel" id="away-panel">
+            <div class="jersey-indicator" id="jersey-away"></div>
+            <div class="team-info" style="text-align:right">
+                <div class="team-name" id="team-name-away">AWAY</div>
+                <div class="team-coach" id="team-coach-away">Coach: -</div>
+                <div class="team-timeout-count" id="timeout-away">TO: ●●●</div>
+            </div>
+            <div class="team-score" id="score-away" onclick="quickGoal('B')" title="Klik untuk gol cepat">0</div>
+        </div>
+
+    </div>
+</header>
+
+<!-- MAIN DASHBOARD -->
+<main class="main-dashboard">
+
+    <!-- Roster Kiri (Team A) -->
+    <aside class="left-roster roster-panel" id="roster-A">
+        <div class="selected-info" id="selected-info-A">Pilih pemain</div>
+        <div class="player-grid" id="player-grid-A"></div>
+        <div class="bench-section" id="bench-A">
+            <div class="bench-label">— BENCH —</div>
+            <div class="player-grid" id="bench-grid-A"></div>
+        </div>
+    </aside>
+
+    <!-- Action Buttons Kiri -->
+    <section class="left-actions action-buttons" id="actions-A">
+        <button class="btn-action goal"        onclick="record('A','GOAL')"  title="Gol Tim A"><span class="action-icon">⚽</span>GOAL</button>
+        <button class="btn-action miss"        onclick="record('A','MISS')"  title="Percobaan gagal"><span class="action-icon">✕</span>MISS</button>
+        <button class="btn-action save"        onclick="record('A','SAVE')"  title="Tangkisan kiper"><span class="action-icon">🧤</span>SAVE</button>
+        <button class="btn-action foul"        onclick="record('A','FOUL')"  title="Pelanggaran + Kartu"><span class="action-icon">⚠</span>FOUL</button>
+        <button class="btn-action timeout-btn" onclick="callTimeout('A')"    title="Time Out"><span class="action-icon">⏸</span>T.OUT</button>
+    </section>
+
+    <!-- Court -->
+    <section class="court-area-wrapper">
+        <div class="court-zone-bar" id="court-zone-bar">
+            <span class="zone-bar-icon">📍</span>
+            <span class="zone-bar-text" id="zone-bar-text">Pilih zona tembakan di lapangan</span>
+            <button class="zone-reset-btn" id="zone-reset-btn" onclick="resetCourtZone()" style="display:none">✕ Reset</button>
+        </div>
+        <div class="handball-court" id="handball-court"></div>
+    </section>
+
+    <!-- Action Buttons Kanan -->
+    <section class="right-actions action-buttons" id="actions-B">
+        <button class="btn-action goal"        onclick="record('B','GOAL')"  title="Gol Tim B"><span class="action-icon">⚽</span>GOAL</button>
+        <button class="btn-action miss"        onclick="record('B','MISS')"  title="Percobaan gagal"><span class="action-icon">✕</span>MISS</button>
+        <button class="btn-action save"        onclick="record('B','SAVE')"  title="Tangkisan kiper"><span class="action-icon">🧤</span>SAVE</button>
+        <button class="btn-action foul"        onclick="record('B','FOUL')"  title="Pelanggaran + Kartu"><span class="action-icon">⚠</span>FOUL</button>
+        <button class="btn-action timeout-btn" onclick="callTimeout('B')"    title="Time Out"><span class="action-icon">⏸</span>T.OUT</button>
+    </section>
+
+    <!-- Roster Kanan (Team B) -->
+    <aside class="right-roster roster-panel" id="roster-B">
+        <div class="selected-info" id="selected-info-B">Pilih pemain</div>
+        <div class="player-grid" id="player-grid-B"></div>
+        <div class="bench-section" id="bench-B">
+            <div class="bench-label">— BENCH —</div>
+            <div class="player-grid" id="bench-grid-B"></div>
+        </div>
+    </aside>
+
+    <!-- Log Panel -->
+    <aside class="log-section">
+        <div class="log-header">
+            <div class="log-header-top">
+                <h3>ACTION LOG</h3>
+                <button id="log-toggle-btn" onclick="toggleLog()" title="Minimize Log">─</button>
+            </div>
+            <div class="log-filter" id="log-filter-bar">
+                <button class="log-filter-btn active" onclick="filterLog('all',this)">ALL</button>
+                <button class="log-filter-btn" onclick="filterLog('GOAL',this)">GOAL</button>
+                <button class="log-filter-btn" onclick="filterLog('FOUL',this)">FOUL</button>
+                <button class="log-filter-btn" onclick="filterLog('CARD',this)">KARTU</button>
+            </div>
+        </div>
+        <div class="log-stats-row" id="log-stats-row">
+            <div class="log-stat-item"><strong id="stat-goals-A">0</strong>GOAL A</div>
+            <div class="log-stat-item"><strong id="stat-goals-B">0</strong>GOAL B</div>
+            <div class="log-stat-item"><strong id="stat-fouls-A">0</strong>FOUL A</div>
+            <div class="log-stat-item"><strong id="stat-fouls-B">0</strong>FOUL B</div>
+        </div>
+        <ul id="event-log"></ul>
+    </aside>
+
+</main>
+
+<!-- ===== MODAL STEP 1: PILIH PEMAIN ===== -->
+<div class="modal-overlay" id="modal-step1">
+    <div class="modal-box modal-step1-box">
+        <div class="step-modal-header">
+            <span class="step-modal-icon" id="s1-icon">⚽</span>
+            <div class="step-modal-meta">
+                <div class="step-modal-type" id="s1-type">GOAL</div>
+                <div class="step-modal-sub" id="s1-team">SURABAYA</div>
+            </div>
+            <div class="step-badge" id="s1-badge">1/2</div>
+        </div>
+        <div class="step-modal-label">
+            Pilih Pemain
+            <span class="step-modal-hint" id="s1-count"></span>
+        </div>
+        <div class="s1-player-grid" id="s1-player-grid"></div>
+        <div class="step-modal-footer">
+            <button class="modal-btn cancel" onclick="closeStep1()">Batal</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== MODAL STEP 3: ZONA GAWANG ===== -->
+<div class="modal-overlay" id="modal-step3">
+    <div class="modal-box modal-step3-box">
+        <div class="step-modal-header">
+            <span class="step-modal-icon" id="s3-icon">⚽</span>
+            <div class="step-modal-meta">
+                <div class="step-modal-type" id="s3-type">GOAL</div>
+                <div class="step-modal-sub" id="s3-info"></div>
+            </div>
+            <div class="step-badge" id="s3-badge">3/3</div>
+        </div>
+        <div class="step-modal-label">Klik Zona di Gawang</div>
+
+        <!-- SVG Gawang dengan 9 zona klik -->
+        <div class="goal-svg-wrapper">
+            <svg id="goal-svg" viewBox="-100 -80 800 500" xmlns="http://www.w3.org/2000/svg">
+                <!-- === LATAR BELAKANG === -->
+                <rect x="-100" y="-80" width="800" height="500" fill="#e8f4e8"/>
+
+                <!-- === NET (jaring halus) === -->
+                <defs>
+                    <pattern id="net" width="12" height="12" patternUnits="userSpaceOnUse">
+                        <path d="M 12 0 L 0 0 0 12" fill="none" stroke="#ccc" stroke-width="0.5"/>
+                    </pattern>
+                </defs>
+                <!-- Area dalam gawang (net) -->
+                <rect x="60" y="30" width="480" height="320" fill="url(#net)" rx="2"/>
+                <!-- Sudut net (gelap untuk efek kedalaman) -->
+                <rect x="60" y="30" width="40" height="320" fill="rgba(0,0,0,0.06)"/>
+                <rect x="520" y="30" width="40" height="320" fill="rgba(0,0,0,0.06)"/>
+
+                <!-- === FRAME GAWANG === -->
+                <!-- Tiang kiri -->
+                <rect x="50" y="25" width="12" height="340" fill="#ddd" rx="4"/>
+                <rect x="52" y="27" width="8" height="336" fill="white" rx="3"/>
+                <!-- Tiang kanan -->
+                <rect x="538" y="25" width="12" height="340" fill="#ddd" rx="4"/>
+                <rect x="540" y="27" width="8" height="336" fill="white" rx="3"/>
+                <!-- Crossbar (mistar) -->
+                <rect x="50" y="22" width="500" height="12" fill="#ddd" rx="4"/>
+                <rect x="52" y="24" width="496" height="8" fill="white" rx="3"/>
+                <!-- Tanah -->
+                <rect x="-100" y="360" width="800" height="8" fill="#888" rx="2"/>
+
+                <!-- === GARIS PEMBAGI 3x3 === -->
+                <!-- Vertikal 1 (kiri-tengah) -->
+                <line x1="220" y1="30" x2="220" y2="360" stroke="#333" stroke-width="3"/>
+                <!-- Vertikal 2 (tengah-kanan) -->
+                <line x1="380" y1="30" x2="380" y2="360" stroke="#333" stroke-width="3"/>
+                <!-- Horizontal 1 (atas-tengah) -->
+                <line x1="60" y1="137" x2="540" y2="137" stroke="#333" stroke-width="3"/>
+                <!-- Horizontal 2 (tengah-bawah) -->
+                <line x1="60" y1="244" x2="540" y2="244" stroke="#333" stroke-width="3"/>
+
+                <!-- === DEKORASI TIANG MERAH-PUTIH === -->
+                <!-- Tiang kiri merah-putih -->
+                <rect x="50" y="25"  width="12" height="25" fill="#e74c3c" rx="2"/>
+                <rect x="50" y="75"  width="12" height="25" fill="#e74c3c" rx="2"/>
+                <rect x="50" y="125" width="12" height="25" fill="#e74c3c" rx="2"/>
+                <rect x="50" y="175" width="12" height="25" fill="#e74c3c" rx="2"/>
+                <rect x="50" y="225" width="12" height="25" fill="#e74c3c" rx="2"/>
+                <rect x="50" y="275" width="12" height="25" fill="#e74c3c" rx="2"/>
+                <rect x="50" y="325" width="12" height="25" fill="#e74c3c" rx="2"/>
+                <!-- Tiang kanan merah-putih -->
+                <rect x="538" y="25"  width="12" height="25" fill="#e74c3c" rx="2"/>
+                <rect x="538" y="75"  width="12" height="25" fill="#e74c3c" rx="2"/>
+                <rect x="538" y="125" width="12" height="25" fill="#e74c3c" rx="2"/>
+                <rect x="538" y="175" width="12" height="25" fill="#e74c3c" rx="2"/>
+                <rect x="538" y="225" width="12" height="25" fill="#e74c3c" rx="2"/>
+                <rect x="538" y="275" width="12" height="25" fill="#e74c3c" rx="2"/>
+                <rect x="538" y="325" width="12" height="25" fill="#e74c3c" rx="2"/>
+                <!-- Mistar merah-putih -->
+                <rect x="50"  y="22" width="45" height="12" fill="#e74c3c" rx="2"/>
+                <rect x="145" y="22" width="45" height="12" fill="#e74c3c" rx="2"/>
+                <rect x="240" y="22" width="45" height="12" fill="#e74c3c" rx="2"/>
+                <rect x="335" y="22" width="45" height="12" fill="#e74c3c" rx="2"/>
+                <rect x="430" y="22" width="45" height="12" fill="#e74c3c" rx="2"/>
+                <rect x="505" y="22" width="45" height="12" fill="#e74c3c" rx="2"/>
+
+                <!-- === GARIS PEMBAGI ZONA LUAR === -->
+                <line x1="-100" y1="22" x2="50" y2="22" stroke="#bbb" stroke-width="2" stroke-dasharray="5,5"/>
+                <line x1="550" y1="22" x2="700" y2="22" stroke="#bbb" stroke-width="2" stroke-dasharray="5,5"/>
+
+                <!-- === LABEL ZONA (samar) === -->
+                <!-- Row labels -->
+                <text x="30" y="90"  text-anchor="middle" font-size="9" fill="#666" font-family="sans-serif" transform="rotate(-90,30,90)">ATAS</text>
+                <text x="30" y="198" text-anchor="middle" font-size="9" fill="#666" font-family="sans-serif" transform="rotate(-90,30,198)">TENGAH</text>
+                <text x="30" y="305" text-anchor="middle" font-size="9" fill="#666" font-family="sans-serif" transform="rotate(-90,30,305)">BAWAH</text>
+                <!-- Col labels -->
+                <text x="140" y="15" text-anchor="middle" font-size="9" fill="#666" font-family="sans-serif">KIRI</text>
+                <text x="300" y="15" text-anchor="middle" font-size="9" fill="#666" font-family="sans-serif">TENGAH</text>
+                <text x="460" y="15" text-anchor="middle" font-size="9" fill="#666" font-family="sans-serif">KANAN</text>
+
+                <!-- Outer zone labels -->
+                <text x="-25" y="191" text-anchor="middle" font-size="11" fill="rgba(0,0,0,0.35)" font-family="sans-serif" pointer-events="none">Luar Kiri</text>
+                <text x="625" y="191" text-anchor="middle" font-size="11" fill="rgba(0,0,0,0.35)" font-family="sans-serif" pointer-events="none">Luar Kanan</text>
+                <text x="300" y="-30" text-anchor="middle" font-size="11" fill="rgba(0,0,0,0.35)" font-family="sans-serif" pointer-events="none">Luar Atas</text>
+
+                <!-- Inner zone text labels -->
+                <text x="140" y="90"  text-anchor="middle" font-size="11" fill="rgba(0,0,0,0.15)" font-family="sans-serif" pointer-events="none">Atas Kiri</text>
+                <text x="300" y="90"  text-anchor="middle" font-size="11" fill="rgba(0,0,0,0.15)" font-family="sans-serif" pointer-events="none">Atas Tengah</text>
+                <text x="460" y="90"  text-anchor="middle" font-size="11" fill="rgba(0,0,0,0.15)" font-family="sans-serif" pointer-events="none">Atas Kanan</text>
+                <text x="140" y="193" text-anchor="middle" font-size="11" fill="rgba(0,0,0,0.15)" font-family="sans-serif" pointer-events="none">Tengah Kiri</text>
+                <text x="300" y="193" text-anchor="middle" font-size="11" fill="rgba(0,0,0,0.15)" font-family="sans-serif" pointer-events="none">Tengah</text>
+                <text x="460" y="193" text-anchor="middle" font-size="11" fill="rgba(0,0,0,0.15)" font-family="sans-serif" pointer-events="none">Tengah Kanan</text>
+                <text x="140" y="305" text-anchor="middle" font-size="11" fill="rgba(0,0,0,0.15)" font-family="sans-serif" pointer-events="none">Bawah Kiri</text>
+                <text x="300" y="305" text-anchor="middle" font-size="11" fill="rgba(0,0,0,0.15)" font-family="sans-serif" pointer-events="none">Bawah Tengah</text>
+                <text x="460" y="305" text-anchor="middle" font-size="11" fill="rgba(0,0,0,0.15)" font-family="sans-serif" pointer-events="none">Bawah Kanan</text>
+
+                <!-- === ZONA KLIK INTERAKTIF (Diletakkan paling atas agar pointer-events tidak terhalang) === -->
+                <!-- Outer click zones -->
+                <rect class="goal-zone-btn outer-goal-zone" data-zone="Luar Kiri"    x="-100" y="22"  width="150" height="338" rx="3" onclick="selectGoalZone(this)"/>
+                <rect class="goal-zone-btn outer-goal-zone" data-zone="Luar Kanan"   x="550"  y="22"  width="150" height="338" rx="3" onclick="selectGoalZone(this)"/>
+                <rect class="goal-zone-btn outer-goal-zone" data-zone="Luar Atas"    x="-100" y="-80" width="800" height="102" rx="3" onclick="selectGoalZone(this)"/>
+
+                <!-- Tiang & Mistar click zones -->
+                <rect class="goal-zone-btn" data-zone="Tiang/Mistar" x="46" y="22" width="20" height="338" rx="2" onclick="selectGoalZone(this)" title="Tiang Kiri"/>
+                <rect class="goal-zone-btn" data-zone="Tiang/Mistar" x="534" y="22" width="20" height="338" rx="2" onclick="selectGoalZone(this)" title="Tiang Kanan"/>
+                <rect class="goal-zone-btn" data-zone="Tiang/Mistar" x="46" y="16" width="508" height="20" rx="2" onclick="selectGoalZone(this)" title="Mistar Gawang"/>
+
+                <!-- Row 1: Atas -->
+                <rect class="goal-zone-btn" data-zone="Atas Kiri"    x="62"  y="30" width="156" height="104" rx="3" onclick="selectGoalZone(this)"/>
+                <rect class="goal-zone-btn" data-zone="Atas Tengah"  x="222" y="30" width="156" height="104" rx="3" onclick="selectGoalZone(this)"/>
+                <rect class="goal-zone-btn" data-zone="Atas Kanan"   x="382" y="30" width="156" height="104" rx="3" onclick="selectGoalZone(this)"/>
+                <!-- Row 2: Tengah -->
+                <rect class="goal-zone-btn" data-zone="Tengah Kiri"  x="62"  y="137" width="156" height="104" rx="3" onclick="selectGoalZone(this)"/>
+                <rect class="goal-zone-btn" data-zone="Tengah"       x="222" y="137" width="156" height="104" rx="3" onclick="selectGoalZone(this)"/>
+                <rect class="goal-zone-btn" data-zone="Tengah Kanan" x="382" y="137" width="156" height="104" rx="3" onclick="selectGoalZone(this)"/>
+                <!-- Row 3: Bawah -->
+                <rect class="goal-zone-btn" data-zone="Bawah Kiri"   x="62"  y="244" width="156" height="113" rx="3" onclick="selectGoalZone(this)"/>
+                <rect class="goal-zone-btn" data-zone="Bawah Tengah" x="222" y="244" width="156" height="113" rx="3" onclick="selectGoalZone(this)"/>
+                <rect class="goal-zone-btn" data-zone="Bawah Kanan"  x="382" y="244" width="156" height="113" rx="3" onclick="selectGoalZone(this)"/>
+            </svg>
+        </div>
+
+        <div class="step-modal-footer">
+            <button class="modal-btn cancel" onclick="closeStep3()">Batal</button>
+            <button class="modal-btn cancel" onclick="backToStep25()" style="background:white;border-color:#bbb">&#8592; Kembali</button>
+            <button class="modal-btn cancel" onclick="skipZone()" style="background:white;border-color:var(--blue-main);color:var(--blue-main);margin-left:auto">Lewati &#8594;</button>
+        </div>
+    </div>
+</div>
+<div class="modal-overlay" id="modal-step2">
+    <div class="modal-box modal-step2-box">
+        <div class="step-modal-header">
+            <span class="step-modal-icon" id="s2-icon">⚽</span>
+            <div class="step-modal-meta">
+                <div class="step-modal-type" id="s2-type">GOAL</div>
+                <div class="step-modal-sub" id="s2-player">TIM</div>
+            </div>
+            <div class="step-badge" id="s2-badge">2/2</div>
+        </div>
+        <div class="step-modal-label" id="s2-section-label">Jenis Tembakan</div>
+        <div class="s2-subtype-grid" id="s2-subtype-grid"></div>
+        <div class="step-modal-footer">
+            <button class="modal-btn cancel" onclick="closeStep2()">Batal</button>
+            <button class="modal-btn cancel" onclick="backToStep1()" style="background:white;border-color:#bbb">&#8592; Kembali</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== MODAL STEP 2.5: TIPE SERANGAN ===== -->
+<div class="modal-overlay" id="modal-step25">
+    <div class="modal-box modal-step25-box">
+        <div class="step-modal-header">
+            <span class="step-modal-icon" id="s25-icon">⚽</span>
+            <div class="step-modal-meta">
+                <div class="step-modal-type" id="s25-type">GOAL</div>
+                <div class="step-modal-sub" id="s25-info">TIM</div>
+            </div>
+            <div class="step-badge" id="s25-badge">3/4</div>
+        </div>
+        <div class="step-modal-label">Pilih Tipe Serangan</div>
+        <div class="s25-attack-grid" id="s25-attack-grid">
+            <button class="s25-attack-btn" onclick="selectAttackType('Set-play')">
+                <span class="attack-icon">🔄</span>Set-play
+            </button>
+            <button class="s25-attack-btn" onclick="selectAttackType('Fastbreak')">
+                <span class="attack-icon">⚡</span>Fastbreak
+            </button>
+        </div>
+        <div class="step-modal-footer">
+            <button class="modal-btn cancel" onclick="closeStep25()">Batal</button>
+            <button class="modal-btn cancel" onclick="backToStep2()" style="background:white;border-color:#bbb">&#8592; Kembali</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== MODAL: SUBSTITUSI ===== -->
+<div class="modal-overlay" id="modal-sub">
+    <div class="modal-box">
+        <h3 id="modal-sub-title">Substitusi Tim</h3>
+        <p style="font-size:13px;color:#888;margin-bottom:14px">Pilih pemain yang keluar, lalu pemain pengganti</p>
+        <div class="form-group">
+            <label>Pemain Keluar (On-Court)</label>
+            <select id="sub-out-select" style="width:100%;padding:10px;border:1.5px solid #ddd;border-radius:8px;font-size:14px"></select>
+        </div>
+        <div class="form-group">
+            <label>Pemain Masuk (Bench)</label>
+            <select id="sub-in-select" style="width:100%;padding:10px;border:1.5px solid #ddd;border-radius:8px;font-size:14px"></select>
+        </div>
+        <div class="modal-actions">
+            <button class="modal-btn cancel" onclick="closeSubModal()">Batal</button>
+            <button class="modal-btn confirm" onclick="confirmSubstitution()">Konfirmasi SUB</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== MODAL: UNDO ===== -->
+<div class="modal-overlay" id="modal-undo">
+    <div class="modal-box">
+        <h3>Batalkan Aksi</h3>
+        <p style="font-size:13px;color:#888;margin-bottom:14px">Klik "Hapus" pada aksi yang ingin dibatalkan</p>
+        <div id="modal-undo-list"></div>
+        <div class="modal-actions">
+            <button class="modal-btn cancel" onclick="closeUndoModal()">Tutup</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== MODAL: EDIT SKOR ===== -->
+<div class="modal-overlay" id="modal-score-edit">
+    <div class="modal-box">
+        <h3>Edit Skor Manual</h3>
+        <div class="form-row" style="display:flex;gap:16px;margin-bottom:16px">
+            <div class="form-group" style="flex:1">
+                <label id="edit-score-label-A">Tim A</label>
+                <input type="number" id="edit-score-A" min="0" value="0" style="width:100%;padding:10px;border:1.5px solid #ddd;border-radius:8px;font-size:24px;text-align:center">
+            </div>
+            <div class="form-group" style="flex:1">
+                <label id="edit-score-label-B">Tim B</label>
+                <input type="number" id="edit-score-B" min="0" value="0" style="width:100%;padding:10px;border:1.5px solid #ddd;border-radius:8px;font-size:24px;text-align:center">
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="modal-btn cancel" onclick="closeScoreEdit()">Batal</button>
+            <button class="modal-btn confirm" onclick="applyScoreEdit()">Simpan</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== PERIOD OVERLAY ===== -->
+<div id="period-overlay">
+    <p id="period-overlay-sub">AKHIR BABAK</p>
+    <h2 id="period-overlay-title">BABAK 1</h2>
+    <div class="period-score" id="period-overlay-score">0 – 0</div>
+    <button class="btn-continue-period" onclick="startNextPeriod()">Mulai Babak Berikutnya &rarr;</button>
+    <button class="btn-continue-period" style="background:#555;margin-top:4px" onclick="endMatch()">Akhiri Pertandingan</button>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div id="toast-container"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

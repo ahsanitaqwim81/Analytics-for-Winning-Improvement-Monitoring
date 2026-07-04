@@ -1,0 +1,2180 @@
++
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWIM - Handball Stats</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --blue-dark: #0d3a52;
+            --blue-main: #1a6b8c;
+            --blue-light: #2a8ab5;
+            --orange: #f39c12;
+            --orange-dark: #e08a00;
+            --green: #27ae60;
+            --green-dark: #1e8449;
+            --red: #e74c3c;
+            --bg: #f0f4f7;
+            --gray-light: #f8f9fa;
+            --gray-mid: #dee2e6;
+            --gray-text: #555;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.10);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        body {
+            font-family: 'Barlow', sans-serif;
+            background: var(--bg);
+            color: #333;
+            height: 100vh;
+            overflow: hidden
+        }
+
+        button {
+            cursor: pointer;
+            font-family: 'Barlow', sans-serif
+        }
+
+        /* ============ HOMEPAGE ============ */
+        #homepage-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: url('background beranda.png') center/cover no-repeat;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #homepage-screen::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 0;
+        }
+
+        .home-content {
+            position: relative;
+            z-index: 1;
+            text-align: center
+        }
+
+        .logo-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 10px
+        }
+
+        .logo-icon {
+            width: 70px;
+            height: 70px;
+            background: var(--orange);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 32px;
+            font-weight: 800;
+            color: white;
+            box-shadow: 0 8px 24px rgba(243, 156, 18, .4)
+        }
+
+        .logo-text {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 64px;
+            font-weight: 800;
+            color: white;
+            letter-spacing: 4px;
+            line-height: 1
+        }
+
+        .logo-sub {
+            color: rgba(255, 255, 255, .65);
+            font-size: 14px;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            margin-bottom: 50px;
+            font-weight: 500
+        }
+
+        .menu-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 280px
+        }
+
+        .menu-btn {
+            background: rgba(255, 255, 255, .1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, .2);
+            padding: 16px 30px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: all .25s;
+            backdrop-filter: blur(6px)
+        }
+
+        .menu-btn:hover {
+            background: var(--orange);
+            border-color: var(--orange);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(243, 156, 18, .3)
+        }
+
+        .menu-btn.primary {
+            background: var(--orange);
+            border-color: var(--orange);
+            box-shadow: 0 6px 20px rgba(243, 156, 18, .35)
+        }
+
+        .menu-btn.primary:hover {
+            background: var(--orange-dark);
+            transform: translateY(-2px)
+        }
+
+        /* ============ SETUP SCREEN ============ */
+        #setup-screen {
+            display: none;
+            height: 100vh;
+            flex-direction: row
+        }
+
+        .setup-container {
+            display: flex;
+            height: 100%;
+            width: 100%
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 220px;
+            flex-shrink: 0;
+            background: var(--blue-dark);
+            display: flex;
+            flex-direction: column
+        }
+
+        .sidebar-header {
+            padding: 22px 20px 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, .08)
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, .5);
+            font-size: 12px;
+            letter-spacing: 1px;
+            padding: 0 0 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer
+        }
+
+        .back-btn:hover {
+            color: white
+        }
+
+        .sidebar-title {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: white;
+            letter-spacing: 2px
+        }
+
+        .sidebar-steps {
+            padding: 14px 0;
+            flex-grow: 1
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, .45);
+            padding: 13px 20px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 500;
+            width: 100%;
+            transition: all .2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .tab-btn .step-num {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        /* LOCKED state - sidebar step belum bisa diakses */
+        .tab-btn.locked {
+            pointer-events: none;
+            opacity: .35
+        }
+
+        .tab-btn:not(.locked):hover {
+            background: rgba(255, 255, 255, .06);
+            color: white
+        }
+
+        .tab-btn.active {
+            background: rgba(255, 255, 255, .1);
+            color: white;
+            border-left: 3px solid var(--orange)
+        }
+
+        .tab-btn.active .step-num {
+            background: var(--orange)
+        }
+
+        .tab-btn.done {
+            color: rgba(255, 255, 255, .8)
+        }
+
+        .tab-btn.done .step-num {
+            background: var(--green)
+        }
+
+        .tab-btn.done .step-num::after {
+            content: '✓'
+        }
+
+        /* Main content */
+        .main-content {
+            flex-grow: 1;
+            padding: 26px 30px;
+            overflow-y: auto;
+            background: var(--bg)
+        }
+
+        .tab-content {
+            display: none
+        }
+
+        .tab-content.active {
+            display: block
+        }
+
+        .tab-header {
+            margin-bottom: 18px
+        }
+
+        .tab-header h2 {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--blue-dark);
+            letter-spacing: 1px
+        }
+
+        .tab-header p {
+            color: var(--gray-text);
+            font-size: 13px;
+            margin-top: 4px
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 14px
+        }
+
+        .card-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--gray-text);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px
+        }
+
+        /* Save/Load row */
+        .save-load-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 14px;
+            padding: 10px 14px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow)
+        }
+
+        .save-load-label {
+            font-size: 11px;
+            color: var(--gray-text);
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            flex-shrink: 0
+        }
+
+        .btn-load-team {
+            background: white;
+            color: var(--blue-dark);
+            border: 1.5px solid var(--blue-dark);
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: .2s
+        }
+
+        .btn-load-team:hover {
+            background: var(--blue-dark);
+            color: white
+        }
+
+        .btn-save-team {
+            background: var(--blue-dark);
+            color: white;
+            border: none;
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: .2s;
+            margin-left: auto
+        }
+
+        .btn-save-team:hover {
+            background: var(--blue-light)
+        }
+
+        .form-row {
+            display: flex;
+            gap: 16px
+        }
+
+        .form-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--gray-text);
+            margin-bottom: 6px
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            padding: 10px 14px;
+            border: 1.5px solid var(--gray-mid);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Barlow', sans-serif;
+            transition: border-color .2s;
+            background: white
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--blue-main);
+            box-shadow: 0 0 0 3px rgba(26, 107, 140, .12)
+        }
+
+        .color-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 8px
+        }
+
+        .color-dot {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: .2s
+        }
+
+        .color-dot:hover,
+        .color-dot.selected {
+            border-color: var(--blue-dark);
+            transform: scale(1.15)
+        }
+
+        .color-label {
+            font-size: 12px;
+            color: var(--gray-text);
+            margin-top: 4px
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px
+        }
+
+        .btn-add {
+            background: var(--green);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: .2s
+        }
+
+        .btn-add:hover {
+            background: var(--green-dark)
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse
+        }
+
+        thead tr {
+            background: var(--bg)
+        }
+
+        th {
+            padding: 10px 12px;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--gray-text)
+        }
+
+        td {
+            padding: 9px 12px;
+            font-size: 14px;
+            border-bottom: 1px solid var(--gray-mid)
+        }
+
+        tbody tr:hover {
+            background: var(--gray-light)
+        }
+
+        .btn-del {
+            background: none;
+            border: none;
+            color: #ccc;
+            font-size: 16px;
+            cursor: pointer;
+            transition: color .2s;
+            padding: 0 4px
+        }
+
+        .btn-del:hover {
+            color: var(--red)
+        }
+
+        /* Validation Panel */
+        .validation-panel {
+            border-radius: 10px;
+            padding: 13px 15px;
+            margin-top: 12px;
+            border: 1.5px solid var(--gray-mid);
+            background: var(--bg);
+        }
+
+        .validation-panel.all-ok {
+            border-color: var(--green);
+            background: #f0fff5
+        }
+
+        .validation-panel.has-error {
+            border-color: var(--red);
+            background: #fff5f5
+        }
+
+        .val-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--gray-text);
+            margin-bottom: 9px
+        }
+
+        .val-items {
+            display: flex;
+            flex-direction: column;
+            gap: 5px
+        }
+
+        .val-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px
+        }
+
+        .val-item.ok {
+            color: var(--green)
+        }
+
+        .val-item.err {
+            color: var(--red);
+            font-weight: 600
+        }
+
+        .val-icon {
+            font-size: 14px;
+            line-height: 1
+        }
+
+        .pos-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 8px
+        }
+
+        .pos-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            padding: 3px 9px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            border: 1.5px solid var(--gray-mid);
+            background: white;
+            color: var(--gray-text)
+        }
+
+        .pos-chip.filled {
+            border-color: var(--green);
+            color: var(--green);
+            background: #f0fff5
+        }
+
+        .pos-chip.required-missing {
+            border-color: var(--red);
+            color: var(--red);
+            background: #fff5f5
+        }
+
+        .action-bar {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 18px
+        }
+
+        .btn-next {
+            background: var(--blue-main);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 8px;
+            letter-spacing: 1px;
+            transition: .2s
+        }
+
+        .btn-next:hover {
+            background: var(--blue-dark)
+        }
+
+        .btn-start-match {
+            background: var(--orange);
+            color: white;
+            border: none;
+            padding: 14px 36px;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: .2s;
+            box-shadow: 0 4px 14px rgba(243, 156, 18, .35)
+        }
+
+        .btn-start-match:hover {
+            background: var(--orange-dark);
+            transform: translateY(-1px)
+        }
+
+        .period-selector {
+            display: flex;
+            gap: 10px
+        }
+
+        .period-btn {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid var(--gray-mid);
+            border-radius: 8px;
+            background: white;
+            font-weight: 600;
+            font-size: 14px;
+            transition: .2s
+        }
+
+        .period-btn.active {
+            border-color: var(--blue-main);
+            background: var(--blue-main);
+            color: white
+        }
+
+        /* Review summary */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px
+        }
+
+        .summary-card {
+            border: 2px solid var(--gray-mid);
+            border-radius: 10px;
+            padding: 16px;
+            text-align: center
+        }
+
+        .summary-card .team-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--gray-text);
+            margin-bottom: 6px
+        }
+
+        .summary-card .team-val {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--blue-dark)
+        }
+
+        .summary-card .team-count {
+            font-size: 12px;
+            color: var(--gray-text);
+            margin-top: 4px
+        }
+
+        .jersey-preview {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: inline-block;
+            margin: 8px auto 0;
+            border: 2px solid #ddd
+        }
+
+        .info-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 14px
+        }
+
+        .info-chip {
+            background: var(--bg);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13px;
+            flex: 1;
+            min-width: 110px
+        }
+
+        .info-chip strong {
+            display: block;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--gray-text);
+            margin-bottom: 3px
+        }
+
+        .warning-box {
+            background: #fff8e1;
+            border: 1.5px solid var(--orange);
+            border-radius: 8px;
+            padding: 12px 15px;
+            font-size: 13px;
+            color: #7d5a00;
+            margin-bottom: 13px;
+            display: flex;
+            align-items: center;
+            gap: 10px
+        }
+
+        /* ===== MODALS (shared) ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .55);
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            backdrop-filter: blur(3px)
+        }
+
+        .modal-overlay.show {
+            display: flex
+        }
+
+        .modal-box {
+            background: white;
+            padding: 28px;
+            border-radius: 16px;
+            width: 440px;
+            max-width: 95vw;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, .25);
+            animation: modalIn .2s ease
+        }
+
+        @keyframes modalIn {
+            from {
+                transform: scale(.92);
+                opacity: 0
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1
+            }
+        }
+
+        .modal-box h3 {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 18px;
+            color: var(--blue-dark)
+        }
+
+        .modal-box .form-group {
+            margin-bottom: 13px
+        }
+
+        .modal-box label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--gray-text);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: block;
+            margin-bottom: 6px
+        }
+
+        .modal-box input,
+        .modal-box select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1.5px solid var(--gray-mid);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit
+        }
+
+        .modal-box input:focus,
+        .modal-box select:focus {
+            outline: none;
+            border-color: var(--blue-main);
+            box-shadow: 0 0 0 3px rgba(26, 107, 140, .12)
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 18px
+        }
+
+        .btn-cancel {
+            background: var(--bg);
+            color: #555;
+            border: 1.5px solid var(--gray-mid);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: .2s
+        }
+
+        .btn-cancel:hover {
+            background: var(--gray-mid)
+        }
+
+        .btn-save {
+            background: var(--green);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: .2s
+        }
+
+        .btn-save:hover {
+            background: var(--green-dark)
+        }
+
+        /* Load team modal */
+        .saved-team-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 14px;
+            border: 1.5px solid var(--gray-mid);
+            border-radius: 10px;
+            margin-bottom: 8px;
+            transition: .15s
+        }
+
+        .saved-team-card:hover {
+            border-color: var(--blue-main);
+            background: #f8fbff
+        }
+
+        .saved-team-card-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-grow: 1;
+            min-width: 0
+        }
+
+        .saved-team-card-actions {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0
+        }
+
+        .btn-load {
+            background: var(--blue-main);
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            transition: .2s
+        }
+
+        .btn-load:hover {
+            background: var(--blue-dark)
+        }
+
+        .btn-del-team {
+            background: none;
+            color: #ccc;
+            border: 1.5px solid #ddd;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            transition: .2s
+        }
+
+        .btn-del-team:hover {
+            color: var(--red);
+            border-color: var(--red)
+        }
+
+        .modal-empty {
+            color: #aaa;
+            text-align: center;
+            padding: 24px 0;
+            font-size: 14px
+        }
+
+        .modal-load-scroll {
+            max-height: 340px;
+            overflow-y: auto;
+            margin-bottom: 4px
+        }
+
+        /* ===== STARTER FULL-SCREEN MODAL ===== */
+        #modal-starters {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #0d3a52 0%, #1a6b8c 100%);
+            z-index: 2000;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-y: auto
+        }
+
+        #modal-starters.show {
+            display: flex
+        }
+
+        .starters-header {
+            text-align: center;
+            margin-bottom: 20px
+        }
+
+        .starters-header h2 {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 40px;
+            font-weight: 800;
+            color: white;
+            letter-spacing: 4px
+        }
+
+        .starters-header p {
+            color: rgba(255, 255, 255, .6);
+            font-size: 13px;
+            margin-top: 6px;
+            letter-spacing: 1px
+        }
+
+        .starters-body {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            max-width: 900px
+        }
+
+        .starter-col {
+            flex: 1;
+            background: rgba(255, 255, 255, .08);
+            border-radius: 16px;
+            padding: 18px;
+            border: 1px solid rgba(255, 255, 255, .12)
+        }
+
+        .starter-col-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px
+        }
+
+        .starter-team-name {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px
+        }
+
+        .starter-team-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, .3);
+            flex-shrink: 0
+        }
+
+        .starter-count {
+            font-size: 14px;
+            font-weight: 700;
+            background: rgba(255, 255, 255, .12);
+            color: rgba(255, 255, 255, .65);
+            padding: 4px 14px;
+            border-radius: 20px;
+            transition: .2s
+        }
+
+        .starter-count.done {
+            background: var(--green);
+            color: white
+        }
+
+        .starter-count.over {
+            background: var(--red);
+            color: white
+        }
+
+        .starter-player-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 7px;
+            max-height: 290px;
+            overflow-y: auto;
+            margin-bottom: 12px
+        }
+
+        .starter-player-btn {
+            border: 2px solid rgba(255, 255, 255, .15);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, .05);
+            padding: 10px 5px;
+            cursor: pointer;
+            transition: all .13s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px
+        }
+
+        .starter-player-btn:hover {
+            background: rgba(255, 255, 255, .14);
+            border-color: rgba(255, 255, 255, .35)
+        }
+
+        .starter-player-btn.selected {
+            background: var(--orange);
+            border-color: var(--orange)
+        }
+
+        .starter-player-btn.is-gk {
+            border-color: rgba(243, 156, 18, .5)
+        }
+
+        .s-num {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: white;
+            line-height: 1
+        }
+
+        .s-pos {
+            font-size: 9px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, .6);
+            letter-spacing: .5px;
+            background: rgba(0, 0, 0, .2);
+            padding: 1px 5px;
+            border-radius: 3px
+        }
+
+        .s-name {
+            font-size: 9px;
+            color: rgba(255, 255, 255, .65);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 64px
+        }
+
+        .starter-col-actions {
+            display: flex;
+            gap: 6px
+        }
+
+        .starter-col-actions button {
+            flex: 1;
+            background: rgba(255, 255, 255, .1);
+            color: rgba(255, 255, 255, .75);
+            border: none;
+            padding: 7px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            transition: .15s
+        }
+
+        .starter-col-actions button:hover {
+            background: rgba(255, 255, 255, .2);
+            color: white
+        }
+
+        /* Requirement chips in starter modal */
+        .starter-req-row {
+            margin-bottom: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            align-items: center
+        }
+
+        .starter-req-label {
+            font-size: 10px;
+            color: rgba(255, 255, 255, .45);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-weight: 600;
+            flex-basis: 100%;
+            margin-bottom: 3px
+        }
+
+        .starter-req-chip {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, .2);
+            color: rgba(255, 255, 255, .55);
+            background: rgba(255, 255, 255, .06)
+        }
+
+        .starter-req-chip.filled {
+            background: rgba(39, 174, 96, .25);
+            border-color: var(--green);
+            color: #6dffa0
+        }
+
+        .starter-req-chip.missing {
+            background: rgba(231, 76, 60, .25);
+            border-color: var(--red);
+            color: #ffaaaa
+        }
+
+        .starters-warning {
+            min-height: 22px;
+            color: #ffd166;
+            font-size: 13px;
+            text-align: center;
+            margin-top: 12px;
+            font-weight: 600
+        }
+
+        .starters-footer {
+            display: flex;
+            gap: 14px;
+            margin-top: 18px;
+            align-items: center
+        }
+
+        .btn-starter-back {
+            background: rgba(255, 255, 255, .1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, .2);
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: .2s
+        }
+
+        .btn-starter-back:hover {
+            background: rgba(255, 255, 255, .2)
+        }
+
+        .btn-starter-confirm {
+            background: var(--orange);
+            color: white;
+            border: none;
+            padding: 14px 36px;
+            border-radius: 10px;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: .2s;
+            box-shadow: 0 4px 20px rgba(243, 156, 18, .4)
+        }
+
+        .btn-starter-confirm:hover:not(:disabled) {
+            background: var(--orange-dark);
+            transform: translateY(-1px)
+        }
+
+        .btn-starter-confirm:disabled {
+            background: rgba(255, 255, 255, .15);
+            box-shadow: none;
+            cursor: not-allowed;
+            color: rgba(255, 255, 255, .4)
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HOMEPAGE -->
+    <div id="homepage-screen">
+        <div class="home-content">
+            <div class="logo-badge">
+                <div class="logo-icon">HB</div>
+                <div class="logo-text">AWIM</div>
+            </div>
+            <div class="logo-sub">Handball Live Statistics</div>
+            <div class="menu-group">
+                <button class="menu-btn primary" onclick="goToSetup()">&#9654; New Match</button>
+                <button class="menu-btn" onclick="loadLastMatch()">&#128190; Continue Last Match</button>
+                <button class="menu-btn" onclick="manageTeams()">&#128101; Manage Saved Teams</button>
+                <button class="menu-btn" onclick="showAbout()">&#8505; Help / About</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SETUP SCREEN -->
+    <div id="setup-screen">
+        <div class="setup-container">
+            <div class="sidebar">
+                <div class="sidebar-header">
+                    <button class="back-btn" onclick="goHome()">&#8592; BACK</button>
+                    <div class="sidebar-title">SETUP MATCH</div>
+                </div>
+                <div class="sidebar-steps">
+                    <button class="tab-btn active" id="tab-btn-0" onclick="openTab('tab-team-a',0)">
+                        <span class="step-num">1</span> Team A (Home)
+                    </button>
+                    <button class="tab-btn locked" id="tab-btn-1">
+                        <span class="step-num">2</span> Team B (Away)
+                    </button>
+                    <button class="tab-btn locked" id="tab-btn-2">
+                        <span class="step-num">3</span> Match Info
+                    </button>
+                    <button class="tab-btn locked" id="tab-btn-3">
+                        <span class="step-num">4</span> Review &amp; Start
+                    </button>
+                </div>
+            </div>
+
+            <div class="main-content">
+
+                <!-- TAB TEAM A -->
+                <div id="tab-team-a" class="tab-content active">
+                    <div class="tab-header">
+                        <h2>TEAM A — HOME</h2>
+                        <p>Masukkan informasi tim tuan rumah</p>
+                    </div>
+                    <div class="save-load-row">
+                        <span class="save-load-label">&#128101; Tim Tersimpan:</span>
+                        <button class="btn-load-team" onclick="openLoadModal('A')">&#128193; Muat Tim</button>
+                        <button class="btn-save-team" onclick="saveTeam('A')">&#128190; Simpan Tim</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Identitas Tim</div>
+                        <div class="form-row" style="margin-bottom:14px">
+                            <div class="form-group">
+                                <label>Nama Tim</label>
+                                <input type="text" id="teamA-name" placeholder="contoh: SURABAYA"
+                                    oninput="updateValUI('A')">
+                            </div>
+                            <div class="form-group">
+                                <label>Nama Coach</label>
+                                <input type="text" id="teamA-coach" placeholder="contoh: Coach Akmal">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Warna Jersey</label>
+                            <div class="color-group">
+                                <div class="color-dot selected" style="background:#e74c3c" data-color="#e74c3c"
+                                    data-team="A" onclick="selectColor(this,'A')"></div>
+                                <div class="color-dot" style="background:#3498db" data-color="#3498db" data-team="A"
+                                    onclick="selectColor(this,'A')"></div>
+                                <div class="color-dot" style="background:#27ae60" data-color="#27ae60" data-team="A"
+                                    onclick="selectColor(this,'A')"></div>
+                                <div class="color-dot" style="background:#f39c12" data-color="#f39c12" data-team="A"
+                                    onclick="selectColor(this,'A')"></div>
+                                <div class="color-dot" style="background:#9b59b6" data-color="#9b59b6" data-team="A"
+                                    onclick="selectColor(this,'A')"></div>
+                                <div class="color-dot" style="background:#1abc9c" data-color="#1abc9c" data-team="A"
+                                    onclick="selectColor(this,'A')"></div>
+                                <div class="color-dot" style="background:#e67e22" data-color="#e67e22" data-team="A"
+                                    onclick="selectColor(this,'A')"></div>
+                                <div class="color-dot" style="background:#2c3e50" data-color="#2c3e50" data-team="A"
+                                    onclick="selectColor(this,'A')"></div>
+                                <div class="color-dot" style="background:#ecf0f1;border:1px solid #ccc"
+                                    data-color="#ecf0f1" data-team="A" onclick="selectColor(this,'A')"></div>
+                            </div>
+                            <div class="color-label" id="colorLabelA">Merah dipilih</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="table-header">
+                            <div class="card-title" style="margin-bottom:0">Daftar Pemain <span id="count-A"
+                                    style="color:var(--gray-text);font-weight:400">(0/16)</span></div>
+                            <button class="btn-add" onclick="openModal('A')">+ Tambah Pemain</button>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Nama</th>
+                                    <th>Posisi</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-body-A"></tbody>
+                        </table>
+                        <div class="validation-panel has-error" id="validation-A">
+                            <div class="val-title">Status Kelengkapan Tim A</div>
+                            <div class="val-items" id="val-items-A"></div>
+                        </div>
+                    </div>
+                    <div class="action-bar">
+                        <button class="btn-next" onclick="goNextTab('A','tab-team-b',1)">Lanjut: Team B &rarr;</button>
+                    </div>
+                </div>
+
+                <!-- TAB TEAM B -->
+                <div id="tab-team-b" class="tab-content">
+                    <div class="tab-header">
+                        <h2>TEAM B — AWAY</h2>
+                        <p>Masukkan informasi tim tamu</p>
+                    </div>
+                    <div class="save-load-row">
+                        <span class="save-load-label">&#128101; Tim Tersimpan:</span>
+                        <button class="btn-load-team" onclick="openLoadModal('B')">&#128193; Muat Tim</button>
+                        <button class="btn-save-team" onclick="saveTeam('B')">&#128190; Simpan Tim</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Identitas Tim</div>
+                        <div class="form-row" style="margin-bottom:14px">
+                            <div class="form-group">
+                                <label>Nama Tim</label>
+                                <input type="text" id="teamB-name" placeholder="contoh: GRESIK"
+                                    oninput="updateValUI('B')">
+                            </div>
+                            <div class="form-group">
+                                <label>Nama Coach</label>
+                                <input type="text" id="teamB-coach" placeholder="contoh: Coach Budi">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Warna Jersey</label>
+                            <div class="color-group">
+                                <div class="color-dot" style="background:#e74c3c" data-color="#e74c3c" data-team="B"
+                                    onclick="selectColor(this,'B')"></div>
+                                <div class="color-dot" style="background:#3498db" data-color="#3498db" data-team="B"
+                                    onclick="selectColor(this,'B')"></div>
+                                <div class="color-dot" style="background:#27ae60" data-color="#27ae60" data-team="B"
+                                    onclick="selectColor(this,'B')"></div>
+                                <div class="color-dot" style="background:#f39c12" data-color="#f39c12" data-team="B"
+                                    onclick="selectColor(this,'B')"></div>
+                                <div class="color-dot" style="background:#9b59b6" data-color="#9b59b6" data-team="B"
+                                    onclick="selectColor(this,'B')"></div>
+                                <div class="color-dot selected" style="background:#1abc9c" data-color="#1abc9c"
+                                    data-team="B" onclick="selectColor(this,'B')"></div>
+                                <div class="color-dot" style="background:#e67e22" data-color="#e67e22" data-team="B"
+                                    onclick="selectColor(this,'B')"></div>
+                                <div class="color-dot" style="background:#2c3e50" data-color="#2c3e50" data-team="B"
+                                    onclick="selectColor(this,'B')"></div>
+                                <div class="color-dot" style="background:#ecf0f1;border:1px solid #ccc"
+                                    data-color="#ecf0f1" data-team="B" onclick="selectColor(this,'B')"></div>
+                            </div>
+                            <div class="color-label" id="colorLabelB">Tosca dipilih</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="table-header">
+                            <div class="card-title" style="margin-bottom:0">Daftar Pemain <span id="count-B"
+                                    style="color:var(--gray-text);font-weight:400">(0/16)</span></div>
+                            <button class="btn-add" onclick="openModal('B')">+ Tambah Pemain</button>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Nama</th>
+                                    <th>Posisi</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-body-B"></tbody>
+                        </table>
+                        <div class="validation-panel has-error" id="validation-B">
+                            <div class="val-title">Status Kelengkapan Tim B</div>
+                            <div class="val-items" id="val-items-B"></div>
+                        </div>
+                    </div>
+                    <div class="action-bar">
+                        <button class="btn-next" onclick="goNextTab('B','tab-match-info',2)">Lanjut: Match Info
+                            &rarr;</button>
+                    </div>
+                </div>
+
+                <!-- TAB MATCH INFO -->
+                <div id="tab-match-info" class="tab-content">
+                    <div class="tab-header">
+                        <h2>MATCH INFO</h2>
+                        <p>Konfigurasi pertandingan</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Lokasi &amp; Waktu</div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Venue / Tempat</label>
+                                <input type="text" id="match-venue" placeholder="contoh: GOR UNESA">
+                            </div>
+                            <div class="form-group">
+                                <label>Tanggal Pertandingan</label>
+                                <input type="text" id="match-date" placeholder="contoh: 29 Mei 2026">
+                            </div>
+                        </div>
+                        <div class="form-row" style="margin-top:13px">
+                            <div class="form-group">
+                                <label>Nama Kompetisi / Liga</label>
+                                <input type="text" id="match-competition"
+                                    placeholder="contoh: Liga Handball Jatim 2026">
+                            </div>
+                            <div class="form-group">
+                                <label>Wasit</label>
+                                <input type="text" id="match-referee" placeholder="contoh: Bpk. Santoso">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Format Pertandingan</div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Durasi Per Babak (menit)</label>
+                                <input type="number" id="match-duration" value="30" min="1" max="60">
+                            </div>
+                            <div class="form-group">
+                                <label>Jumlah Babak</label>
+                                <div class="period-selector" style="margin-top:6px">
+                                    <button class="period-btn active" id="period-btn-2" onclick="selectPeriods(2)">2
+                                        Babak</button>
+                                    <button class="period-btn" id="period-btn-3" onclick="selectPeriods(3)">3
+                                        Babak</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="action-bar">
+                        <button class="btn-next" onclick="prepareReview()">Review &rarr;</button>
+                    </div>
+                </div>
+
+                <!-- TAB REVIEW -->
+                <div id="tab-review" class="tab-content">
+                    <div class="tab-header">
+                        <h2>REVIEW &amp; START</h2>
+                        <p>Periksa semua data — lanjut ke pemilihan 7 starter tiap tim</p>
+                    </div>
+                    <div id="review-warnings"></div>
+                    <div class="card">
+                        <div class="card-title">Ringkasan Tim</div>
+                        <div class="summary-grid" id="summary-teams"></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Info Pertandingan</div>
+                        <div class="info-row" id="summary-info"></div>
+                    </div>
+                    <div class="action-bar">
+                        <button class="btn-next" style="background:#888" onclick="openTab('tab-match-info',2)">&#8592;
+                            Edit</button>
+                        <button class="btn-start-match" onclick="openStarterModal()">&#9654; PILIH STARTER &amp;
+                            MULAI</button>
+                    </div>
+                </div>
+
+            </div><!-- end main-content -->
+        </div>
+    </div>
+
+    <!-- MODAL: TAMBAH PEMAIN -->
+    <div class="modal-overlay" id="modal-add-player">
+        <div class="modal-box">
+            <h3 id="modal-title">Tambah Pemain</h3>
+            <div class="form-group">
+                <label>Nomor Punggung</label>
+                <input type="text" id="modal-player-no" placeholder="contoh: 7" maxlength="3">
+            </div>
+            <div class="form-group">
+                <label>Nama Pemain</label>
+                <input type="text" id="modal-player-name" placeholder="contoh: Dimas Arya">
+            </div>
+            <div class="form-group">
+                <label>Posisi</label>
+                <select id="modal-player-pos">
+                    <option value="GK">🧤 Goalkeeper (GK) — WAJIB ada 1</option>
+                    <option value="CB">Centerback (CB)</option>
+                    <option value="LB">Leftback (LB)</option>
+                    <option value="RB">Rightback (RB)</option>
+                    <option value="LW">Leftwing (LW)</option>
+                    <option value="RW">Rightwing (RW)</option>
+                    <option value="PV">Pivot (PV)</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal()">Batal</button>
+                <button class="btn-save" onclick="savePlayer()">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: MUAT TIM TERSIMPAN -->
+    <div class="modal-overlay" id="modal-load-team">
+        <div class="modal-box" style="width:480px">
+            <h3 id="load-modal-title">Muat Tim Tersimpan</h3>
+            <div class="modal-load-scroll" id="saved-teams-list"></div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeLoadModal()">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: MANAGE TEAMS (Homepage) -->
+    <div class="modal-overlay" id="modal-manage-teams">
+        <div class="modal-box" style="width:500px">
+            <h3>&#128101; Kelola Tim Tersimpan</h3>
+            <div class="modal-load-scroll" id="manage-teams-list"></div>
+            <div class="modal-actions">
+                <button class="btn-cancel"
+                    onclick="document.getElementById('modal-manage-teams').classList.remove('show')">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- STARTER SELECTION (Full Screen) -->
+    <div id="modal-starters">
+        <div class="starters-header">
+            <h2>&#9654; PILIH 7 STARTER</h2>
+            <p>Pilih tepat 7 pemain per tim &mdash; wajib include 1 Goalkeeper (🧤)</p>
+        </div>
+        <div class="starters-body">
+            <!-- Team A -->
+            <div class="starter-col">
+                <div class="starter-col-header">
+                    <div class="starter-team-name">
+                        <div class="starter-team-dot" id="starter-dot-A"></div>
+                        <span id="starter-name-A">TEAM A</span>
+                    </div>
+                    <div class="starter-count" id="starter-count-A">0/7</div>
+                </div>
+                <!-- Position requirement chips -->
+                <div class="starter-req-row" id="starter-req-A">
+                    <span class="starter-req-label">Posisi terpilih:</span>
+                </div>
+                <div class="starter-player-grid" id="starter-grid-A"></div>
+                <div class="starter-col-actions">
+                    <button onclick="autoSelectStarters('A')">&#9889; Otomatis</button>
+                    <button onclick="resetStarters('A')">&#8635; Reset</button>
+                </div>
+            </div>
+            <!-- Team B -->
+            <div class="starter-col">
+                <div class="starter-col-header">
+                    <div class="starter-team-name">
+                        <div class="starter-team-dot" id="starter-dot-B"></div>
+                        <span id="starter-name-B">TEAM B</span>
+                    </div>
+                    <div class="starter-count" id="starter-count-B">0/7</div>
+                </div>
+                <div class="starter-req-row" id="starter-req-B">
+                    <span class="starter-req-label">Posisi terpilih:</span>
+                </div>
+                <div class="starter-player-grid" id="starter-grid-B"></div>
+                <div class="starter-col-actions">
+                    <button onclick="autoSelectStarters('B')">&#9889; Otomatis</button>
+                    <button onclick="resetStarters('B')">&#8635; Reset</button>
+                </div>
+            </div>
+        </div>
+        <div class="starters-warning" id="starters-warning"></div>
+        <div class="starters-footer">
+            <button class="btn-starter-back" onclick="closeStarterModal()">&#8592; Kembali</button>
+            <button class="btn-starter-confirm" id="btn-confirm-starters" disabled onclick="confirmStarters()">
+                &#9654; KONFIRMASI &amp; MULAI
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // STATE
+        // ============================================================
+        let currentTargetTeam = '';
+        let dataPemainA = [];
+        let dataPemainB = [];
+        let jerseyColorA = '#e74c3c';
+        let jerseyColorB = '#1abc9c';
+        let totalPeriods = 2;
+        let loadModalTarget = '';
+        let startersA = new Set();
+        let startersB = new Set();
+        // Track which tabs have been unlocked
+        let unlockedTabs = new Set([0]); // Tab 0 always unlocked
+
+        const colorNames = {
+            '#e74c3c': 'Merah', '#3498db': 'Biru', '#27ae60': 'Hijau',
+            '#f39c12': 'Kuning', '#9b59b6': 'Ungu', '#1abc9c': 'Tosca',
+            '#e67e22': 'Oranye', '#2c3e50': 'Navy', '#ecf0f1': 'Putih'
+        };
+        const ALL_POSITIONS = ['GK', 'CB', 'LB', 'RB', 'LW', 'RW', 'PV'];
+
+        // ============================================================
+        // NAVIGATION
+        // ============================================================
+        function goHome() {
+            document.getElementById('setup-screen').style.display = 'none';
+            document.getElementById('homepage-screen').style.display = 'flex';
+        }
+        function goToSetup() {
+            document.getElementById('homepage-screen').style.display = 'none';
+            document.getElementById('setup-screen').style.display = 'flex';
+            updateValUI('A');
+            updateValUI('B');
+        }
+        function loadLastMatch() {
+            if (localStorage.getItem('matchData')) {
+                if (confirm('Lanjutkan pertandingan terakhir?')) window.location.href = 'statistik.html';
+            } else {
+                alert('Tidak ada data pertandingan tersimpan.');
+            }
+        }
+        function showAbout() {
+            alert('AWIM — Handball Live Statistics v2.0\n\nFitur:\n• Live score & timer\n• Roster dinamis (on-court/bench)\n• Substitusi pemain\n• Kartu Kuning & Merah\n• Timeout tracking\n• Multi-babak\n• Statistik per pemain\n• Undo aksi\n• Export laporan\n• Save/Load tim');
+        }
+        function manageTeams() {
+            const saved = JSON.parse(localStorage.getItem('savedTeams') || '{}');
+            const keys = Object.keys(saved);
+            const container = document.getElementById('manage-teams-list');
+            container.innerHTML = '';
+            if (keys.length === 0) {
+                container.innerHTML = '<div class="modal-empty">Belum ada tim tersimpan.</div>';
+            } else {
+                keys.forEach(key => {
+                    const t = saved[key];
+                    const d = document.createElement('div');
+                    d.className = 'saved-team-card';
+                    d.innerHTML = `
+                <div class="saved-team-card-info">
+                    <div style="width:22px;height:22px;border-radius:50%;background:${t.color};border:2px solid #ddd;flex-shrink:0"></div>
+                    <div>
+                        <strong style="font-size:15px">${t.name}</strong>
+                        <div style="font-size:12px;color:#888;margin-top:2px">Coach: ${t.coach || '-'} · ${t.players.length} pemain</div>
+                        <div style="font-size:11px;color:#aaa">${t.players.map(p => p.posisi + ' #' + p.nomor).join(', ')}</div>
+                    </div>
+                </div>
+                <div class="saved-team-card-actions">
+                    <button class="btn-del-team" onclick="deleteTeamSaved('${key}',true)">&#10005; Hapus</button>
+                </div>`;
+                    container.appendChild(d);
+                });
+            }
+            document.getElementById('modal-manage-teams').classList.add('show');
+        }
+
+        // ============================================================
+        // TAB NAVIGATION
+        // ============================================================
+        function openTab(tabId, index) {
+            // Only allow if unlocked
+            if (!unlockedTabs.has(index)) return;
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            const btn = document.getElementById('tab-btn-' + index);
+            if (btn) btn.classList.add('active');
+        }
+
+        function unlockTab(index) {
+            unlockedTabs.add(index);
+            const btn = document.getElementById('tab-btn-' + index);
+            if (btn) {
+                btn.classList.remove('locked');
+                // Assign proper onclick
+                const tabs = ['tab-team-a', 'tab-team-b', 'tab-match-info', 'tab-review'];
+                btn.onclick = () => openTab(tabs[index], index);
+            }
+        }
+
+        function goNextTab(fromTeam, nextTabId, nextIndex) {
+            const { valid, errors } = validateTeam(fromTeam);
+            if (!valid) {
+                alert('⚠ Lengkapi Tim ' + fromTeam + ' dulu:\n\n' + errors.map(e => '• ' + e).join('\n'));
+                updateValUI(fromTeam);
+                return;
+            }
+            // Mark done
+            const fromIndex = fromTeam === 'A' ? 0 : 1;
+            const doneBtn = document.getElementById('tab-btn-' + fromIndex);
+            if (doneBtn) { doneBtn.classList.remove('active'); doneBtn.classList.add('done'); }
+            unlockTab(nextIndex);
+            openTab(nextTabId, nextIndex);
+        }
+
+        // ============================================================
+        // COLOR
+        // ============================================================
+        function selectColor(el, team) {
+            const color = el.dataset.color;
+            document.querySelectorAll(`.color-dot[data-team="${team}"]`).forEach(d => d.classList.remove('selected'));
+            el.classList.add('selected');
+            if (team === 'A') { jerseyColorA = color; document.getElementById('colorLabelA').textContent = (colorNames[color] || color) + ' dipilih'; }
+            else { jerseyColorB = color; document.getElementById('colorLabelB').textContent = (colorNames[color] || color) + ' dipilih'; }
+        }
+        function applyColor(hex, team) {
+            document.querySelectorAll(`.color-dot[data-team="${team}"]`).forEach(d => d.classList.remove('selected'));
+            const el = document.querySelector(`.color-dot[data-team="${team}"][data-color="${hex}"]`);
+            if (el) el.classList.add('selected');
+            if (team === 'A') { jerseyColorA = hex; document.getElementById('colorLabelA').textContent = (colorNames[hex] || hex) + ' dipilih'; }
+            else { jerseyColorB = hex; document.getElementById('colorLabelB').textContent = (colorNames[hex] || hex) + ' dipilih'; }
+        }
+
+        // ============================================================
+        // FORMAT
+        // ============================================================
+        function selectPeriods(n) {
+            totalPeriods = n;
+            document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('period-btn-' + n).classList.add('active');
+        }
+
+        // ============================================================
+        // PLAYER MODAL
+        // ============================================================
+        function openModal(team) {
+            const list = team === 'A' ? dataPemainA : dataPemainB;
+            if (list.length >= 16) { showToast('Maksimal 16 pemain per tim!', 'error'); return; }
+            currentTargetTeam = team;
+            const teamName = team === 'A'
+                ? (document.getElementById('teamA-name').value || 'Team A')
+                : (document.getElementById('teamB-name').value || 'Team B');
+            document.getElementById('modal-title').innerText = 'Tambah Pemain — ' + teamName;
+            document.getElementById('modal-player-no').value = '';
+            document.getElementById('modal-player-name').value = '';
+            document.getElementById('modal-player-pos').value = 'GK';
+            document.getElementById('modal-add-player').classList.add('show');
+            setTimeout(() => document.getElementById('modal-player-no').focus(), 80);
+        }
+        function closeModal() {
+            document.getElementById('modal-add-player').classList.remove('show');
+        }
+        function savePlayer() {
+            const no = document.getElementById('modal-player-no').value.trim();
+            const name = document.getElementById('modal-player-name').value.trim();
+            const pos = document.getElementById('modal-player-pos').value;
+            if (!no || !name) { showToast('Nomor dan Nama wajib diisi!', 'error'); return; }
+            const list = currentTargetTeam === 'A' ? dataPemainA : dataPemainB;
+            if (list.length >= 16) { showToast('Maksimal 16 pemain!', 'error'); return; }
+            if (list.find(p => p.nomor === no)) { showToast('Nomor #' + no + ' sudah ada!', 'error'); return; }
+            list.push({ nomor: no, nama: name, posisi: pos });
+            rerenderTable(currentTargetTeam);
+            updateValUI(currentTargetTeam);
+            closeModal();
+            showToast('Pemain #' + no + ' ' + name + ' ditambahkan.');
+        }
+        function deletePlayer(team, idx) {
+            if (!confirm('Hapus pemain ini?')) return;
+            if (team === 'A') dataPemainA.splice(idx, 1);
+            else dataPemainB.splice(idx, 1);
+            rerenderTable(team);
+            updateValUI(team);
+        }
+        function rerenderTable(team) {
+            const list = team === 'A' ? dataPemainA : dataPemainB;
+            const tbody = document.getElementById('table-body-' + team);
+            tbody.innerHTML = '';
+            list.forEach((p, i) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td><strong>${p.nomor}</strong></td><td>${p.nama}</td><td>${p.posisi}</td>
+            <td><button class="btn-del" onclick="deletePlayer('${team}',${i})">&#10005;</button></td>`;
+                tbody.appendChild(tr);
+            });
+            const countEl = document.getElementById('count-' + team);
+            if (countEl) countEl.textContent = '(' + list.length + '/16)';
+        }
+
+        // ============================================================
+        // VALIDATION
+        // ============================================================
+        function validateTeam(team) {
+            const list = team === 'A' ? dataPemainA : dataPemainB;
+            const errors = [];
+            if (list.length < 7) errors.push('Minimal 7 pemain (saat ini: ' + list.length + ')');
+            if (!list.some(p => p.posisi === 'GK')) errors.push('Wajib ada minimal 1 Goalkeeper (GK)');
+            return { valid: errors.length === 0, errors };
+        }
+        function updateValUI(team) {
+            const list = team === 'A' ? dataPemainA : dataPemainB;
+            const panel = document.getElementById('validation-' + team);
+            const items = document.getElementById('val-items-' + team);
+            if (!panel || !items) return;
+
+            const hasEnough = list.length >= 7;
+            const hasGK = list.some(p => p.posisi === 'GK');
+            const isValid = hasEnough && hasGK;
+
+            const filled = new Set(list.map(p => p.posisi));
+            const chipsHTML = ALL_POSITIONS.map(pos => {
+                const ok = filled.has(pos);
+                const req = pos === 'GK';
+                const cls = ok ? 'filled' : (req ? 'required-missing' : '');
+                return `<span class="pos-chip ${cls}">${ok ? '✓' : (req ? '✗' : '○')} ${pos}${req ? ' *' : ''}</span>`;
+            }).join('');
+
+            items.innerHTML = `
+        <div class="val-item ${hasEnough ? 'ok' : 'err'}">
+            <span class="val-icon">${hasEnough ? '✅' : '❌'}</span>
+            <span>Jumlah pemain: <strong>${list.length} / 7 minimum</strong></span>
+        </div>
+        <div class="val-item ${hasGK ? 'ok' : 'err'}">
+            <span class="val-icon">${hasGK ? '✅' : '❌'}</span>
+            <span>Goalkeeper wajib: <strong>${hasGK ? 'Terpenuhi ✓' : 'BELUM ADA GK!'}</strong></span>
+        </div>
+        <div style="margin-top:8px">
+            <div style="font-size:11px;color:var(--gray-text);margin-bottom:5px;font-weight:700">
+                POSISI TERISI: <span style="font-weight:400;color:#bbb">* = wajib</span>
+            </div>
+            <div class="pos-chips">${chipsHTML}</div>
+        </div>`;
+
+            panel.className = 'validation-panel ' + (isValid ? 'all-ok' : 'has-error');
+        }
+
+        // ============================================================
+        // SAVE / LOAD TEAM
+        // ============================================================
+        function saveTeam(team) {
+            const nameVal = document.getElementById('team' + team + '-name').value.trim();
+            const coach = document.getElementById('team' + team + '-coach').value.trim();
+            const color = team === 'A' ? jerseyColorA : jerseyColorB;
+            const players = team === 'A' ? dataPemainA : dataPemainB;
+
+            if (!nameVal) { showToast('Isi nama tim dulu!', 'error'); return; }
+            if (players.length < 1) { showToast('Tambahkan pemain dulu!', 'error'); return; }
+
+            const saved = JSON.parse(localStorage.getItem('savedTeams') || '{}');
+            const key = nameVal.toUpperCase().trim();
+            if (saved[key] && !confirm('Tim "' + key + '" sudah tersimpan. Timpa data lama?')) return;
+
+            saved[key] = { name: nameVal, coach, color, players: JSON.parse(JSON.stringify(players)) };
+            localStorage.setItem('savedTeams', JSON.stringify(saved));
+            showToast('💾 Tim ' + key + ' tersimpan! (' + players.length + ' pemain)');
+        }
+        function openLoadModal(targetTeam) {
+            loadModalTarget = targetTeam;
+            document.getElementById('load-modal-title').innerText = 'Muat Tim → ke Team ' + targetTeam;
+            renderSavedList('saved-teams-list', false);
+            document.getElementById('modal-load-team').classList.add('show');
+        }
+        function closeLoadModal() {
+            document.getElementById('modal-load-team').classList.remove('show');
+        }
+        function renderSavedList(containerId, isManage) {
+            const saved = JSON.parse(localStorage.getItem('savedTeams') || '{}');
+            const keys = Object.keys(saved);
+            const el = document.getElementById(containerId);
+            el.innerHTML = '';
+            if (keys.length === 0) {
+                el.innerHTML = '<div class="modal-empty">Belum ada tim yang tersimpan.<br><small>Isi data tim lalu klik "Simpan Tim" 💾.</small></div>';
+                return;
+            }
+            keys.forEach(key => {
+                const t = saved[key];
+                const div = document.createElement('div');
+                div.className = 'saved-team-card';
+                div.innerHTML = `
+            <div class="saved-team-card-info">
+                <div style="width:22px;height:22px;border-radius:50%;background:${t.color};border:2px solid #ddd;flex-shrink:0"></div>
+                <div style="min-width:0">
+                    <strong style="font-size:14px">${t.name}</strong>
+                    <div style="font-size:11px;color:#888;margin-top:1px">Coach: ${t.coach || '-'} · ${t.players.length} pemain</div>
+                    <div style="font-size:11px;color:#bbb;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px">
+                        ${t.players.map(p => '#' + p.nomor + ' ' + p.posisi).join(' · ')}
+                    </div>
+                </div>
+            </div>
+            <div class="saved-team-card-actions">
+                ${!isManage ? `<button class="btn-load" onclick="loadTeam('${key}')">Muat</button>` : ''}
+                <button class="btn-del-team" onclick="deleteTeamSaved('${key}',${isManage})">&#10005;</button>
+            </div>`;
+                el.appendChild(div);
+            });
+        }
+        function loadTeam(key) {
+            const saved = JSON.parse(localStorage.getItem('savedTeams') || '{}');
+            const t = saved[key];
+            if (!t) return;
+            const team = loadModalTarget;
+            document.getElementById('team' + team + '-name').value = t.name;
+            document.getElementById('team' + team + '-coach').value = t.coach || '';
+            applyColor(t.color, team);
+            if (team === 'A') dataPemainA = JSON.parse(JSON.stringify(t.players));
+            else dataPemainB = JSON.parse(JSON.stringify(t.players));
+            rerenderTable(team);
+            updateValUI(team);
+            closeLoadModal();
+            showToast('📂 Tim ' + t.name + ' dimuat! (' + t.players.length + ' pemain)');
+        }
+        function deleteTeamSaved(key, isManage) {
+            if (!confirm('Hapus tim "' + key + '" dari penyimpanan?')) return;
+            const saved = JSON.parse(localStorage.getItem('savedTeams') || '{}');
+            delete saved[key];
+            localStorage.setItem('savedTeams', JSON.stringify(saved));
+            if (isManage) {
+                manageTeams(); // refresh modal manage
+            } else {
+                renderSavedList('saved-teams-list', false);
+            }
+            showToast('Tim ' + key + ' dihapus.');
+        }
+
+        // ============================================================
+        // REVIEW
+        // ============================================================
+        function prepareReview() {
+            const vA = validateTeam('A');
+            const vB = validateTeam('B');
+            if (!vA.valid || !vB.valid) {
+                let msg = '';
+                if (!vA.valid) msg += 'TIM A:\n' + vA.errors.map(e => '• ' + e).join('\n');
+                if (!vB.valid) { if (msg) msg += '\n\n'; msg += 'TIM B:\n' + vB.errors.map(e => '• ' + e).join('\n'); }
+                alert('⚠ Masih ada yang belum lengkap:\n\n' + msg);
+                return;
+            }
+            const tA = document.getElementById('teamA-name').value || 'HOME';
+            const tB = document.getElementById('teamB-name').value || 'AWAY';
+            document.getElementById('review-warnings').innerHTML = '';
+            document.getElementById('summary-teams').innerHTML = `
+        <div class="summary-card">
+            <div class="team-label">Home (Team A)</div>
+            <div class="team-val">${tA.toUpperCase()}</div>
+            <span class="jersey-preview" style="background:${jerseyColorA}"></span>
+            <div class="team-count">${dataPemainA.length} pemain · Coach: ${document.getElementById('teamA-coach').value || '-'}</div>
+        </div>
+        <div class="summary-card">
+            <div class="team-label">Away (Team B)</div>
+            <div class="team-val">${tB.toUpperCase()}</div>
+            <span class="jersey-preview" style="background:${jerseyColorB}"></span>
+            <div class="team-count">${dataPemainB.length} pemain · Coach: ${document.getElementById('teamB-coach').value || '-'}</div>
+        </div>`;
+            document.getElementById('summary-info').innerHTML = `
+        <div class="info-chip"><strong>Venue</strong>${document.getElementById('match-venue').value || '-'}</div>
+        <div class="info-chip"><strong>Tanggal</strong>${document.getElementById('match-date').value || '-'}</div>
+        <div class="info-chip"><strong>Kompetisi</strong>${document.getElementById('match-competition').value || '-'}</div>
+        <div class="info-chip"><strong>Wasit</strong>${document.getElementById('match-referee').value || '-'}</div>
+        <div class="info-chip"><strong>Durasi</strong>${document.getElementById('match-duration').value || 30} mnt/babak</div>
+        <div class="info-chip"><strong>Babak</strong>${totalPeriods}×</div>`;
+            unlockTab(3);
+            openTab('tab-review', 3);
+            // Mark tab 2 done
+            const btn2 = document.getElementById('tab-btn-2');
+            if (btn2) { btn2.classList.remove('active'); btn2.classList.add('done'); }
+        }
+
+        // ============================================================
+        // STARTER SELECTION
+        // ============================================================
+        function openStarterModal() {
+            startersA = new Set();
+            startersB = new Set();
+
+            const nameA = document.getElementById('teamA-name').value || 'TEAM A';
+            const nameB = document.getElementById('teamB-name').value || 'TEAM B';
+            document.getElementById('starter-name-A').innerText = nameA.toUpperCase();
+            document.getElementById('starter-name-B').innerText = nameB.toUpperCase();
+            document.getElementById('starter-dot-A').style.background = jerseyColorA;
+            document.getElementById('starter-dot-B').style.background = jerseyColorB;
+
+            // Auto-select if exactly 7
+            if (dataPemainA.length === 7) dataPemainA.forEach(p => startersA.add(p.nomor));
+            if (dataPemainB.length === 7) dataPemainB.forEach(p => startersB.add(p.nomor));
+
+            renderStarterGrid('A');
+            renderStarterGrid('B');
+            updateStarterCounter('A');
+            updateStarterCounter('B');
+            updateStarterReqChips('A');
+            updateStarterReqChips('B');
+            updateConfirmBtn();
+            document.getElementById('starters-warning').innerText = '';
+            document.getElementById('modal-starters').classList.add('show');
+        }
+        function closeStarterModal() {
+            document.getElementById('modal-starters').classList.remove('show');
+        }
+        function renderStarterGrid(team) {
+            const players = team === 'A' ? dataPemainA : dataPemainB;
+            const starters = team === 'A' ? startersA : startersB;
+            const grid = document.getElementById('starter-grid-' + team);
+            grid.innerHTML = '';
+            players.forEach(p => {
+                const btn = document.createElement('button');
+                btn.className = `starter-player-btn ${p.posisi === 'GK' ? 'is-gk' : ''} ${starters.has(p.nomor) ? 'selected' : ''}`;
+                btn.innerHTML = `<span class="s-num">${p.nomor}</span><span class="s-pos">${p.posisi}</span><span class="s-name">${p.nama}</span>`;
+                btn.title = `${p.nama} (#${p.nomor}) — ${p.posisi}`;
+                btn.onclick = () => toggleStarter(team, p.nomor);
+                grid.appendChild(btn);
+            });
+        }
+        function toggleStarter(team, nomor) {
+            const starters = team === 'A' ? startersA : startersB;
+            if (starters.has(nomor)) {
+                starters.delete(nomor);
+            } else {
+                if (starters.size >= 7) {
+                    setStarterWarning('Sudah 7 starter terpilih untuk Team ' + team + '. Hapus satu dulu.');
+                    return;
+                }
+                starters.add(nomor);
+            }
+            renderStarterGrid(team);
+            updateStarterCounter(team);
+            updateStarterReqChips(team);
+            updateConfirmBtn();
+            document.getElementById('starters-warning').innerText = '';
+        }
+        function autoSelectStarters(team) {
+            const players = team === 'A' ? dataPemainA : dataPemainB;
+            const starters = team === 'A' ? startersA : startersB;
+            starters.clear();
+            // GK first, then by registration order
+            const sorted = [...players].sort((a, b) => {
+                if (a.posisi === 'GK' && b.posisi !== 'GK') return -1;
+                if (b.posisi === 'GK' && a.posisi !== 'GK') return 1;
+                return 0;
+            });
+            sorted.slice(0, 7).forEach(p => starters.add(p.nomor));
+            renderStarterGrid(team);
+            updateStarterCounter(team);
+            updateStarterReqChips(team);
+            updateConfirmBtn();
+        }
+        function resetStarters(team) {
+            if (team === 'A') startersA.clear();
+            else startersB.clear();
+            renderStarterGrid(team);
+            updateStarterCounter(team);
+            updateStarterReqChips(team);
+            updateConfirmBtn();
+        }
+        function updateStarterCounter(team) {
+            const count = team === 'A' ? startersA.size : startersB.size;
+            const el = document.getElementById('starter-count-' + team);
+            el.innerText = count + '/7';
+            el.className = 'starter-count ' + (count === 7 ? 'done' : count > 7 ? 'over' : '');
+        }
+        function updateStarterReqChips(team) {
+            const players = team === 'A' ? dataPemainA : dataPemainB;
+            const starters = team === 'A' ? startersA : startersB;
+            const el = document.getElementById('starter-req-' + team);
+            const selected = players.filter(p => starters.has(p.nomor));
+            const filledPos = new Set(selected.map(p => p.posisi));
+            const chips = ALL_POSITIONS.map(pos => {
+                const has = filledPos.has(pos);
+                const req = pos === 'GK';
+                const cls = has ? 'filled' : (req ? 'missing' : '');
+                return `<span class="starter-req-chip ${cls}">${has ? '✓' : '○'} ${pos}${req ? ' *' : ''}</span>`;
+            }).join('');
+            el.innerHTML = '<span class="starter-req-label">Posisi terpilih: <span style="color:rgba(255,255,255,.35)">* = wajib</span></span>' + chips;
+        }
+        function updateConfirmBtn() {
+            const btn = document.getElementById('btn-confirm-starters');
+            btn.disabled = !(startersA.size === 7 && startersB.size === 7);
+        }
+        function setStarterWarning(msg) {
+            const el = document.getElementById('starters-warning');
+            el.innerText = '⚠ ' + msg;
+            setTimeout(() => { el.innerText = ''; }, 2800);
+        }
+        function confirmStarters() {
+            if (startersA.size !== 7) { setStarterWarning('Team A belum 7 starter!'); return; }
+            if (startersB.size !== 7) { setStarterWarning('Team B belum 7 starter!'); return; }
+            const gkA = dataPemainA.some(p => startersA.has(p.nomor) && p.posisi === 'GK');
+            const gkB = dataPemainB.some(p => startersB.has(p.nomor) && p.posisi === 'GK');
+            const nA = document.getElementById('teamA-name').value || 'Team A';
+            const nB = document.getElementById('teamB-name').value || 'Team B';
+            if (!gkA) { setStarterWarning(nA + ': Wajib ada 1 Goalkeeper dalam starter!'); return; }
+            if (!gkB) { setStarterWarning(nB + ': Wajib ada 1 Goalkeeper dalam starter!'); return; }
+
+            // Build playerState
+            const stateA = {};
+            dataPemainA.forEach(p => { stateA[p.nomor] = startersA.has(p.nomor) ? 'court' : 'bench'; });
+            const stateB = {};
+            dataPemainB.forEach(p => { stateB[p.nomor] = startersB.has(p.nomor) ? 'court' : 'bench'; });
+            finalizeMatch(stateA, stateB);
+        }
+        function finalizeMatch(stateA, stateB) {
+            const dur = parseInt(document.getElementById('match-duration').value) || 30;
+            const matchData = {
+                teamA: {
+                    name: document.getElementById('teamA-name').value || 'HOME',
+                    coach: document.getElementById('teamA-coach').value || 'COACH',
+                    color: jerseyColorA, players: dataPemainA, playerState: stateA, stats: {}
+                },
+                teamB: {
+                    name: document.getElementById('teamB-name').value || 'AWAY',
+                    coach: document.getElementById('teamB-coach').value || 'COACH',
+                    color: jerseyColorB, players: dataPemainB, playerState: stateB, stats: {}
+                },
+                info: {
+                    venue: document.getElementById('match-venue').value || '-',
+                    date: document.getElementById('match-date').value || '-',
+                    competition: document.getElementById('match-competition').value || '-',
+                    referee: document.getElementById('match-referee').value || '-',
+                    duration: dur, periods: totalPeriods
+                },
+                scoreA: 0, scoreB: 0,
+                currentPeriod: 1,
+                timeLeft: dur * 60,
+                timeoutsA: 3, timeoutsB: 3,
+                events: []
+            };
+            localStorage.setItem('matchData', JSON.stringify(matchData));
+            window.location.href = 'statistik.html';
+        }
+
+        // ============================================================
+        // TOAST
+        // ============================================================
+        function showToast(msg, type) {
+            const bg = type === 'error' ? '#e74c3c' : type === 'warn' ? '#f39c12' : '#27ae60';
+            const el = document.createElement('div');
+            el.style.cssText = `position:fixed;bottom:20px;right:20px;background:${bg};color:white;
+        padding:12px 20px;border-radius:10px;font-weight:600;z-index:9999;font-size:14px;
+        box-shadow:0 4px 20px rgba(0,0,0,.2);max-width:300px;transition:opacity .3s`;
+            el.innerText = msg;
+            document.body.appendChild(el);
+            setTimeout(() => { el.style.opacity = '0'; }, 2500);
+            setTimeout(() => el.remove(), 2900);
+        }
+
+        // ============================================================
+        // KEYBOARD
+        // ============================================================
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show'));
+                closeStarterModal();
+                document.getElementById('modal-starters').classList.remove('show');
+            }
+            if (e.key === 'Enter' && document.getElementById('modal-add-player').classList.contains('show')) {
+                savePlayer();
+            }
+        });
+
+        // Init
+        updateValUI('A');
+        updateValUI('B');
+    </script>
+</body>
+
+</html>
