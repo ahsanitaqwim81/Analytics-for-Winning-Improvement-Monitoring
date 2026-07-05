@@ -919,3 +919,240 @@ button { cursor: pointer; font-family: inherit; }
     font-weight: 600;
     padding: 1px 5px;
 }
+
+/* ============================================================
+   RESPONSIVE — iPad (768px – 1024px portrait & landscape)
+============================================================ */
+@media (min-width: 768px) and (max-width: 1024px) {
+    /* Main body layout */
+    body {
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    /* Scoreboard bar adjustments */
+    .scoreboard-bar {
+        padding: 6px 12px;
+        gap: 6px;
+    }
+    .team-panel {
+        width: 31%;
+        height: 54px;
+    }
+    .team-name {
+        font-size: 16px;
+    }
+    .team-coach {
+        display: none; /* Hide coach to save vertical/horizontal space */
+    }
+    .team-score {
+        width: 52px;
+        font-size: 32px;
+    }
+    .timer-center {
+        min-width: 170px;
+        gap: 2px;
+    }
+    .timer-display {
+        font-size: 32px;
+        min-width: 85px;
+    }
+    .timer-adj-btn {
+        width: 24px;
+        height: 24px;
+        font-size: 11px;
+    }
+    .btn-timer-toggle {
+        padding: 4px 12px;
+        font-size: 11px;
+    }
+    .btn-next-period {
+        padding: 4px 8px;
+        font-size: 10px;
+    }
+
+    /* Main Dashboard re-layout for iPad.
+       Roster panels are 95px, action panels are 56px, court is 1fr.
+       Log section is placed at the bottom to maximize court width and prevent horizontal overflow.
+    */
+    .main-dashboard {
+        grid-template-areas: 
+          "rosterA actionsA court actionsB rosterB"
+          "log log log log log";
+        grid-template-columns: 95px 56px 1fr 56px 95px;
+        grid-template-rows: 1fr auto;
+        gap: 8px;
+        padding: 8px;
+    }
+
+    .left-roster { grid-area: rosterA; }
+    .left-actions { grid-area: actionsA; }
+    .court-area-wrapper { grid-area: court; }
+    .right-actions { grid-area: actionsB; }
+    .right-roster { grid-area: rosterB; }
+    .log-section { grid-area: log; }
+
+    /* Override desktop log-minimized behavior to not break columns layout on iPad */
+    .main-dashboard.log-minimized {
+        grid-template-columns: 95px 56px 1fr 56px 95px;
+        grid-template-rows: 1fr auto;
+    }
+
+    /* Make player grid scroll cleanly */
+    .player-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 4px;
+    }
+    .btn-player {
+        font-size: 15px;
+        max-height: 44px;
+    }
+    .btn-player .pos-label {
+        font-size: 6px;
+    }
+
+    /* Action buttons padding and font sizes */
+    .btn-action {
+        font-size: 12px;
+        min-height: 38px;
+        padding: 4px;
+    }
+    .btn-action .action-icon {
+        font-size: 15px;
+    }
+
+    /* Log section styling at bottom */
+    .log-section {
+        max-height: 120px;
+        flex-direction: row;
+        align-items: stretch;
+    }
+    .log-section.minimized {
+        max-height: 34px;
+        flex-direction: row;
+    }
+    .log-header {
+        width: 140px;
+        flex-shrink: 0;
+        padding: 6px 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        border-right: 1px solid var(--blue-dark);
+    }
+    .log-header-top h3 {
+        font-size: 11px;
+    }
+    .log-filter {
+        margin-top: 4px;
+        gap: 2px;
+    }
+    .log-filter-btn {
+        padding: 2px 4px;
+        font-size: 8px;
+    }
+    .log-stats-row {
+        width: 100px;
+        flex-shrink: 0;
+        flex-direction: column;
+        border-bottom: none;
+        border-right: 1px solid var(--gray-panel);
+        justify-content: center;
+    }
+    .log-stat-item {
+        border-right: none;
+        border-bottom: 1px solid var(--gray-panel);
+        padding: 3px;
+        font-size: 8px;
+    }
+    .log-stat-item:last-child {
+        border-bottom: none;
+    }
+    .log-stat-item strong {
+        font-size: 13px;
+    }
+    #event-log {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: row;
+        overflow-x: auto;
+        overflow-y: hidden;
+        gap: 6px;
+        padding: 6px 10px;
+        align-items: center;
+    }
+    #event-log li {
+        margin-bottom: 0;
+        flex-shrink: 0;
+        min-width: 160px;
+        max-width: 200px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 4px 8px;
+    }
+
+    /* Modal dialog sizing on iPad */
+    .modal-box {
+        width: 90%;
+        max-width: 440px;
+        padding: 20px;
+    }
+    .modal-step1-box, .modal-step2-box, .modal-step25-box, .modal-step3-box {
+        width: 92%;
+        max-width: 460px;
+    }
+    .s1-player-grid {
+        grid-template-columns: repeat(4, 1fr);
+        max-height: 220px;
+    }
+    .s2-subtype-grid {
+        gap: 6px;
+    }
+    .s2-subtype-btn {
+        min-width: 85px;
+        font-size: 15px;
+        padding: 12px 8px;
+    }
+    .s25-attack-grid {
+        padding: 12px 16px;
+        gap: 8px;
+    }
+    .s25-attack-btn {
+        padding: 14px 8px;
+        font-size: 16px;
+    }
+    .s25-attack-btn .attack-icon {
+        font-size: 22px;
+    }
+    .goal-svg-wrapper {
+        padding: 6px 12px;
+    }
+}
+
+/* Specific adjustment for iPad portrait only (e.g. 768px - 834px) */
+@media (min-width: 768px) and (max-width: 834px) {
+    .main-dashboard {
+        grid-template-columns: 85px 50px 1fr 50px 85px;
+    }
+    .main-dashboard.log-minimized {
+        grid-template-columns: 85px 50px 1fr 50px 85px;
+    }
+    .player-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+    .btn-player {
+        font-size: 14px;
+        height: 38px;
+    }
+    .team-panel {
+        width: 29%;
+    }
+    .timer-center {
+        min-width: 150px;
+    }
+    .timer-display {
+        font-size: 28px;
+    }
+}
