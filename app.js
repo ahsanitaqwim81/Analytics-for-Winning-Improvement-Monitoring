@@ -440,6 +440,7 @@ function endMatch() {
     alert(msg);
     addEvent({ type: 'MATCH_END', time: getFormattedTime(), scoreA: matchData.scoreA, scoreB: matchData.scoreB });
     saveState();
+    window.location.href = 'index.html';
 }
 
 // ============================================================

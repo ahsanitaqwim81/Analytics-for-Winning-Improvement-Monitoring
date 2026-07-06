@@ -1826,6 +1826,61 @@
         };
         const ALL_POSITIONS = ['GK', 'CB', 'LB', 'RB', 'LW', 'RW', 'PV'];
 
+        let apiAvailable = false;
+        let savedTeamsCache = {};
+        const apiEndpoint = 'api.php';
+
+        async function checkApiHealth() {
+            try {
+                const response = await fetch(`${apiEndpoint}?action=health`, { method: 'GET', cache: 'no-store' });
+                if (!response.ok) throw new Error('API tidak responsif');
+                const body = await response.json();
+                if (body.status === 'ok') {
+                    apiAvailable = true;
+                    await loadSavedTeamsCache();
+                    return true;
+                }
+            } catch (error) {
+                apiAvailable = false;
+                console.warn('API health check gagal:', error);
+            }
+            return false;
+        }
+
+        function getLocalSavedTeams() {
+            try {
+                return JSON.parse(localStorage.getItem('savedTeams') || '{}');
+            } catch (error) {
+                return {};
+            }
+        }
+
+        async function loadSavedTeamsCache() {
+            if (apiAvailable) {
+                try {
+                    const response = await fetch(`${apiEndpoint}?action=get_teams`, { method: 'GET', cache: 'no-store' });
+                    if (!response.ok) throw new Error('Gagal mengambil tim dari API');
+                    const data = await response.json();
+                    if (data && typeof data === 'object') {
+                        savedTeamsCache = data;
+                        return savedTeamsCache;
+                    }
+                } catch (error) {
+                    apiAvailable = false;
+                    console.warn('Gagal memuat tim dari API, fallback ke localStorage:', error);
+                }
+            }
+            savedTeamsCache = getLocalSavedTeams();
+            return savedTeamsCache;
+        }
+
+        async function ensureSavedTeamsLoaded() {
+            if (Object.keys(savedTeamsCache).length === 0) {
+                await loadSavedTeamsCache();
+            }
+            return savedTeamsCache;
+        }
+
         // ============================================================
         // NAVIGATION
         // ============================================================
@@ -1849,8 +1904,8 @@
         function showAbout() {
             alert('AWIM — Handball Live Statistics v2.0\n\nFitur:\n• Live score & timer\n• Roster dinamis (on-court/bench)\n• Substitusi pemain\n• Kartu Kuning & Merah\n• Timeout tracking\n• Multi-babak\n• Statistik per pemain\n• Undo aksi\n• Export laporan\n• Save/Load tim');
         }
-        function manageTeams() {
-            const saved = JSON.parse(localStorage.getItem('savedTeams') || '{}');
+        async function manageTeams() {
+            const saved = apiAvailable ? await loadSavedTeamsCache() : getLocalSavedTeams();
             const keys = Object.keys(saved);
             const container = document.getElementById('manage-teams-list');
             container.innerHTML = '';
@@ -2050,7 +2105,7 @@
         // ============================================================
         // SAVE / LOAD TEAM
         // ============================================================
-        function saveTeam(team) {
+        async function saveTeam(team) {
             const nameVal = document.getElementById('team' + team + '-name').value.trim();
             const coach = document.getElementById('team' + team + '-coach').value.trim();
             const color = team === 'A' ? jerseyColorA : jerseyColorB;
@@ -2059,25 +2114,49 @@
             if (!nameVal) { showToast('Isi nama tim dulu!', 'error'); return; }
             if (players.length < 1) { showToast('Tambahkan pemain dulu!', 'error'); return; }
 
-            const saved = JSON.parse(localStorage.getItem('savedTeams') || '{}');
             const key = nameVal.toUpperCase().trim();
-            if (saved[key] && !confirm('Tim "' + key + '" sudah tersimpan. Timpa data lama?')) return;
+            const payload = { name: nameVal, coach, color, players: JSON.parse(JSON.stringify(players)) };
 
-            saved[key] = { name: nameVal, coach, color, players: JSON.parse(JSON.stringify(players)) };
+            if (apiAvailable) {
+                try {
+                    const response = await fetch(`${apiEndpoint}?action=save_team`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!response.ok) throw new Error('API save failed');
+                    const result = await response.json();
+                    if (result.status === 'success') {
+                        showToast('💾 Tim ' + key + ' disimpan ke database MySQL.');
+                        await loadSavedTeamsCache();
+                        return;
+                    }
+                    throw new Error(result.message || 'Unknown API error');
+                } catch (error) {
+                    console.warn('Simpan tim via API gagal, gunakan localStorage:', error);
+                    apiAvailable = false;
+                    showToast('API tidak tersedia, menyimpan ke localStorage.', 'warn');
+                }
+            }
+
+            const saved = getLocalSavedTeams();
+            if (saved[key] && !confirm('Tim "' + key + '" sudah tersimpan. Timpa data lama?')) return;
+            saved[key] = payload;
             localStorage.setItem('savedTeams', JSON.stringify(saved));
-            showToast('💾 Tim ' + key + ' tersimpan! (' + players.length + ' pemain)');
+            savedTeamsCache = saved;
+            showToast('💾 Tim ' + key + ' tersimpan di localStorage! (' + players.length + ' pemain)');
         }
-        function openLoadModal(targetTeam) {
+        async function openLoadModal(targetTeam) {
             loadModalTarget = targetTeam;
             document.getElementById('load-modal-title').innerText = 'Muat Tim → ke Team ' + targetTeam;
-            renderSavedList('saved-teams-list', false);
+            await renderSavedList('saved-teams-list', false);
             document.getElementById('modal-load-team').classList.add('show');
         }
         function closeLoadModal() {
             document.getElementById('modal-load-team').classList.remove('show');
         }
-        function renderSavedList(containerId, isManage) {
-            const saved = JSON.parse(localStorage.getItem('savedTeams') || '{}');
+        async function renderSavedList(containerId, isManage) {
+            const saved = apiAvailable ? await loadSavedTeamsCache() : getLocalSavedTeams();
             const keys = Object.keys(saved);
             const el = document.getElementById(containerId);
             el.innerHTML = '';
@@ -2107,10 +2186,13 @@
                 el.appendChild(div);
             });
         }
-        function loadTeam(key) {
-            const saved = JSON.parse(localStorage.getItem('savedTeams') || '{}');
+        async function loadTeam(key) {
+            const saved = apiAvailable ? await loadSavedTeamsCache() : getLocalSavedTeams();
             const t = saved[key];
-            if (!t) return;
+            if (!t) {
+                showToast('Tim tidak ditemukan.', 'error');
+                return;
+            }
             const team = loadModalTarget;
             document.getElementById('team' + team + '-name').value = t.name;
             document.getElementById('team' + team + '-coach').value = t.coach || '';
@@ -2122,16 +2204,34 @@
             closeLoadModal();
             showToast('📂 Tim ' + t.name + ' dimuat! (' + t.players.length + ' pemain)');
         }
-        function deleteTeamSaved(key, isManage) {
+        async function deleteTeamSaved(key, isManage) {
             if (!confirm('Hapus tim "' + key + '" dari penyimpanan?')) return;
-            const saved = JSON.parse(localStorage.getItem('savedTeams') || '{}');
+
+            if (apiAvailable) {
+                try {
+                    const response = await fetch(`${apiEndpoint}?action=delete_team&name=${encodeURIComponent(key)}`, {
+                        method: 'DELETE'
+                    });
+                    if (!response.ok) throw new Error('API delete failed');
+                    const result = await response.json();
+                    if (result.status === 'success') {
+                        showToast('Tim ' + key + ' dihapus dari database MySQL.');
+                        await loadSavedTeamsCache();
+                        if (isManage) manageTeams(); else renderSavedList('saved-teams-list', false);
+                        return;
+                    }
+                    throw new Error(result.message || 'Unknown API error');
+                } catch (error) {
+                    console.warn('Hapus tim via API gagal, gunakan localStorage:', error);
+                    apiAvailable = false;
+                    showToast('API tidak tersedia, hapus tim dari localStorage.', 'warn');
+                }
+            }
+
+            const saved = getLocalSavedTeams();
             delete saved[key];
             localStorage.setItem('savedTeams', JSON.stringify(saved));
-            if (isManage) {
-                manageTeams(); // refresh modal manage
-            } else {
-                renderSavedList('saved-teams-list', false);
-            }
+            if (isManage) manageTeams(); else renderSavedList('saved-teams-list', false);
             showToast('Tim ' + key + ' dihapus.');
         }
 
@@ -2372,6 +2472,11 @@
         // Init
         updateValUI('A');
         updateValUI('B');
+        checkApiHealth().then(() => {
+            if (!apiAvailable) {
+                showToast('Mode offline: API tidak tersedia. Data disimpan ke localStorage.', 'warn');
+            }
+        });
     </script>
 </body>
 
