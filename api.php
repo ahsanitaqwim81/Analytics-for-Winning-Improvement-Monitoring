@@ -1,7 +1,7 @@
 <?php
 /**
  * AWIM Handball Stats - API Backend PHP
- * Menangani penyimpanan dan pengambilan data tim/pemain dari database MySQL
+ * Menangani penyimpanan dan pengambilan data tim dari database MySQL
  */
 
 // Set header CORS agar dapat dipanggil dari mana saja (misal file://)
@@ -44,19 +44,6 @@ try {
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
     );
-    $pdo->exec(
-        "CREATE TABLE IF NOT EXISTS players (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            team_id INT NOT NULL,
-            jersey_number VARCHAR(3) NOT NULL,
-            name VARCHAR(100) NOT NULL,
-            position ENUM('GK','CB','LB','RB','LW','RW','PV') NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            UNIQUE KEY uq_team_jersey (team_id, jersey_number),
-            CONSTRAINT fk_players_team FOREIGN KEY (team_id) REFERENCES teams(id) ON DELETE CASCADE ON UPDATE CASCADE
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
-    );
 } catch (\PDOException $e) {
     http_response_code(500);
     echo json_encode([
@@ -77,10 +64,6 @@ switch ($_SERVER['REQUEST_METHOD']) {
             getTeams($pdo);
         } elseif ($action === 'get_team') {
             getTeam($pdo);
-        } elseif ($action === 'get_players') {
-            getPlayers($pdo);
-        } elseif ($action === 'get_player') {
-            getPlayer($pdo);
         } else {
             http_response_code(400);
             echo json_encode(["status" => "error", "message" => "Invalid action"]);
@@ -90,8 +73,6 @@ switch ($_SERVER['REQUEST_METHOD']) {
     case 'POST':
         if ($action === 'save_team') {
             saveTeam($pdo);
-        } elseif ($action === 'save_player') {
-            savePlayer($pdo);
         } else {
             http_response_code(400);
             echo json_encode(["status" => "error", "message" => "Invalid action"]);
@@ -101,8 +82,6 @@ switch ($_SERVER['REQUEST_METHOD']) {
     case 'DELETE':
         if ($action === 'delete_team') {
             deleteTeam($pdo);
-        } elseif ($action === 'delete_player') {
-            deletePlayer($pdo);
         } else {
             http_response_code(400);
             echo json_encode(["status" => "error", "message" => "Invalid action"]);
@@ -128,28 +107,12 @@ function getTeams($pdo) {
         $result = [];
         
         foreach ($teams as $team) {
-            // Ambil semua pemain untuk tim ini
-            $stmtPlayers = $pdo->prepare("SELECT jersey_number, name, position FROM players WHERE team_id = ?");
-            $stmtPlayers->execute([$team['id']]);
-            $dbPlayers = $stmtPlayers->fetchAll();
-            
-            // Format data pemain ke format JS (nomor, nama, posisi)
-            $players = [];
-            foreach ($dbPlayers as $p) {
-                $players[] = [
-                    "nomor"  => $p['jersey_number'],
-                    "nama"   => $p['name'],
-                    "posisi" => $p['position']
-                ];
-            }
-            
-            // Simpan dengan key Nama Tim Huruf Kapital (sesuai format index.html)
             $key = strtoupper(trim($team['name']));
             $result[$key] = [
                 "name"    => $team['name'],
                 "coach"   => $team['coach'] ?? '',
                 "color"   => $team['color'] ?? '#3498db',
-                "players" => $players
+                "players" => []
             ];
         }
         
@@ -176,176 +139,12 @@ function getTeam($pdo) {
             echo json_encode(["status" => "error", "message" => "Team not found."]);
             return;
         }
-        $playersStmt = $pdo->prepare("SELECT id, jersey_number, name, position FROM players WHERE team_id = ? ORDER BY jersey_number ASC");
-        $playersStmt->execute([$team['id']]);
-        $players = $playersStmt->fetchAll();
         echo json_encode([
             "id" => $team['id'],
             "name" => $team['name'],
             "coach" => $team['coach'],
-            "color" => $team['color'],
-            "players" => $players
+            "color" => $team['color']
         ]);
-    } catch (\Exception $e) {
-        http_response_code(500);
-        echo json_encode(["status" => "error", "message" => $e->getMessage()]);
-    }
-}
-
-function getPlayers($pdo) {
-    try {
-        $teamName = isset($_GET['team_name']) ? trim($_GET['team_name']) : '';
-        if (!empty($teamName)) {
-            $stmtTeam = $pdo->prepare("SELECT id FROM teams WHERE name = ?");
-            $stmtTeam->execute([$teamName]);
-            $teamId = $stmtTeam->fetchColumn();
-            if (!$teamId) {
-                http_response_code(404);
-                echo json_encode(["status" => "error", "message" => "Team not found."]);
-                return;
-            }
-            $stmt = $pdo->prepare("SELECT id, jersey_number, name, position FROM players WHERE team_id = ? ORDER BY jersey_number ASC");
-            $stmt->execute([$teamId]);
-        } else {
-            $stmt = $pdo->query("SELECT p.id, p.jersey_number, p.name, p.position, t.name AS team_name FROM players p JOIN teams t ON p.team_id = t.id ORDER BY t.name, p.jersey_number ASC");
-        }
-        $players = $stmt->fetchAll();
-        echo json_encode($players);
-    } catch (\Exception $e) {
-        http_response_code(500);
-        echo json_encode(["status" => "error", "message" => $e->getMessage()]);
-    }
-}
-
-function getPlayer($pdo) {
-    try {
-        $playerId = isset($_GET['player_id']) ? trim($_GET['player_id']) : '';
-        $teamName = isset($_GET['team_name']) ? trim($_GET['team_name']) : '';
-        $jerseyNumber = isset($_GET['jersey_number']) ? trim($_GET['jersey_number']) : '';
-
-        if ($playerId) {
-            $stmt = $pdo->prepare("SELECT p.id, p.jersey_number, p.name, p.position, t.name AS team_name FROM players p JOIN teams t ON p.team_id = t.id WHERE p.id = ?");
-            $stmt->execute([$playerId]);
-        } elseif ($teamName && $jerseyNumber) {
-            $stmt = $pdo->prepare("SELECT p.id, p.jersey_number, p.name, p.position, t.name AS team_name FROM players p JOIN teams t ON p.team_id = t.id WHERE t.name = ? AND p.jersey_number = ?");
-            $stmt->execute([$teamName, $jerseyNumber]);
-        } else {
-            http_response_code(400);
-            echo json_encode(["status" => "error", "message" => "Parameter 'player_id' or ('team_name' and 'jersey_number') is required."]);
-            return;
-        }
-        $player = $stmt->fetch();
-        if (!$player) {
-            http_response_code(404);
-            echo json_encode(["status" => "error", "message" => "Player not found."]);
-            return;
-        }
-        echo json_encode($player);
-    } catch (\Exception $e) {
-        http_response_code(500);
-        echo json_encode(["status" => "error", "message" => $e->getMessage()]);
-    }
-}
-
-function savePlayer($pdo) {
-    try {
-        $input = json_decode(file_get_contents('php://input'), true);
-        if (!$input || empty($input['team_name']) || empty($input['nomor']) || empty($input['nama']) || empty($input['posisi'])) {
-            http_response_code(400);
-            echo json_encode(["status" => "error", "message" => "Invalid payload, 'team_name', 'nomor', 'nama', and 'posisi' are required."]);
-            return;
-        }
-
-        $teamName = trim($input['team_name']);
-        $jersey = trim($input['nomor']);
-        $name = trim($input['nama']);
-        $position = trim($input['posisi']);
-        $playerId = isset($input['player_id']) ? trim($input['player_id']) : null;
-
-        $stmtTeam = $pdo->prepare("SELECT id FROM teams WHERE name = ?");
-        $stmtTeam->execute([$teamName]);
-        $teamId = $stmtTeam->fetchColumn();
-        if (!$teamId) {
-            http_response_code(404);
-            echo json_encode(["status" => "error", "message" => "Team not found."]);
-            return;
-        }
-
-        if ($playerId) {
-            $stmtUpdate = $pdo->prepare("UPDATE players SET jersey_number = :jersey_number, name = :name, position = :position WHERE id = :id AND team_id = :team_id");
-            $stmtUpdate->execute([
-                ':jersey_number' => $jersey,
-                ':name' => $name,
-                ':position' => $position,
-                ':id' => $playerId,
-                ':team_id' => $teamId
-            ]);
-            echo json_encode(["status" => "success", "message" => "Player updated successfully."]);
-            return;
-        }
-
-        $stmtInsert = $pdo->prepare("INSERT INTO players (team_id, jersey_number, name, position) VALUES (:team_id, :jersey_number, :name, :position)");
-        $stmtInsert->execute([
-            ':team_id' => $teamId,
-            ':jersey_number' => $jersey,
-            ':name' => $name,
-            ':position' => $position
-        ]);
-        echo json_encode(["status" => "success", "message" => "Player saved successfully."]);
-    } catch (\PDOException $e) {
-        if ($e->getCode() === '23000') {
-            http_response_code(409);
-            echo json_encode(["status" => "error", "message" => "Player jersey number already exists for this team."]);
-            return;
-        }
-        http_response_code(500);
-        echo json_encode(["status" => "error", "message" => $e->getMessage()]);
-    } catch (\Exception $e) {
-        http_response_code(500);
-        echo json_encode(["status" => "error", "message" => $e->getMessage()]);
-    }
-}
-
-function deletePlayer($pdo) {
-    try {
-        $playerId = isset($_GET['player_id']) ? trim($_GET['player_id']) : '';
-        $teamName = isset($_GET['team_name']) ? trim($_GET['team_name']) : '';
-        $jerseyNumber = isset($_GET['jersey_number']) ? trim($_GET['jersey_number']) : '';
-
-        if ($playerId) {
-            $stmt = $pdo->prepare("DELETE FROM players WHERE id = ?");
-            $stmt->execute([$playerId]);
-            if ($stmt->rowCount() === 0) {
-                http_response_code(404);
-                echo json_encode(["status" => "error", "message" => "Player not found."]);
-                return;
-            }
-            echo json_encode(["status" => "success", "message" => "Player deleted successfully."]);
-            return;
-        }
-
-        if ($teamName && $jerseyNumber) {
-            $stmtTeam = $pdo->prepare("SELECT id FROM teams WHERE name = ?");
-            $stmtTeam->execute([$teamName]);
-            $teamId = $stmtTeam->fetchColumn();
-            if (!$teamId) {
-                http_response_code(404);
-                echo json_encode(["status" => "error", "message" => "Team not found."]);
-                return;
-            }
-            $stmt = $pdo->prepare("DELETE FROM players WHERE team_id = ? AND jersey_number = ?");
-            $stmt->execute([$teamId, $jerseyNumber]);
-            if ($stmt->rowCount() === 0) {
-                http_response_code(404);
-                echo json_encode(["status" => "error", "message" => "Player not found."]);
-                return;
-            }
-            echo json_encode(["status" => "success", "message" => "Player deleted successfully."]);
-            return;
-        }
-
-        http_response_code(400);
-        echo json_encode(["status" => "error", "message" => "Parameter 'player_id' or ('team_name' and 'jersey_number') is required."]);
     } catch (\Exception $e) {
         http_response_code(500);
         echo json_encode(["status" => "error", "message" => $e->getMessage()]);
@@ -353,7 +152,7 @@ function deletePlayer($pdo) {
 }
 
 /**
- * Fungsi untuk menyimpan tim baru atau memperbarui tim yang sudah ada beserta pemainnya.
+ * Fungsi untuk menyimpan tim baru atau memperbarui tim yang sudah ada.
  */
 function saveTeam($pdo) {
     try {
@@ -369,7 +168,6 @@ function saveTeam($pdo) {
         $name = trim($input['name']);
         $coach = isset($input['coach']) ? trim($input['coach']) : '';
         $color = isset($input['color']) ? trim($input['color']) : '#3498db';
-        $players = isset($input['players']) ? $input['players'] : [];
 
         // Jalankan transaksi agar konsisten
         $pdo->beginTransaction();
@@ -388,40 +186,8 @@ function saveTeam($pdo) {
             ':color' => $color
         ]);
 
-        // Dapatkan ID Tim (baik baru maupun yang lama)
-        $stmtGetId = $pdo->prepare("SELECT id FROM teams WHERE name = ?");
-        $stmtGetId->execute([$name]);
-        $teamId = $stmtGetId->fetchColumn();
-
-        if (!$teamId) {
-            throw new \Exception("Failed to retrieve team ID.");
-        }
-
-        // 2. Hapus semua pemain lama tim ini terlebih dahulu agar tersinkronisasi
-        $stmtDelPlayers = $pdo->prepare("DELETE FROM players WHERE team_id = ?");
-        $stmtDelPlayers->execute([$teamId]);
-
-        // 3. Masukkan daftar pemain yang baru
-        if (!empty($players) && is_array($players)) {
-            $stmtInsertPlayer = $pdo->prepare("
-                INSERT INTO players (team_id, jersey_number, name, position) 
-                VALUES (:team_id, :jersey_number, :name, :position)
-            ");
-            foreach ($players as $player) {
-                if (empty($player['nomor']) || empty($player['nama']) || empty($player['posisi'])) {
-                    continue; // Skip data tidak valid
-                }
-                $stmtInsertPlayer->execute([
-                    ':team_id'       => $teamId,
-                    ':jersey_number' => trim($player['nomor']),
-                    ':name'          => trim($player['nama']),
-                    ':position'      => trim($player['posisi'])
-                ]);
-            }
-        }
-
         $pdo->commit();
-        echo json_encode(["status" => "success", "message" => "Team '$name' and its players saved successfully."]);
+        echo json_encode(["status" => "success", "message" => "Team '$name' saved successfully."]);
 
     } catch (\Exception $e) {
         if ($pdo->inTransaction()) {
@@ -456,7 +222,7 @@ function deleteTeam($pdo) {
             return;
         }
 
-        // Hapus tim (tabel players terhapus otomatis karena foreign key CASCADE)
+        // Hapus tim dari database
         $stmtDelTeam = $pdo->prepare("DELETE FROM teams WHERE id = ?");
         $stmtDelTeam->execute([$teamId]);
 
