@@ -3,6 +3,14 @@
 <html lang="id">
 
 <head>
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Inisialisasi Supabase ClientPA
+        const SUPABASE_URL = 'https://nbedeeqmyesfvrcvwglt.supabase.co/rest/v1/';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5iZWRlZXFteWVzZnZyY3Z3Z2x0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU5NDE3MjYsImV4cCI6MjEwMTUxNzcyNn0.zhGoWMaAptwDqm0GJNQUjGKQLL1JKtruvFY39CmcNoo';
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AWIM - Handball Stats</title>
@@ -469,6 +477,24 @@
 
         .btn-add:hover {
             background: var(--green-dark)
+        }
+
+        .btn-import {
+            background: var(--blue-main);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: .2s
+        }
+
+        .btn-import:hover {
+            background: var(--blue-dark)
         }
 
         table {
@@ -1223,7 +1249,8 @@
         @media (min-width: 768px) and (max-width: 1024px) {
 
             /* --- Prevent ALL horizontal overflow at root --- */
-            html, body {
+            html,
+            body {
                 overflow-x: hidden;
                 max-width: 100vw;
             }
@@ -1292,7 +1319,7 @@
             .sidebar-header {
                 padding: 12px 16px;
                 border-bottom: none;
-                border-right: 1px solid rgba(255,255,255,.08);
+                border-right: 1px solid rgba(255, 255, 255, .08);
                 flex-shrink: 0;
                 white-space: nowrap;
             }
@@ -1515,7 +1542,10 @@
                         <div class="table-header">
                             <div class="card-title" style="margin-bottom:0">Daftar Pemain <span id="count-A"
                                     style="color:var(--gray-text);font-weight:400">(0/16)</span></div>
-                            <button class="btn-add" onclick="openModal('A')">+ Tambah Pemain</button>
+                            <div style="display:flex; gap:8px;">
+                                <button class="btn-add" onclick="openModal('A')">+ Tambah Pemain</button>
+                                <button class="btn-import" onclick="triggerCsvImport('A')">&#128194; Import CSV</button>
+                            </div>
                         </div>
                         <table>
                             <thead>
@@ -1591,7 +1621,10 @@
                         <div class="table-header">
                             <div class="card-title" style="margin-bottom:0">Daftar Pemain <span id="count-B"
                                     style="color:var(--gray-text);font-weight:400">(0/16)</span></div>
-                            <button class="btn-add" onclick="openModal('B')">+ Tambah Pemain</button>
+                            <div style="display:flex; gap:8px;">
+                                <button class="btn-add" onclick="openModal('B')">+ Tambah Pemain</button>
+                                <button class="btn-import" onclick="triggerCsvImport('B')">&#128194; Import CSV</button>
+                            </div>
                         </div>
                         <table>
                             <thead>
@@ -1694,6 +1727,9 @@
             </div><!-- end main-content -->
         </div>
     </div>
+
+    <!-- HIDDEN INPUT FOR CSV IMPORT -->
+    <input type="file" id="csv-file-input" accept=".csv" style="display:none" onchange="handleCsvFile(event)">
 
     <!-- MODAL: TAMBAH PEMAIN -->
     <div class="modal-overlay" id="modal-add-player">
@@ -2112,39 +2148,26 @@
             const players = team === 'A' ? dataPemainA : dataPemainB;
 
             if (!nameVal) { showToast('Isi nama tim dulu!', 'error'); return; }
-            if (players.length < 1) { showToast('Tambahkan pemain dulu!', 'error'); return; }
+            if (players.length < 1) { showToast('Tambahkan pemain atau impor CSV dulu!', 'error'); return; }
 
-            const key = nameVal.toUpperCase().trim();
-            const payload = { name: nameVal, coach, color, players: JSON.parse(JSON.stringify(players)) };
-
-            if (apiAvailable) {
-                try {
-                    const response = await fetch(`${apiEndpoint}?action=save_team`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                    if (!response.ok) throw new Error('API save failed');
-                    const result = await response.json();
-                    if (result.status === 'success') {
-                        showToast('💾 Tim ' + key + ' disimpan ke database MySQL.');
-                        await loadSavedTeamsCache();
-                        return;
+            // Simpan ke Supabase
+            const { data, error } = await supabase
+                .from('teams')
+                .insert([
+                    {
+                        name: nameVal,
+                        coach: coach,
+                        color: color,
+                        players: players
                     }
-                    throw new Error(result.message || 'Unknown API error');
-                } catch (error) {
-                    console.warn('Simpan tim via API gagal, gunakan localStorage:', error);
-                    apiAvailable = false;
-                    showToast('API tidak tersedia, menyimpan ke localStorage.', 'warn');
-                }
-            }
+                ]);
 
-            const saved = getLocalSavedTeams();
-            if (saved[key] && !confirm('Tim "' + key + '" sudah tersimpan. Timpa data lama?')) return;
-            saved[key] = payload;
-            localStorage.setItem('savedTeams', JSON.stringify(saved));
-            savedTeamsCache = saved;
-            showToast('💾 Tim ' + key + ' tersimpan di localStorage! (' + players.length + ' pemain)');
+            if (error) {
+                console.error('Gagal menyimpan ke Supabase:', error.message);
+                showToast('Gagal menyimpan ke database!', 'error');
+            } else {
+                showToast('💾 Tim ' + nameVal + ' berhasil disimpan ke Supabase!');
+            }
         }
         async function openLoadModal(targetTeam) {
             loadModalTarget = targetTeam;
@@ -2453,6 +2476,164 @@
             document.body.appendChild(el);
             setTimeout(() => { el.style.opacity = '0'; }, 2500);
             setTimeout(() => el.remove(), 2900);
+        }
+
+        // ============================================================
+        // CSV IMPORT FOR TEAM PLAYERS
+        // ============================================================
+        let currentCsvTargetTeam = 'A';
+
+        function triggerCsvImport(team) {
+            currentCsvTargetTeam = team;
+            document.getElementById('csv-file-input').value = '';
+            document.getElementById('csv-file-input').click();
+        }
+
+        function handleCsvFile(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (evt) {
+                const text = evt.target.result;
+                parseAndLoadCsv(text);
+            };
+            reader.readAsText(file);
+        }
+
+        function parseAndLoadCsv(text) {
+            const list = currentCsvTargetTeam === 'A' ? dataPemainA : dataPemainB;
+
+            let clearCurrent = false;
+            if (list.length > 0) {
+                clearCurrent = confirm("Apakah Anda ingin menghapus daftar pemain saat ini sebelum mengimpor?\n\n• Pilih 'OK' untuk MENGHAPUS roster lama dan menggantinya dengan isi CSV.\n• Pilih 'Batal' untuk MENGGABUNGKAN (merge) data baru.");
+            }
+
+            const lines = text.split(/\r?\n/);
+            if (lines.length === 0) {
+                showToast("File CSV kosong!", "error");
+                return;
+            }
+
+            // Detect separator (comma or semicolon)
+            const firstLine = lines[0];
+            let separator = ',';
+            if (firstLine.includes(';')) {
+                separator = ';';
+            }
+
+            const cleanLines = lines.map(line => line.trim()).filter(line => line.length > 0);
+            if (cleanLines.length === 0) {
+                showToast("Tidak ada data dalam CSV!", "error");
+                return;
+            }
+
+            // Find column indices
+            const headerRow = cleanLines[0].split(separator).map(h => h.trim().toLowerCase());
+            let nameIdx = -1;
+            let noIdx = -1;
+            let posIdx = -1;
+
+            for (let i = 0; i < headerRow.length; i++) {
+                const h = headerRow[i];
+                if (h.includes('nama') || h.includes('name')) {
+                    nameIdx = i;
+                } else if (h.includes('nomor') || h.includes('number') || h === 'no' || h === 'no.') {
+                    noIdx = i;
+                } else if (h.includes('posisi') || h.includes('position') || h === 'pos') {
+                    posIdx = i;
+                }
+            }
+
+            // Fallback to defaults
+            if (nameIdx === -1 || noIdx === -1 || posIdx === -1) {
+                nameIdx = 0;
+                noIdx = 1;
+                posIdx = 2;
+            }
+
+            const playersToImport = [];
+            const existingNumbers = new Set(clearCurrent ? [] : list.map(p => p.nomor));
+            const newNumbersInCsv = new Set();
+
+            // Check if first line is headers
+            let startIdx = 1;
+            const isFirstLineHeader = (cleanLines[0].toLowerCase().includes('nama') || cleanLines[0].toLowerCase().includes('nomor') || cleanLines[0].toLowerCase().includes('posisi') || cleanLines[0].toLowerCase().includes('name') || cleanLines[0].toLowerCase().includes('position'));
+            if (!isFirstLineHeader) {
+                startIdx = 0;
+            }
+
+            const ALL_VALID_POSITIONS = ['GK', 'CB', 'LB', 'RB', 'LW', 'RW', 'PV'];
+
+            for (let i = startIdx; i < cleanLines.length; i++) {
+                const cols = cleanLines[i].split(separator).map(c => c.trim().replace(/^["']|["']$/g, ''));
+
+                const name = cols[nameIdx] || '';
+                const rawNo = cols[noIdx] || '';
+                let pos = (cols[posIdx] || '').toUpperCase();
+
+                if (!name && !rawNo) continue;
+
+                // Validate Number
+                const no = rawNo.replace(/[^0-9]/g, '');
+                if (!no) {
+                    showToast(`Baris ${i + 1}: Nomor punggung tidak valid (${rawNo}). Dilewati.`, "warn");
+                    continue;
+                }
+
+                // Check duplicate shirt numbers
+                if (existingNumbers.has(no) || newNumbersInCsv.has(no)) {
+                    showToast(`Baris ${i + 1}: Nomor #${no} duplikat. Dilewati.`, "warn");
+                    continue;
+                }
+
+                // Normalize/Validate Position
+                if (!ALL_VALID_POSITIONS.includes(pos)) {
+                    if (pos.includes('GOAL') || pos.includes('KIPER') || pos.includes('KEEP') || pos === 'G') {
+                        pos = 'GK';
+                    } else if (pos.includes('CENTER') || pos === 'C') {
+                        pos = 'CB';
+                    } else if (pos.includes('LEFT') && pos.includes('BACK')) {
+                        pos = 'LB';
+                    } else if (pos.includes('RIGHT') && pos.includes('BACK')) {
+                        pos = 'RB';
+                    } else if (pos.includes('LEFT') && pos.includes('WING')) {
+                        pos = 'LW';
+                    } else if (pos.includes('RIGHT') && pos.includes('WING')) {
+                        pos = 'RW';
+                    } else if (pos.includes('PIVOT') || pos === 'P') {
+                        pos = 'PV';
+                    } else {
+                        showToast(`Baris ${i + 1}: Posisi '${pos}' tidak standar. Default ke 'CB'.`, "warn");
+                        pos = 'CB';
+                    }
+                }
+
+                playersToImport.push({ nomor: no, nama: name || `Pemain #${no}`, posisi: pos });
+                newNumbersInCsv.add(no);
+            }
+
+            if (playersToImport.length === 0) {
+                showToast("Tidak ada pemain valid dalam CSV!", "error");
+                return;
+            }
+
+            const currentCount = clearCurrent ? 0 : list.length;
+            if (currentCount + playersToImport.length > 16) {
+                showToast(`Gagal impor! Total pemain melebihi batas 16 (Saat ini: ${currentCount}, Baru: ${playersToImport.length}).`, "error");
+                return;
+            }
+
+            if (clearCurrent) {
+                list.length = 0;
+            }
+
+            playersToImport.forEach(p => list.push(p));
+
+            rerenderTable(currentCsvTargetTeam);
+            updateValUI(currentCsvTargetTeam);
+
+            showToast(`Berhasil mengimpor ${playersToImport.length} pemain!`);
         }
 
         // ============================================================
