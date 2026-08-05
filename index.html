@@ -2156,8 +2156,8 @@
 
             // 1. Simpan ke Supabase (jika supabase client terdefinisi)
             try {
-                if (typeof supabase !== 'undefined' && supabase) {
-                    const { data, error } = await supabase
+                if (typeof supabaseClient !== 'undefined' && supabaseClient) {
+                    const { data, error } = await supabaseClient
                         .from('teams')
                         .insert([
                             {
@@ -2167,100 +2167,99 @@
                                 players: players
                             }
                         ]);
+
                     if (error) {
                         console.error('Gagal menyimpan ke Supabase:', error.message);
+                        showToast('Gagal menyimpan ke database!', 'error');
                     } else {
-                        savedToSupabase = true;
+                        showToast('💾 Tim ' + nameVal + ' berhasil disimpan ke Supabase!');
                     }
                 }
-            } catch (err) {
-                console.error('Eror Supabase:', err);
-            }
 
-            // 2. Simpan ke MySQL via API (jika API tersedia)
-            if (apiAvailable) {
-                try {
-                    const response = await fetch(`${apiEndpoint}?action=save_team`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            name: nameVal,
-                            coach: coach,
-                            color: color,
-                            players: players
-                        })
-                    });
-                    if (response.ok) {
-                        const result = await response.json();
-                        if (result.status === 'success') {
-                            savedToApi = true;
+                // 2. Simpan ke MySQL via API (jika API tersedia)
+                if (apiAvailable) {
+                    try {
+                        const response = await fetch(`${apiEndpoint}?action=save_team`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                name: nameVal,
+                                coach: coach,
+                                color: color,
+                                players: players
+                            })
+                        });
+                        if (response.ok) {
+                            const result = await response.json();
+                            if (result.status === 'success') {
+                                savedToApi = true;
+                            } else {
+                                console.error('Gagal simpan via API:', result.message);
+                            }
                         } else {
-                            console.error('Gagal simpan via API:', result.message);
+                            console.error('Gagal simpan via API: HTTP ' + response.status);
                         }
-                    } else {
-                        console.error('Gagal simpan via API: HTTP ' + response.status);
+                    } catch (err) {
+                        console.error('Eror API MySQL:', err);
                     }
+                }
+
+                // 3. Simpan ke localStorage (selalu lakukan sebagai fallback / cache lokal)
+                try {
+                    const saved = getLocalSavedTeams();
+                    saved[nameVal.toUpperCase()] = {
+                        name: nameVal,
+                        coach: coach,
+                        color: color,
+                        players: players
+                    };
+                    localStorage.setItem('savedTeams', JSON.stringify(saved));
+                    savedToLocal = true;
                 } catch (err) {
-                    console.error('Eror API MySQL:', err);
+                    console.error('Gagal simpan ke localStorage:', err);
+                }
+
+                // Beri feedback ke user
+                if (savedToSupabase || savedToApi || savedToLocal) {
+                    let msg = '💾 Tim ' + nameVal + ' berhasil disimpan ';
+                    let details = [];
+                    if (savedToSupabase) details.push('Supabase');
+                    if (savedToApi) details.push('Database');
+                    if (savedToLocal) details.push('Lokal');
+
+                    showToast(msg + '(' + details.join(', ') + ')!');
+
+                    // Refresh list cache
+                    await loadSavedTeamsCache();
+                } else {
+                    showToast('Gagal menyimpan tim!', 'error');
                 }
             }
-
-            // 3. Simpan ke localStorage (selalu lakukan sebagai fallback / cache lokal)
-            try {
-                const saved = getLocalSavedTeams();
-                saved[nameVal.toUpperCase()] = {
-                    name: nameVal,
-                    coach: coach,
-                    color: color,
-                    players: players
-                };
-                localStorage.setItem('savedTeams', JSON.stringify(saved));
-                savedToLocal = true;
-            } catch (err) {
-                console.error('Gagal simpan ke localStorage:', err);
-            }
-
-            // Beri feedback ke user
-            if (savedToSupabase || savedToApi || savedToLocal) {
-                let msg = '💾 Tim ' + nameVal + ' berhasil disimpan ';
-                let details = [];
-                if (savedToSupabase) details.push('Supabase');
-                if (savedToApi) details.push('Database');
-                if (savedToLocal) details.push('Lokal');
-
-                showToast(msg + '(' + details.join(', ') + ')!');
-
-                // Refresh list cache
-                await loadSavedTeamsCache();
-            } else {
-                showToast('Gagal menyimpan tim!', 'error');
-            }
-        }
         async function openLoadModal(targetTeam) {
-            loadModalTarget = targetTeam;
-            document.getElementById('load-modal-title').innerText = 'Muat Tim → ke Team ' + targetTeam;
-            await renderSavedList('saved-teams-list', false);
-            document.getElementById('modal-load-team').classList.add('show');
-        }
-        function closeLoadModal() {
-            document.getElementById('modal-load-team').classList.remove('show');
-        }
-        async function renderSavedList(containerId, isManage) {
-            const saved = apiAvailable ? await loadSavedTeamsCache() : getLocalSavedTeams();
-            const keys = Object.keys(saved);
-            const el = document.getElementById(containerId);
-            el.innerHTML = '';
-            if (keys.length === 0) {
-                el.innerHTML = '<div class="modal-empty">Belum ada tim yang tersimpan.<br><small>Isi data tim lalu klik "Simpan Tim" 💾.</small></div>';
-                return;
+                loadModalTarget = targetTeam;
+                document.getElementById('load-modal-title').innerText = 'Muat Tim → ke Team ' + targetTeam;
+                await renderSavedList('saved-teams-list', false);
+                document.getElementById('modal-load-team').classList.add('show');
             }
-            keys.forEach(key => {
-                const t = saved[key];
-                const div = document.createElement('div');
-                div.className = 'saved-team-card';
-                div.innerHTML = `
+            function closeLoadModal() {
+                document.getElementById('modal-load-team').classList.remove('show');
+            }
+            async function renderSavedList(containerId, isManage) {
+                const saved = apiAvailable ? await loadSavedTeamsCache() : getLocalSavedTeams();
+                const keys = Object.keys(saved);
+                const el = document.getElementById(containerId);
+                el.innerHTML = '';
+                if (keys.length === 0) {
+                    el.innerHTML = '<div class="modal-empty">Belum ada tim yang tersimpan.<br><small>Isi data tim lalu klik "Simpan Tim" 💾.</small></div>';
+                    return;
+                }
+                keys.forEach(key => {
+                    const t = saved[key];
+                    const div = document.createElement('div');
+                    div.className = 'saved-team-card';
+                    div.innerHTML = `
             <div class="saved-team-card-info">
                 <div style="width:22px;height:22px;border-radius:50%;background:${t.color};border:2px solid #ddd;flex-shrink:0"></div>
                 <div style="min-width:0">
@@ -2275,75 +2274,75 @@
                 ${!isManage ? `<button class="btn-load" onclick="loadTeam('${key}')">Muat</button>` : ''}
                 <button class="btn-del-team" onclick="deleteTeamSaved('${key}',${isManage})">&#10005;</button>
             </div>`;
-                el.appendChild(div);
-            });
-        }
-        async function loadTeam(key) {
-            const saved = apiAvailable ? await loadSavedTeamsCache() : getLocalSavedTeams();
-            const t = saved[key];
-            if (!t) {
-                showToast('Tim tidak ditemukan.', 'error');
-                return;
+                    el.appendChild(div);
+                });
             }
-            const team = loadModalTarget;
-            document.getElementById('team' + team + '-name').value = t.name;
-            document.getElementById('team' + team + '-coach').value = t.coach || '';
-            applyColor(t.color, team);
-            if (team === 'A') dataPemainA = JSON.parse(JSON.stringify(t.players));
-            else dataPemainB = JSON.parse(JSON.stringify(t.players));
-            rerenderTable(team);
-            updateValUI(team);
-            closeLoadModal();
-            showToast('📂 Tim ' + t.name + ' dimuat! (' + t.players.length + ' pemain)');
-        }
-        async function deleteTeamSaved(key, isManage) {
-            if (!confirm('Hapus tim "' + key + '" dari penyimpanan?')) return;
-
-            if (apiAvailable) {
-                try {
-                    const response = await fetch(`${apiEndpoint}?action=delete_team&name=${encodeURIComponent(key)}`, {
-                        method: 'DELETE'
-                    });
-                    if (!response.ok) throw new Error('API delete failed');
-                    const result = await response.json();
-                    if (result.status === 'success') {
-                        showToast('Tim ' + key + ' dihapus dari database MySQL.');
-                        await loadSavedTeamsCache();
-                        if (isManage) manageTeams(); else renderSavedList('saved-teams-list', false);
-                        return;
-                    }
-                    throw new Error(result.message || 'Unknown API error');
-                } catch (error) {
-                    console.warn('Hapus tim via API gagal, gunakan localStorage:', error);
-                    apiAvailable = false;
-                    showToast('API tidak tersedia, hapus tim dari localStorage.', 'warn');
+            async function loadTeam(key) {
+                const saved = apiAvailable ? await loadSavedTeamsCache() : getLocalSavedTeams();
+                const t = saved[key];
+                if (!t) {
+                    showToast('Tim tidak ditemukan.', 'error');
+                    return;
                 }
+                const team = loadModalTarget;
+                document.getElementById('team' + team + '-name').value = t.name;
+                document.getElementById('team' + team + '-coach').value = t.coach || '';
+                applyColor(t.color, team);
+                if (team === 'A') dataPemainA = JSON.parse(JSON.stringify(t.players));
+                else dataPemainB = JSON.parse(JSON.stringify(t.players));
+                rerenderTable(team);
+                updateValUI(team);
+                closeLoadModal();
+                showToast('📂 Tim ' + t.name + ' dimuat! (' + t.players.length + ' pemain)');
+            }
+            async function deleteTeamSaved(key, isManage) {
+                if (!confirm('Hapus tim "' + key + '" dari penyimpanan?')) return;
+
+                if (apiAvailable) {
+                    try {
+                        const response = await fetch(`${apiEndpoint}?action=delete_team&name=${encodeURIComponent(key)}`, {
+                            method: 'DELETE'
+                        });
+                        if (!response.ok) throw new Error('API delete failed');
+                        const result = await response.json();
+                        if (result.status === 'success') {
+                            showToast('Tim ' + key + ' dihapus dari database MySQL.');
+                            await loadSavedTeamsCache();
+                            if (isManage) manageTeams(); else renderSavedList('saved-teams-list', false);
+                            return;
+                        }
+                        throw new Error(result.message || 'Unknown API error');
+                    } catch (error) {
+                        console.warn('Hapus tim via API gagal, gunakan localStorage:', error);
+                        apiAvailable = false;
+                        showToast('API tidak tersedia, hapus tim dari localStorage.', 'warn');
+                    }
+                }
+
+                const saved = getLocalSavedTeams();
+                delete saved[key];
+                localStorage.setItem('savedTeams', JSON.stringify(saved));
+                if (isManage) manageTeams(); else renderSavedList('saved-teams-list', false);
+                showToast('Tim ' + key + ' dihapus.');
             }
 
-            const saved = getLocalSavedTeams();
-            delete saved[key];
-            localStorage.setItem('savedTeams', JSON.stringify(saved));
-            if (isManage) manageTeams(); else renderSavedList('saved-teams-list', false);
-            showToast('Tim ' + key + ' dihapus.');
-        }
-
-        // ============================================================
-        // REVIEW
-        // ============================================================
-        function prepareReview() {
-            const vA = validateTeam('A');
-            const vB = validateTeam('B');
-            if (!vA.valid || !vB.valid) {
-                let msg = '';
-                if (!vA.valid) msg += 'TIM A:\n' + vA.errors.map(e => '• ' + e).join('\n');
-                if (!vB.valid) { if (msg) msg += '\n\n'; msg += 'TIM B:\n' + vB.errors.map(e => '• ' + e).join('\n'); }
-                alert('⚠ Masih ada yang belum lengkap:\n\n' + msg);
-                return;
-            }
-            const tA = document.getElementById('teamA-name').value || 'HOME';
-            const tB = document.getElementById('teamB-name').value || 'AWAY';
-            document.getElementById('review-warnings').innerHTML = '';
-            document.getElementById('summary-teams').innerHTML = `
+            // ============================================================
+            // REVIEW
+            // ============================================================
+            function prepareReview() {
+                const vA = validateTeam('A');
+                const vB = validateTeam('B');
+                if (!vA.valid || !vB.valid) {
+                    let msg = '';
+                    if (!vA.valid) msg += 'TIM A:\n' + vA.errors.map(e => '• ' + e).join('\n');
+                    if (!vB.valid) { if (msg) msg += '\n\n'; msg += 'TIM B:\n' + vB.errors.map(e => '• ' + e).join('\n'); }
+                    alert('⚠ Masih ada yang belum lengkap:\n\n' + msg);
+                    return;
+                }
+                const tA = document.getElementById('teamA-name').value || 'HOME';
+                const tB = document.getElementById('teamB-name').value || 'AWAY';
+                document.getElementById('review-warnings').innerHTML = '';
+                document.getElementById('summary-teams').innerHTML = `
         <div class="summary-card">
             <div class="team-label">Home (Team A)</div>
             <div class="team-val">${tA.toUpperCase()}</div>
@@ -2356,377 +2355,377 @@
             <span class="jersey-preview" style="background:${jerseyColorB}"></span>
             <div class="team-count">${dataPemainB.length} pemain · Coach: ${document.getElementById('teamB-coach').value || '-'}</div>
         </div>`;
-            document.getElementById('summary-info').innerHTML = `
+                document.getElementById('summary-info').innerHTML = `
         <div class="info-chip"><strong>Venue</strong>${document.getElementById('match-venue').value || '-'}</div>
         <div class="info-chip"><strong>Tanggal</strong>${document.getElementById('match-date').value || '-'}</div>
         <div class="info-chip"><strong>Kompetisi</strong>${document.getElementById('match-competition').value || '-'}</div>
         <div class="info-chip"><strong>Wasit</strong>${document.getElementById('match-referee').value || '-'}</div>
         <div class="info-chip"><strong>Durasi</strong>${document.getElementById('match-duration').value || 30} mnt/babak</div>
         <div class="info-chip"><strong>Babak</strong>${totalPeriods}×</div>`;
-            unlockTab(3);
-            openTab('tab-review', 3);
-            // Mark tab 2 done
-            const btn2 = document.getElementById('tab-btn-2');
-            if (btn2) { btn2.classList.remove('active'); btn2.classList.add('done'); }
-        }
-
-        // ============================================================
-        // STARTER SELECTION
-        // ============================================================
-        function openStarterModal() {
-            startersA = new Set();
-            startersB = new Set();
-
-            const nameA = document.getElementById('teamA-name').value || 'TEAM A';
-            const nameB = document.getElementById('teamB-name').value || 'TEAM B';
-            document.getElementById('starter-name-A').innerText = nameA.toUpperCase();
-            document.getElementById('starter-name-B').innerText = nameB.toUpperCase();
-            document.getElementById('starter-dot-A').style.background = jerseyColorA;
-            document.getElementById('starter-dot-B').style.background = jerseyColorB;
-
-            // Auto-select if exactly 7
-            if (dataPemainA.length === 7) dataPemainA.forEach(p => startersA.add(p.nomor));
-            if (dataPemainB.length === 7) dataPemainB.forEach(p => startersB.add(p.nomor));
-
-            renderStarterGrid('A');
-            renderStarterGrid('B');
-            updateStarterCounter('A');
-            updateStarterCounter('B');
-            updateStarterReqChips('A');
-            updateStarterReqChips('B');
-            updateConfirmBtn();
-            document.getElementById('starters-warning').innerText = '';
-            document.getElementById('modal-starters').classList.add('show');
-        }
-        function closeStarterModal() {
-            document.getElementById('modal-starters').classList.remove('show');
-        }
-        function renderStarterGrid(team) {
-            const players = team === 'A' ? dataPemainA : dataPemainB;
-            const starters = team === 'A' ? startersA : startersB;
-            const grid = document.getElementById('starter-grid-' + team);
-            grid.innerHTML = '';
-            players.forEach(p => {
-                const btn = document.createElement('button');
-                btn.className = `starter-player-btn ${p.posisi === 'GK' ? 'is-gk' : ''} ${starters.has(p.nomor) ? 'selected' : ''}`;
-                btn.innerHTML = `<span class="s-num">${p.nomor}</span><span class="s-pos">${p.posisi}</span><span class="s-name">${p.nama}</span>`;
-                btn.title = `${p.nama} (#${p.nomor}) — ${p.posisi}`;
-                btn.onclick = () => toggleStarter(team, p.nomor);
-                grid.appendChild(btn);
-            });
-        }
-        function toggleStarter(team, nomor) {
-            const starters = team === 'A' ? startersA : startersB;
-            if (starters.has(nomor)) {
-                starters.delete(nomor);
-            } else {
-                if (starters.size >= 7) {
-                    setStarterWarning('Sudah 7 starter terpilih untuk Team ' + team + '. Hapus satu dulu.');
-                    return;
-                }
-                starters.add(nomor);
+                unlockTab(3);
+                openTab('tab-review', 3);
+                // Mark tab 2 done
+                const btn2 = document.getElementById('tab-btn-2');
+                if (btn2) { btn2.classList.remove('active'); btn2.classList.add('done'); }
             }
-            renderStarterGrid(team);
-            updateStarterCounter(team);
-            updateStarterReqChips(team);
-            updateConfirmBtn();
-            document.getElementById('starters-warning').innerText = '';
-        }
-        function autoSelectStarters(team) {
-            const players = team === 'A' ? dataPemainA : dataPemainB;
-            const starters = team === 'A' ? startersA : startersB;
-            starters.clear();
-            // GK first, then by registration order
-            const sorted = [...players].sort((a, b) => {
-                if (a.posisi === 'GK' && b.posisi !== 'GK') return -1;
-                if (b.posisi === 'GK' && a.posisi !== 'GK') return 1;
-                return 0;
-            });
-            sorted.slice(0, 7).forEach(p => starters.add(p.nomor));
-            renderStarterGrid(team);
-            updateStarterCounter(team);
-            updateStarterReqChips(team);
-            updateConfirmBtn();
-        }
-        function resetStarters(team) {
-            if (team === 'A') startersA.clear();
-            else startersB.clear();
-            renderStarterGrid(team);
-            updateStarterCounter(team);
-            updateStarterReqChips(team);
-            updateConfirmBtn();
-        }
-        function updateStarterCounter(team) {
-            const count = team === 'A' ? startersA.size : startersB.size;
-            const el = document.getElementById('starter-count-' + team);
-            el.innerText = count + '/7';
-            el.className = 'starter-count ' + (count === 7 ? 'done' : count > 7 ? 'over' : '');
-        }
-        function updateStarterReqChips(team) {
-            const players = team === 'A' ? dataPemainA : dataPemainB;
-            const starters = team === 'A' ? startersA : startersB;
-            const el = document.getElementById('starter-req-' + team);
-            const selected = players.filter(p => starters.has(p.nomor));
-            const filledPos = new Set(selected.map(p => p.posisi));
-            const chips = ALL_POSITIONS.map(pos => {
-                const has = filledPos.has(pos);
-                const req = pos === 'GK';
-                const cls = has ? 'filled' : (req ? 'missing' : '');
-                return `<span class="starter-req-chip ${cls}">${has ? '✓' : '○'} ${pos}${req ? ' *' : ''}</span>`;
-            }).join('');
-            el.innerHTML = '<span class="starter-req-label">Posisi terpilih: <span style="color:rgba(255,255,255,.35)">* = wajib</span></span>' + chips;
-        }
-        function updateConfirmBtn() {
-            const btn = document.getElementById('btn-confirm-starters');
-            btn.disabled = !(startersA.size === 7 && startersB.size === 7);
-        }
-        function setStarterWarning(msg) {
-            const el = document.getElementById('starters-warning');
-            el.innerText = '⚠ ' + msg;
-            setTimeout(() => { el.innerText = ''; }, 2800);
-        }
-        function confirmStarters() {
-            if (startersA.size !== 7) { setStarterWarning('Team A belum 7 starter!'); return; }
-            if (startersB.size !== 7) { setStarterWarning('Team B belum 7 starter!'); return; }
-            const gkA = dataPemainA.some(p => startersA.has(p.nomor) && p.posisi === 'GK');
-            const gkB = dataPemainB.some(p => startersB.has(p.nomor) && p.posisi === 'GK');
-            const nA = document.getElementById('teamA-name').value || 'Team A';
-            const nB = document.getElementById('teamB-name').value || 'Team B';
-            if (!gkA) { setStarterWarning(nA + ': Wajib ada 1 Goalkeeper dalam starter!'); return; }
-            if (!gkB) { setStarterWarning(nB + ': Wajib ada 1 Goalkeeper dalam starter!'); return; }
 
-            // Build playerState
-            const stateA = {};
-            dataPemainA.forEach(p => { stateA[p.nomor] = startersA.has(p.nomor) ? 'court' : 'bench'; });
-            const stateB = {};
-            dataPemainB.forEach(p => { stateB[p.nomor] = startersB.has(p.nomor) ? 'court' : 'bench'; });
-            finalizeMatch(stateA, stateB);
-        }
-        function finalizeMatch(stateA, stateB) {
-            const dur = parseInt(document.getElementById('match-duration').value) || 30;
-            const matchData = {
-                teamA: {
-                    name: document.getElementById('teamA-name').value || 'HOME',
-                    coach: document.getElementById('teamA-coach').value || 'COACH',
-                    color: jerseyColorA, players: dataPemainA, playerState: stateA, stats: {}
-                },
-                teamB: {
-                    name: document.getElementById('teamB-name').value || 'AWAY',
-                    coach: document.getElementById('teamB-coach').value || 'COACH',
-                    color: jerseyColorB, players: dataPemainB, playerState: stateB, stats: {}
-                },
-                info: {
-                    venue: document.getElementById('match-venue').value || '-',
-                    date: document.getElementById('match-date').value || '-',
-                    competition: document.getElementById('match-competition').value || '-',
-                    referee: document.getElementById('match-referee').value || '-',
-                    duration: dur, periods: totalPeriods
-                },
-                scoreA: 0, scoreB: 0,
-                currentPeriod: 1,
-                timeLeft: dur * 60,
-                timeoutsA: 3, timeoutsB: 3,
-                events: []
-            };
-            localStorage.setItem('matchData', JSON.stringify(matchData));
-            window.location.href = 'statistik.html';
-        }
+            // ============================================================
+            // STARTER SELECTION
+            // ============================================================
+            function openStarterModal() {
+                startersA = new Set();
+                startersB = new Set();
 
-        // ============================================================
-        // TOAST
-        // ============================================================
-        function showToast(msg, type) {
-            const bg = type === 'error' ? '#e74c3c' : type === 'warn' ? '#f39c12' : '#27ae60';
-            const el = document.createElement('div');
-            el.style.cssText = `position:fixed;bottom:20px;right:20px;background:${bg};color:white;
+                const nameA = document.getElementById('teamA-name').value || 'TEAM A';
+                const nameB = document.getElementById('teamB-name').value || 'TEAM B';
+                document.getElementById('starter-name-A').innerText = nameA.toUpperCase();
+                document.getElementById('starter-name-B').innerText = nameB.toUpperCase();
+                document.getElementById('starter-dot-A').style.background = jerseyColorA;
+                document.getElementById('starter-dot-B').style.background = jerseyColorB;
+
+                // Auto-select if exactly 7
+                if (dataPemainA.length === 7) dataPemainA.forEach(p => startersA.add(p.nomor));
+                if (dataPemainB.length === 7) dataPemainB.forEach(p => startersB.add(p.nomor));
+
+                renderStarterGrid('A');
+                renderStarterGrid('B');
+                updateStarterCounter('A');
+                updateStarterCounter('B');
+                updateStarterReqChips('A');
+                updateStarterReqChips('B');
+                updateConfirmBtn();
+                document.getElementById('starters-warning').innerText = '';
+                document.getElementById('modal-starters').classList.add('show');
+            }
+            function closeStarterModal() {
+                document.getElementById('modal-starters').classList.remove('show');
+            }
+            function renderStarterGrid(team) {
+                const players = team === 'A' ? dataPemainA : dataPemainB;
+                const starters = team === 'A' ? startersA : startersB;
+                const grid = document.getElementById('starter-grid-' + team);
+                grid.innerHTML = '';
+                players.forEach(p => {
+                    const btn = document.createElement('button');
+                    btn.className = `starter-player-btn ${p.posisi === 'GK' ? 'is-gk' : ''} ${starters.has(p.nomor) ? 'selected' : ''}`;
+                    btn.innerHTML = `<span class="s-num">${p.nomor}</span><span class="s-pos">${p.posisi}</span><span class="s-name">${p.nama}</span>`;
+                    btn.title = `${p.nama} (#${p.nomor}) — ${p.posisi}`;
+                    btn.onclick = () => toggleStarter(team, p.nomor);
+                    grid.appendChild(btn);
+                });
+            }
+            function toggleStarter(team, nomor) {
+                const starters = team === 'A' ? startersA : startersB;
+                if (starters.has(nomor)) {
+                    starters.delete(nomor);
+                } else {
+                    if (starters.size >= 7) {
+                        setStarterWarning('Sudah 7 starter terpilih untuk Team ' + team + '. Hapus satu dulu.');
+                        return;
+                    }
+                    starters.add(nomor);
+                }
+                renderStarterGrid(team);
+                updateStarterCounter(team);
+                updateStarterReqChips(team);
+                updateConfirmBtn();
+                document.getElementById('starters-warning').innerText = '';
+            }
+            function autoSelectStarters(team) {
+                const players = team === 'A' ? dataPemainA : dataPemainB;
+                const starters = team === 'A' ? startersA : startersB;
+                starters.clear();
+                // GK first, then by registration order
+                const sorted = [...players].sort((a, b) => {
+                    if (a.posisi === 'GK' && b.posisi !== 'GK') return -1;
+                    if (b.posisi === 'GK' && a.posisi !== 'GK') return 1;
+                    return 0;
+                });
+                sorted.slice(0, 7).forEach(p => starters.add(p.nomor));
+                renderStarterGrid(team);
+                updateStarterCounter(team);
+                updateStarterReqChips(team);
+                updateConfirmBtn();
+            }
+            function resetStarters(team) {
+                if (team === 'A') startersA.clear();
+                else startersB.clear();
+                renderStarterGrid(team);
+                updateStarterCounter(team);
+                updateStarterReqChips(team);
+                updateConfirmBtn();
+            }
+            function updateStarterCounter(team) {
+                const count = team === 'A' ? startersA.size : startersB.size;
+                const el = document.getElementById('starter-count-' + team);
+                el.innerText = count + '/7';
+                el.className = 'starter-count ' + (count === 7 ? 'done' : count > 7 ? 'over' : '');
+            }
+            function updateStarterReqChips(team) {
+                const players = team === 'A' ? dataPemainA : dataPemainB;
+                const starters = team === 'A' ? startersA : startersB;
+                const el = document.getElementById('starter-req-' + team);
+                const selected = players.filter(p => starters.has(p.nomor));
+                const filledPos = new Set(selected.map(p => p.posisi));
+                const chips = ALL_POSITIONS.map(pos => {
+                    const has = filledPos.has(pos);
+                    const req = pos === 'GK';
+                    const cls = has ? 'filled' : (req ? 'missing' : '');
+                    return `<span class="starter-req-chip ${cls}">${has ? '✓' : '○'} ${pos}${req ? ' *' : ''}</span>`;
+                }).join('');
+                el.innerHTML = '<span class="starter-req-label">Posisi terpilih: <span style="color:rgba(255,255,255,.35)">* = wajib</span></span>' + chips;
+            }
+            function updateConfirmBtn() {
+                const btn = document.getElementById('btn-confirm-starters');
+                btn.disabled = !(startersA.size === 7 && startersB.size === 7);
+            }
+            function setStarterWarning(msg) {
+                const el = document.getElementById('starters-warning');
+                el.innerText = '⚠ ' + msg;
+                setTimeout(() => { el.innerText = ''; }, 2800);
+            }
+            function confirmStarters() {
+                if (startersA.size !== 7) { setStarterWarning('Team A belum 7 starter!'); return; }
+                if (startersB.size !== 7) { setStarterWarning('Team B belum 7 starter!'); return; }
+                const gkA = dataPemainA.some(p => startersA.has(p.nomor) && p.posisi === 'GK');
+                const gkB = dataPemainB.some(p => startersB.has(p.nomor) && p.posisi === 'GK');
+                const nA = document.getElementById('teamA-name').value || 'Team A';
+                const nB = document.getElementById('teamB-name').value || 'Team B';
+                if (!gkA) { setStarterWarning(nA + ': Wajib ada 1 Goalkeeper dalam starter!'); return; }
+                if (!gkB) { setStarterWarning(nB + ': Wajib ada 1 Goalkeeper dalam starter!'); return; }
+
+                // Build playerState
+                const stateA = {};
+                dataPemainA.forEach(p => { stateA[p.nomor] = startersA.has(p.nomor) ? 'court' : 'bench'; });
+                const stateB = {};
+                dataPemainB.forEach(p => { stateB[p.nomor] = startersB.has(p.nomor) ? 'court' : 'bench'; });
+                finalizeMatch(stateA, stateB);
+            }
+            function finalizeMatch(stateA, stateB) {
+                const dur = parseInt(document.getElementById('match-duration').value) || 30;
+                const matchData = {
+                    teamA: {
+                        name: document.getElementById('teamA-name').value || 'HOME',
+                        coach: document.getElementById('teamA-coach').value || 'COACH',
+                        color: jerseyColorA, players: dataPemainA, playerState: stateA, stats: {}
+                    },
+                    teamB: {
+                        name: document.getElementById('teamB-name').value || 'AWAY',
+                        coach: document.getElementById('teamB-coach').value || 'COACH',
+                        color: jerseyColorB, players: dataPemainB, playerState: stateB, stats: {}
+                    },
+                    info: {
+                        venue: document.getElementById('match-venue').value || '-',
+                        date: document.getElementById('match-date').value || '-',
+                        competition: document.getElementById('match-competition').value || '-',
+                        referee: document.getElementById('match-referee').value || '-',
+                        duration: dur, periods: totalPeriods
+                    },
+                    scoreA: 0, scoreB: 0,
+                    currentPeriod: 1,
+                    timeLeft: dur * 60,
+                    timeoutsA: 3, timeoutsB: 3,
+                    events: []
+                };
+                localStorage.setItem('matchData', JSON.stringify(matchData));
+                window.location.href = 'statistik.html';
+            }
+
+            // ============================================================
+            // TOAST
+            // ============================================================
+            function showToast(msg, type) {
+                const bg = type === 'error' ? '#e74c3c' : type === 'warn' ? '#f39c12' : '#27ae60';
+                const el = document.createElement('div');
+                el.style.cssText = `position:fixed;bottom:20px;right:20px;background:${bg};color:white;
         padding:12px 20px;border-radius:10px;font-weight:600;z-index:9999;font-size:14px;
         box-shadow:0 4px 20px rgba(0,0,0,.2);max-width:300px;transition:opacity .3s`;
-            el.innerText = msg;
-            document.body.appendChild(el);
-            setTimeout(() => { el.style.opacity = '0'; }, 2500);
-            setTimeout(() => el.remove(), 2900);
-        }
-
-        // ============================================================
-        // CSV IMPORT FOR TEAM PLAYERS
-        // ============================================================
-        let currentCsvTargetTeam = 'A';
-
-        function triggerCsvImport(team) {
-            currentCsvTargetTeam = team;
-            document.getElementById('csv-file-input').value = '';
-            document.getElementById('csv-file-input').click();
-        }
-
-        function handleCsvFile(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function (evt) {
-                const text = evt.target.result;
-                parseAndLoadCsv(text);
-            };
-            reader.readAsText(file);
-        }
-
-        function parseAndLoadCsv(text) {
-            const list = currentCsvTargetTeam === 'A' ? dataPemainA : dataPemainB;
-
-            let clearCurrent = false;
-            if (list.length > 0) {
-                clearCurrent = confirm("Apakah Anda ingin menghapus daftar pemain saat ini sebelum mengimpor?\n\n• Pilih 'OK' untuk MENGHAPUS roster lama dan menggantinya dengan isi CSV.\n• Pilih 'Batal' untuk MENGGABUNGKAN (merge) data baru.");
+                el.innerText = msg;
+                document.body.appendChild(el);
+                setTimeout(() => { el.style.opacity = '0'; }, 2500);
+                setTimeout(() => el.remove(), 2900);
             }
 
-            const lines = text.split(/\r?\n/);
-            if (lines.length === 0) {
-                showToast("File CSV kosong!", "error");
-                return;
+            // ============================================================
+            // CSV IMPORT FOR TEAM PLAYERS
+            // ============================================================
+            let currentCsvTargetTeam = 'A';
+
+            function triggerCsvImport(team) {
+                currentCsvTargetTeam = team;
+                document.getElementById('csv-file-input').value = '';
+                document.getElementById('csv-file-input').click();
             }
 
-            // Detect separator (comma or semicolon)
-            const firstLine = lines[0];
-            let separator = ',';
-            if (firstLine.includes(';')) {
-                separator = ';';
+            function handleCsvFile(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = function (evt) {
+                    const text = evt.target.result;
+                    parseAndLoadCsv(text);
+                };
+                reader.readAsText(file);
             }
 
-            const cleanLines = lines.map(line => line.trim()).filter(line => line.length > 0);
-            if (cleanLines.length === 0) {
-                showToast("Tidak ada data dalam CSV!", "error");
-                return;
-            }
+            function parseAndLoadCsv(text) {
+                const list = currentCsvTargetTeam === 'A' ? dataPemainA : dataPemainB;
 
-            // Find column indices
-            const headerRow = cleanLines[0].split(separator).map(h => h.trim().toLowerCase());
-            let nameIdx = -1;
-            let noIdx = -1;
-            let posIdx = -1;
-
-            for (let i = 0; i < headerRow.length; i++) {
-                const h = headerRow[i];
-                if (h.includes('nama') || h.includes('name')) {
-                    nameIdx = i;
-                } else if (h.includes('nomor') || h.includes('number') || h === 'no' || h === 'no.') {
-                    noIdx = i;
-                } else if (h.includes('posisi') || h.includes('position') || h === 'pos') {
-                    posIdx = i;
-                }
-            }
-
-            // Fallback to defaults
-            if (nameIdx === -1 || noIdx === -1 || posIdx === -1) {
-                nameIdx = 0;
-                noIdx = 1;
-                posIdx = 2;
-            }
-
-            const playersToImport = [];
-            const existingNumbers = new Set(clearCurrent ? [] : list.map(p => p.nomor));
-            const newNumbersInCsv = new Set();
-
-            // Check if first line is headers
-            let startIdx = 1;
-            const isFirstLineHeader = (cleanLines[0].toLowerCase().includes('nama') || cleanLines[0].toLowerCase().includes('nomor') || cleanLines[0].toLowerCase().includes('posisi') || cleanLines[0].toLowerCase().includes('name') || cleanLines[0].toLowerCase().includes('position'));
-            if (!isFirstLineHeader) {
-                startIdx = 0;
-            }
-
-            const ALL_VALID_POSITIONS = ['GK', 'CB', 'LB', 'RB', 'LW', 'RW', 'PV'];
-
-            for (let i = startIdx; i < cleanLines.length; i++) {
-                const cols = cleanLines[i].split(separator).map(c => c.trim().replace(/^["']|["']$/g, ''));
-
-                const name = cols[nameIdx] || '';
-                const rawNo = cols[noIdx] || '';
-                let pos = (cols[posIdx] || '').toUpperCase();
-
-                if (!name && !rawNo) continue;
-
-                // Validate Number
-                const no = rawNo.replace(/[^0-9]/g, '');
-                if (!no) {
-                    showToast(`Baris ${i + 1}: Nomor punggung tidak valid (${rawNo}). Dilewati.`, "warn");
-                    continue;
+                let clearCurrent = false;
+                if (list.length > 0) {
+                    clearCurrent = confirm("Apakah Anda ingin menghapus daftar pemain saat ini sebelum mengimpor?\n\n• Pilih 'OK' untuk MENGHAPUS roster lama dan menggantinya dengan isi CSV.\n• Pilih 'Batal' untuk MENGGABUNGKAN (merge) data baru.");
                 }
 
-                // Check duplicate shirt numbers
-                if (existingNumbers.has(no) || newNumbersInCsv.has(no)) {
-                    showToast(`Baris ${i + 1}: Nomor #${no} duplikat. Dilewati.`, "warn");
-                    continue;
+                const lines = text.split(/\r?\n/);
+                if (lines.length === 0) {
+                    showToast("File CSV kosong!", "error");
+                    return;
                 }
 
-                // Normalize/Validate Position
-                if (!ALL_VALID_POSITIONS.includes(pos)) {
-                    if (pos.includes('GOAL') || pos.includes('KIPER') || pos.includes('KEEP') || pos === 'G') {
-                        pos = 'GK';
-                    } else if (pos.includes('CENTER') || pos === 'C') {
-                        pos = 'CB';
-                    } else if (pos.includes('LEFT') && pos.includes('BACK')) {
-                        pos = 'LB';
-                    } else if (pos.includes('RIGHT') && pos.includes('BACK')) {
-                        pos = 'RB';
-                    } else if (pos.includes('LEFT') && pos.includes('WING')) {
-                        pos = 'LW';
-                    } else if (pos.includes('RIGHT') && pos.includes('WING')) {
-                        pos = 'RW';
-                    } else if (pos.includes('PIVOT') || pos === 'P') {
-                        pos = 'PV';
-                    } else {
-                        showToast(`Baris ${i + 1}: Posisi '${pos}' tidak standar. Default ke 'CB'.`, "warn");
-                        pos = 'CB';
+                // Detect separator (comma or semicolon)
+                const firstLine = lines[0];
+                let separator = ',';
+                if (firstLine.includes(';')) {
+                    separator = ';';
+                }
+
+                const cleanLines = lines.map(line => line.trim()).filter(line => line.length > 0);
+                if (cleanLines.length === 0) {
+                    showToast("Tidak ada data dalam CSV!", "error");
+                    return;
+                }
+
+                // Find column indices
+                const headerRow = cleanLines[0].split(separator).map(h => h.trim().toLowerCase());
+                let nameIdx = -1;
+                let noIdx = -1;
+                let posIdx = -1;
+
+                for (let i = 0; i < headerRow.length; i++) {
+                    const h = headerRow[i];
+                    if (h.includes('nama') || h.includes('name')) {
+                        nameIdx = i;
+                    } else if (h.includes('nomor') || h.includes('number') || h === 'no' || h === 'no.') {
+                        noIdx = i;
+                    } else if (h.includes('posisi') || h.includes('position') || h === 'pos') {
+                        posIdx = i;
                     }
                 }
 
-                playersToImport.push({ nomor: no, nama: name || `Pemain #${no}`, posisi: pos });
-                newNumbersInCsv.add(no);
+                // Fallback to defaults
+                if (nameIdx === -1 || noIdx === -1 || posIdx === -1) {
+                    nameIdx = 0;
+                    noIdx = 1;
+                    posIdx = 2;
+                }
+
+                const playersToImport = [];
+                const existingNumbers = new Set(clearCurrent ? [] : list.map(p => p.nomor));
+                const newNumbersInCsv = new Set();
+
+                // Check if first line is headers
+                let startIdx = 1;
+                const isFirstLineHeader = (cleanLines[0].toLowerCase().includes('nama') || cleanLines[0].toLowerCase().includes('nomor') || cleanLines[0].toLowerCase().includes('posisi') || cleanLines[0].toLowerCase().includes('name') || cleanLines[0].toLowerCase().includes('position'));
+                if (!isFirstLineHeader) {
+                    startIdx = 0;
+                }
+
+                const ALL_VALID_POSITIONS = ['GK', 'CB', 'LB', 'RB', 'LW', 'RW', 'PV'];
+
+                for (let i = startIdx; i < cleanLines.length; i++) {
+                    const cols = cleanLines[i].split(separator).map(c => c.trim().replace(/^["']|["']$/g, ''));
+
+                    const name = cols[nameIdx] || '';
+                    const rawNo = cols[noIdx] || '';
+                    let pos = (cols[posIdx] || '').toUpperCase();
+
+                    if (!name && !rawNo) continue;
+
+                    // Validate Number
+                    const no = rawNo.replace(/[^0-9]/g, '');
+                    if (!no) {
+                        showToast(`Baris ${i + 1}: Nomor punggung tidak valid (${rawNo}). Dilewati.`, "warn");
+                        continue;
+                    }
+
+                    // Check duplicate shirt numbers
+                    if (existingNumbers.has(no) || newNumbersInCsv.has(no)) {
+                        showToast(`Baris ${i + 1}: Nomor #${no} duplikat. Dilewati.`, "warn");
+                        continue;
+                    }
+
+                    // Normalize/Validate Position
+                    if (!ALL_VALID_POSITIONS.includes(pos)) {
+                        if (pos.includes('GOAL') || pos.includes('KIPER') || pos.includes('KEEP') || pos === 'G') {
+                            pos = 'GK';
+                        } else if (pos.includes('CENTER') || pos === 'C') {
+                            pos = 'CB';
+                        } else if (pos.includes('LEFT') && pos.includes('BACK')) {
+                            pos = 'LB';
+                        } else if (pos.includes('RIGHT') && pos.includes('BACK')) {
+                            pos = 'RB';
+                        } else if (pos.includes('LEFT') && pos.includes('WING')) {
+                            pos = 'LW';
+                        } else if (pos.includes('RIGHT') && pos.includes('WING')) {
+                            pos = 'RW';
+                        } else if (pos.includes('PIVOT') || pos === 'P') {
+                            pos = 'PV';
+                        } else {
+                            showToast(`Baris ${i + 1}: Posisi '${pos}' tidak standar. Default ke 'CB'.`, "warn");
+                            pos = 'CB';
+                        }
+                    }
+
+                    playersToImport.push({ nomor: no, nama: name || `Pemain #${no}`, posisi: pos });
+                    newNumbersInCsv.add(no);
+                }
+
+                if (playersToImport.length === 0) {
+                    showToast("Tidak ada pemain valid dalam CSV!", "error");
+                    return;
+                }
+
+                const currentCount = clearCurrent ? 0 : list.length;
+                if (currentCount + playersToImport.length > 16) {
+                    showToast(`Gagal impor! Total pemain melebihi batas 16 (Saat ini: ${currentCount}, Baru: ${playersToImport.length}).`, "error");
+                    return;
+                }
+
+                if (clearCurrent) {
+                    list.length = 0;
+                }
+
+                playersToImport.forEach(p => list.push(p));
+
+                rerenderTable(currentCsvTargetTeam);
+                updateValUI(currentCsvTargetTeam);
+
+                showToast(`Berhasil mengimpor ${playersToImport.length} pemain!`);
             }
 
-            if (playersToImport.length === 0) {
-                showToast("Tidak ada pemain valid dalam CSV!", "error");
-                return;
-            }
+            // ============================================================
+            // KEYBOARD
+            // ============================================================
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape') {
+                    document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show'));
+                    closeStarterModal();
+                    document.getElementById('modal-starters').classList.remove('show');
+                }
+                if (e.key === 'Enter' && document.getElementById('modal-add-player').classList.contains('show')) {
+                    savePlayer();
+                }
+            });
 
-            const currentCount = clearCurrent ? 0 : list.length;
-            if (currentCount + playersToImport.length > 16) {
-                showToast(`Gagal impor! Total pemain melebihi batas 16 (Saat ini: ${currentCount}, Baru: ${playersToImport.length}).`, "error");
-                return;
-            }
-
-            if (clearCurrent) {
-                list.length = 0;
-            }
-
-            playersToImport.forEach(p => list.push(p));
-
-            rerenderTable(currentCsvTargetTeam);
-            updateValUI(currentCsvTargetTeam);
-
-            showToast(`Berhasil mengimpor ${playersToImport.length} pemain!`);
-        }
-
-        // ============================================================
-        // KEYBOARD
-        // ============================================================
-        document.addEventListener('keydown', e => {
-            if (e.key === 'Escape') {
-                document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show'));
-                closeStarterModal();
-                document.getElementById('modal-starters').classList.remove('show');
-            }
-            if (e.key === 'Enter' && document.getElementById('modal-add-player').classList.contains('show')) {
-                savePlayer();
-            }
-        });
-
-        // Init
-        updateValUI('A');
-        updateValUI('B');
-        checkApiHealth().then(() => {
-            if (!apiAvailable) {
-                showToast('Mode offline: API tidak tersedia. Data disimpan ke localStorage.', 'warn');
-            }
-        });
+            // Init
+            updateValUI('A');
+            updateValUI('B');
+            checkApiHealth().then(() => {
+                if (!apiAvailable) {
+                    showToast('Mode offline: API tidak tersedia. Data disimpan ke localStorage.', 'warn');
+                }
+            });
     </script>
 </body>
 
