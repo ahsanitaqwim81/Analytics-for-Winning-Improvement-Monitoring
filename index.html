@@ -9,7 +9,7 @@
         // Inisialisasi Supabase ClientPA
         const SUPABASE_URL = 'https://nbedeeqmyesfvrcvwglt.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5iZWRlZXFteWVzZnZyY3Z3Z2x0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU5NDE3MjYsImV4cCI6MjEwMTUxNzcyNn0.zhGoWMaAptwDqm0GJNQUjGKQLL1JKtruvFY39CmcNoo';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -2229,9 +2229,9 @@
                 if (savedToSupabase) details.push('Supabase');
                 if (savedToApi) details.push('Database');
                 if (savedToLocal) details.push('Lokal');
-                
+
                 showToast(msg + '(' + details.join(', ') + ')!');
-                
+
                 // Refresh list cache
                 await loadSavedTeamsCache();
             } else {
