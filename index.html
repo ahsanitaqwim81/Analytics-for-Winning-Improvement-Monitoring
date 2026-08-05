@@ -1892,20 +1892,56 @@
         }
 
         async function loadSavedTeamsCache() {
+            // 1. Coba ambil seluruh data tim dari Supabase
+            try {
+                if (typeof supabaseClient !== 'undefined' && supabaseClient) {
+                    const { data, error } = await supabaseClient
+                        .from('teams')
+                        .select('*');
+                    if (!error && Array.isArray(data)) {
+                        const formatted = {};
+                        data.forEach(item => {
+                            if (item && item.name) {
+                                const key = item.name.trim().toUpperCase();
+                                let playersArr = item.players;
+                                if (typeof playersArr === 'string') {
+                                    try { playersArr = JSON.parse(playersArr); } catch(e) { playersArr = []; }
+                                }
+                                formatted[key] = {
+                                    name: item.name,
+                                    coach: item.coach || '',
+                                    color: item.color || '#3498db',
+                                    players: Array.isArray(playersArr) ? playersArr : []
+                                };
+                            }
+                        });
+                        savedTeamsCache = formatted;
+                        return savedTeamsCache;
+                    } else if (error) {
+                        console.warn('Gagal memuat tim dari Supabase:', error.message);
+                    }
+                }
+            } catch (err) {
+                console.warn('Eror Supabase saat loadSavedTeamsCache:', err);
+            }
+
+            // 2. Fallback ke MySQL API jika tersedia
             if (apiAvailable) {
                 try {
                     const response = await fetch(`${apiEndpoint}?action=get_teams`, { method: 'GET', cache: 'no-store' });
-                    if (!response.ok) throw new Error('Gagal mengambil tim dari API');
-                    const data = await response.json();
-                    if (data && typeof data === 'object') {
-                        savedTeamsCache = data;
-                        return savedTeamsCache;
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data && typeof data === 'object') {
+                            savedTeamsCache = data;
+                            return savedTeamsCache;
+                        }
                     }
                 } catch (error) {
-                    apiAvailable = false;
                     console.warn('Gagal memuat tim dari API, fallback ke localStorage:', error);
                 }
             }
+
+            // 3. Fallback ke localStorage
             savedTeamsCache = getLocalSavedTeams();
             return savedTeamsCache;
         }
@@ -1941,7 +1977,7 @@
             alert('AWIM — Handball Live Statistics v2.0\n\nFitur:\n• Live score & timer\n• Roster dinamis (on-court/bench)\n• Substitusi pemain\n• Kartu Kuning & Merah\n• Timeout tracking\n• Multi-babak\n• Statistik per pemain\n• Undo aksi\n• Export laporan\n• Save/Load tim');
         }
         async function manageTeams() {
-            const saved = apiAvailable ? await loadSavedTeamsCache() : getLocalSavedTeams();
+            const saved = await loadSavedTeamsCache();
             const keys = Object.keys(saved);
             const container = document.getElementById('manage-teams-list');
             container.innerHTML = '';
@@ -1957,8 +1993,8 @@
                     <div style="width:22px;height:22px;border-radius:50%;background:${t.color};border:2px solid #ddd;flex-shrink:0"></div>
                     <div>
                         <strong style="font-size:15px">${t.name}</strong>
-                        <div style="font-size:12px;color:#888;margin-top:2px">Coach: ${t.coach || '-'} · ${t.players.length} pemain</div>
-                        <div style="font-size:11px;color:#aaa">${t.players.map(p => p.posisi + ' #' + p.nomor).join(', ')}</div>
+                        <div style="font-size:12px;color:#888;margin-top:2px">Coach: ${t.coach || '-'} · ${t.players ? t.players.length : 0} pemain</div>
+                        <div style="font-size:11px;color:#aaa">${t.players ? t.players.map(p => p.posisi + ' #' + p.nomor).join(', ') : ''}</div>
                     </div>
                 </div>
                 <div class="saved-team-card-actions">
@@ -2226,7 +2262,7 @@
             document.getElementById('modal-load-team').classList.remove('show');
         }
         async function renderSavedList(containerId, isManage) {
-            const saved = apiAvailable ? await loadSavedTeamsCache() : getLocalSavedTeams();
+            const saved = await loadSavedTeamsCache();
             const keys = Object.keys(saved);
             const el = document.getElementById(containerId);
             el.innerHTML = '';
@@ -2243,9 +2279,9 @@
                 <div style="width:22px;height:22px;border-radius:50%;background:${t.color};border:2px solid #ddd;flex-shrink:0"></div>
                 <div style="min-width:0">
                     <strong style="font-size:14px">${t.name}</strong>
-                    <div style="font-size:11px;color:#888;margin-top:1px">Coach: ${t.coach || '-'} · ${t.players.length} pemain</div>
+                    <div style="font-size:11px;color:#888;margin-top:1px">Coach: ${t.coach || '-'} · ${t.players ? t.players.length : 0} pemain</div>
                     <div style="font-size:11px;color:#bbb;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px">
-                        ${t.players.map(p => '#' + p.nomor + ' ' + p.posisi).join(' · ')}
+                        ${t.players ? t.players.map(p => '#' + p.nomor + ' ' + p.posisi).join(' · ') : ''}
                     </div>
                 </div>
             </div>
@@ -2257,7 +2293,7 @@
             });
         }
         async function loadTeam(key) {
-            const saved = apiAvailable ? await loadSavedTeamsCache() : getLocalSavedTeams();
+            const saved = await loadSavedTeamsCache();
             const t = saved[key];
             if (!t) { showToast('Tim tidak ditemukan.', 'error'); return; }
             const team = loadModalTarget;
@@ -2269,33 +2305,57 @@
             rerenderTable(team);
             updateValUI(team);
             closeLoadModal();
-            showToast('📂 Tim ' + t.name + ' dimuat! (' + t.players.length + ' pemain)');
+            showToast('📂 Tim ' + t.name + ' dimuat! (' + (t.players ? t.players.length : 0) + ' pemain)');
         }
         async function deleteTeamSaved(key, isManage) {
-            if (!confirm('Hapus tim "' + key + '" dari penyimpanan?')) return;
+            const saved = await loadSavedTeamsCache();
+            const t = saved[key];
+            const nameToDelete = t ? t.name : key;
+
+            if (!confirm('Hapus tim "' + nameToDelete + '" dari penyimpanan?')) return;
+
+            // 1. Hapus dari Supabase
+            try {
+                if (typeof supabaseClient !== 'undefined' && supabaseClient) {
+                    const { error } = await supabaseClient
+                        .from('teams')
+                        .delete()
+                        .eq('name', nameToDelete);
+                    if (error) {
+                        console.warn('Gagal hapus dari Supabase:', error.message);
+                    }
+                }
+            } catch (err) {
+                console.warn('Eror Supabase saat deleteTeamSaved:', err);
+            }
+
+            // 2. Hapus dari MySQL API (jika API tersedia)
             if (apiAvailable) {
                 try {
-                    const response = await fetch(`${apiEndpoint}?action=delete_team&name=${encodeURIComponent(key)}`, { method: 'DELETE' });
-                    if (!response.ok) throw new Error('API delete failed');
-                    const result = await response.json();
-                    if (result.status === 'success') {
-                        showToast('Tim ' + key + ' dihapus dari database MySQL.');
-                        await loadSavedTeamsCache();
-                        if (isManage) manageTeams(); else renderSavedList('saved-teams-list', false);
-                        return;
-                    }
-                    throw new Error(result.message || 'Unknown API error');
+                    await fetch(`${apiEndpoint}?action=delete_team&name=${encodeURIComponent(nameToDelete)}`, { method: 'DELETE' });
                 } catch (error) {
-                    console.warn('Hapus tim via API gagal, gunakan localStorage:', error);
-                    apiAvailable = false;
-                    showToast('API tidak tersedia, hapus tim dari localStorage.', 'warn');
+                    console.warn('Hapus tim via API gagal:', error);
                 }
             }
-            const saved = getLocalSavedTeams();
-            delete saved[key];
-            localStorage.setItem('savedTeams', JSON.stringify(saved));
-            if (isManage) manageTeams(); else renderSavedList('saved-teams-list', false);
-            showToast('Tim ' + key + ' dihapus.');
+
+            // 3. Hapus dari localStorage
+            try {
+                const local = getLocalSavedTeams();
+                delete local[key];
+                delete local[nameToDelete];
+                delete local[nameToDelete.toUpperCase()];
+                localStorage.setItem('savedTeams', JSON.stringify(local));
+            } catch (err) {
+                console.warn('Gagal hapus dari localStorage:', err);
+            }
+
+            showToast('Tim ' + nameToDelete + ' dihapus.');
+            await loadSavedTeamsCache();
+            if (isManage) {
+                await manageTeams();
+            } else {
+                await renderSavedList('saved-teams-list', false);
+            }
         }
 
         // ============================================================
