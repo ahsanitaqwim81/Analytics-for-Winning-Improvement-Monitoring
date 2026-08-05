@@ -27,13 +27,13 @@ CREATE TABLE teams (
     name VARCHAR(100) NOT NULL UNIQUE COMMENT 'Nama tim/klub',
     coach VARCHAR(100) DEFAULT NULL COMMENT 'Nama pelatih tim',
     color VARCHAR(7) DEFAULT '#3498db' COMMENT 'Kode warna jersey tim (hex, contoh: #e74c3c)',
+    players LONGTEXT DEFAULT NULL COMMENT 'Daftar pemain dalam format JSON',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB COMMENT='Tabel data tim / klub';
 
 -- ============================================================
--- Skema pemain tidak disimpan di database.
--- Pemain akan diinput manual oleh pengguna di aplikasi.
+-- Daftar pemain disimpan sebagai JSON dalam kolom players.
 -- ============================================================
 
 -- ============================================================

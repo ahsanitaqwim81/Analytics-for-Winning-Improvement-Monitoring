@@ -44,6 +44,12 @@ try {
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
     );
+    // Tambahkan kolom players jika belum ada
+    try {
+        $pdo->exec("ALTER TABLE teams ADD COLUMN players LONGTEXT DEFAULT NULL");
+    } catch (\PDOException $ex) {
+        // Kolom mungkin sudah ada, abaikan
+    }
 } catch (\PDOException $e) {
     http_response_code(500);
     echo json_encode([
@@ -112,7 +118,7 @@ function getTeams($pdo) {
                 "name"    => $team['name'],
                 "coach"   => $team['coach'] ?? '',
                 "color"   => $team['color'] ?? '#3498db',
-                "players" => []
+                "players" => (!empty($team['players'])) ? json_decode($team['players'], true) : []
             ];
         }
         
@@ -168,22 +174,25 @@ function saveTeam($pdo) {
         $name = trim($input['name']);
         $coach = isset($input['coach']) ? trim($input['coach']) : '';
         $color = isset($input['color']) ? trim($input['color']) : '#3498db';
+        $players = isset($input['players']) ? json_encode($input['players']) : '[]';
 
         // Jalankan transaksi agar konsisten
         $pdo->beginTransaction();
 
         // 1. Simpan atau perbarui tim (ON DUPLICATE KEY UPDATE)
         $stmtTeam = $pdo->prepare("
-            INSERT INTO teams (name, coach, color) 
-            VALUES (:name, :coach, :color) 
+            INSERT INTO teams (name, coach, color, players) 
+            VALUES (:name, :coach, :color, :players) 
             ON DUPLICATE KEY UPDATE 
                 coach = VALUES(coach), 
-                color = VALUES(color)
+                color = VALUES(color),
+                players = VALUES(players)
         ");
         $stmtTeam->execute([
             ':name'  => $name,
             ':coach' => $coach,
-            ':color' => $color
+            ':color' => $color,
+            ':players' => $players
         ]);
 
         $pdo->commit();

@@ -7,9 +7,9 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         // Inisialisasi Supabase ClientPA
-        const SUPABASE_URL = 'https://nbedeeqmyesfvrcvwglt.supabase.co/rest/v1/';
+        const SUPABASE_URL = 'https://nbedeeqmyesfvrcvwglt.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5iZWRlZXFteWVzZnZyY3Z3Z2x0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU5NDE3MjYsImV4cCI6MjEwMTUxNzcyNn0.zhGoWMaAptwDqm0GJNQUjGKQLL1JKtruvFY39CmcNoo';
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -2150,23 +2150,92 @@
             if (!nameVal) { showToast('Isi nama tim dulu!', 'error'); return; }
             if (players.length < 1) { showToast('Tambahkan pemain atau impor CSV dulu!', 'error'); return; }
 
-            // Simpan ke Supabase
-            const { data, error } = await supabase
-                .from('teams')
-                .insert([
-                    {
-                        name: nameVal,
-                        coach: coach,
-                        color: color,
-                        players: players
-                    }
-                ]);
+            let savedToSupabase = false;
+            let savedToApi = false;
+            let savedToLocal = false;
 
-            if (error) {
-                console.error('Gagal menyimpan ke Supabase:', error.message);
-                showToast('Gagal menyimpan ke database!', 'error');
+            // 1. Simpan ke Supabase (jika supabase client terdefinisi)
+            try {
+                if (typeof supabase !== 'undefined' && supabase) {
+                    const { data, error } = await supabase
+                        .from('teams')
+                        .insert([
+                            {
+                                name: nameVal,
+                                coach: coach,
+                                color: color,
+                                players: players
+                            }
+                        ]);
+                    if (error) {
+                        console.error('Gagal menyimpan ke Supabase:', error.message);
+                    } else {
+                        savedToSupabase = true;
+                    }
+                }
+            } catch (err) {
+                console.error('Eror Supabase:', err);
+            }
+
+            // 2. Simpan ke MySQL via API (jika API tersedia)
+            if (apiAvailable) {
+                try {
+                    const response = await fetch(`${apiEndpoint}?action=save_team`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            name: nameVal,
+                            coach: coach,
+                            color: color,
+                            players: players
+                        })
+                    });
+                    if (response.ok) {
+                        const result = await response.json();
+                        if (result.status === 'success') {
+                            savedToApi = true;
+                        } else {
+                            console.error('Gagal simpan via API:', result.message);
+                        }
+                    } else {
+                        console.error('Gagal simpan via API: HTTP ' + response.status);
+                    }
+                } catch (err) {
+                    console.error('Eror API MySQL:', err);
+                }
+            }
+
+            // 3. Simpan ke localStorage (selalu lakukan sebagai fallback / cache lokal)
+            try {
+                const saved = getLocalSavedTeams();
+                saved[nameVal.toUpperCase()] = {
+                    name: nameVal,
+                    coach: coach,
+                    color: color,
+                    players: players
+                };
+                localStorage.setItem('savedTeams', JSON.stringify(saved));
+                savedToLocal = true;
+            } catch (err) {
+                console.error('Gagal simpan ke localStorage:', err);
+            }
+
+            // Beri feedback ke user
+            if (savedToSupabase || savedToApi || savedToLocal) {
+                let msg = '💾 Tim ' + nameVal + ' berhasil disimpan ';
+                let details = [];
+                if (savedToSupabase) details.push('Supabase');
+                if (savedToApi) details.push('Database');
+                if (savedToLocal) details.push('Lokal');
+                
+                showToast(msg + '(' + details.join(', ') + ')!');
+                
+                // Refresh list cache
+                await loadSavedTeamsCache();
             } else {
-                showToast('💾 Tim ' + nameVal + ' berhasil disimpan ke Supabase!');
+                showToast('Gagal menyimpan tim!', 'error');
             }
         }
         async function openLoadModal(targetTeam) {
