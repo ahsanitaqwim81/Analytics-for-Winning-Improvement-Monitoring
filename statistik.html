@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://nbedeeqmyesfvrcvwglt.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5iZWRlZXFteWVzZnZyY3Z3Z2x0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU5NDE3MjYsImV4cCI6MjEwMTUxNzcyNn0.zhGoWMaAptwDqm0GJNQUjGKQLL1JKtruvFY39CmcNoo';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AWIM — Live Stats</title>

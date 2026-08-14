@@ -2981,13 +2981,46 @@
         function hideMatchHistory() {
             document.getElementById('match-history-section').classList.remove('show');
         }
-        function loadMatchHistory() {
+        async function loadMatchHistory() {
             const container = document.getElementById('match-history-cards');
             if (!container) return;
             let history = [];
+
+            // 1. Ambil riwayat terbaru dari Supabase
             try {
-                history = JSON.parse(localStorage.getItem('matchHistory') || '[]');
-            } catch(e) { history = []; }
+                if (typeof supabaseClient !== 'undefined' && supabaseClient) {
+                    const { data, error } = await supabaseClient
+                        .from('match_history')
+                        .select('*')
+                        .order('created_at', { ascending: false })
+                        .limit(10);
+
+                    if (!error && Array.isArray(data) && data.length > 0) {
+                        history = data.map(item => {
+                            let parsed = {};
+                            if (item.match_data) {
+                                try {
+                                    parsed = typeof item.match_data === 'string' ? JSON.parse(item.match_data) : item.match_data;
+                                } catch(e) { parsed = {}; }
+                            }
+                            parsed.id = item.id;
+                            parsed.finishedAt = item.finished_at || item.created_at || parsed.finishedAt;
+                            return parsed;
+                        });
+                        // Sinkronkan ke cache lokal
+                        localStorage.setItem('matchHistory', JSON.stringify(history));
+                    }
+                }
+            } catch (err) {
+                console.warn('Gagal memuat riwayat dari Supabase, fallback ke localStorage:', err);
+            }
+
+            // 2. Fallback ke localStorage jika data Supabase kosong / offline
+            if (history.length === 0) {
+                try {
+                    history = JSON.parse(localStorage.getItem('matchHistory') || '[]');
+                } catch(e) { history = []; }
+            }
 
             if (history.length === 0) {
                 container.innerHTML = '<div class="mh-empty">&#128202; Belum ada riwayat pertandingan selesai.<br><small style="opacity:.5">Riwayat akan muncul setelah pertandingan diakhiri dari halaman statistik.</small></div>';
@@ -3083,13 +3116,24 @@
                 showToast('Gagal membuka laporan: ' + e.message, 'error');
             }
         }
-        function deleteHistoryEntry(idx) {
+        async function deleteHistoryEntry(idx) {
             if (!confirm('Hapus riwayat pertandingan ini?')) return;
             try {
                 const history = JSON.parse(localStorage.getItem('matchHistory') || '[]');
+                const itemToDelete = history[idx];
+
+                // Hapus dari Supabase jika ada id
+                if (itemToDelete && itemToDelete.id && typeof supabaseClient !== 'undefined' && supabaseClient) {
+                    try {
+                        await supabaseClient.from('match_history').delete().eq('id', itemToDelete.id);
+                    } catch(err) {
+                        console.warn('Gagal menghapus dari Supabase:', err);
+                    }
+                }
+
                 history.splice(idx, 1);
                 localStorage.setItem('matchHistory', JSON.stringify(history));
-                loadMatchHistory();
+                await loadMatchHistory();
                 showToast('Riwayat pertandingan dihapus.');
             } catch(e) {
                 showToast('Gagal menghapus: ' + e.message, 'error');
