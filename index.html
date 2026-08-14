@@ -497,6 +497,373 @@
             background: var(--blue-dark)
         }
 
+        /* ============ MATCH HISTORY (Homepage) ============ */
+        #match-history-section {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.72);
+            z-index: 800;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(8px);
+            padding: 24px 16px;
+        }
+        #match-history-section.show {
+            display: flex;
+        }
+        .mh-panel {
+            background: #0f2535;
+            border: 1px solid rgba(255,255,255,.12);
+            border-radius: 20px;
+            width: min(900px, 96vw);
+            max-height: 88vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 32px 80px rgba(0,0,0,.55);
+            animation: modalIn .22s ease;
+        }
+        .mh-header {
+            padding: 22px 28px 16px;
+            border-bottom: 1px solid rgba(255,255,255,.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .mh-title {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 26px;
+            font-weight: 800;
+            color: white;
+            letter-spacing: 2px;
+        }
+        .mh-title span { color: var(--orange); }
+        .mh-close-btn {
+            background: rgba(255,255,255,.1);
+            border: none;
+            color: white;
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            font-size: 18px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            transition: .15s;
+        }
+        .mh-close-btn:hover { background: rgba(255,255,255,.2); }
+        .mh-body {
+            overflow-y: auto;
+            padding: 20px 28px 28px;
+            flex-grow: 1;
+        }
+        .mh-empty {
+            text-align: center;
+            color: rgba(255,255,255,.35);
+            font-size: 15px;
+            padding: 60px 0;
+            font-style: italic;
+        }
+        .history-card {
+            background: rgba(255,255,255,.05);
+            border: 1px solid rgba(255,255,255,.1);
+            border-radius: 14px;
+            padding: 18px 20px;
+            margin-bottom: 12px;
+            transition: border-color .18s, background .18s;
+        }
+        .history-card:hover {
+            border-color: rgba(243,156,18,.45);
+            background: rgba(255,255,255,.07);
+        }
+        .hc-top {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 12px;
+        }
+        .hc-score-block {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+        .hc-team-name {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 17px;
+            font-weight: 700;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+        .hc-dot {
+            width: 12px; height: 12px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,.3);
+            flex-shrink: 0;
+        }
+        .hc-score {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 36px;
+            font-weight: 800;
+            color: white;
+            min-width: 36px;
+            text-align: center;
+            line-height: 1;
+        }
+        .hc-sep {
+            font-size: 22px;
+            color: rgba(255,255,255,.3);
+            font-weight: 300;
+            line-height: 1;
+        }
+        .hc-winner-badge {
+            margin-left: auto;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding: 4px 12px;
+            border-radius: 20px;
+            flex-shrink: 0;
+        }
+        .hc-winner-badge.win { background: rgba(39,174,96,.2); color: #6dffaa; border: 1px solid rgba(39,174,96,.4); }
+        .hc-winner-badge.seri { background: rgba(243,156,18,.15); color: #ffd27a; border: 1px solid rgba(243,156,18,.35); }
+        .hc-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .hc-chip {
+            background: rgba(255,255,255,.06);
+            border: 1px solid rgba(255,255,255,.1);
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 11px;
+            color: rgba(255,255,255,.55);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .hc-stats {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+        }
+        .hc-stat-item {
+            background: rgba(255,255,255,.04);
+            border-radius: 8px;
+            padding: 8px 14px;
+            min-width: 80px;
+            text-align: center;
+        }
+        .hc-stat-val {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: white;
+        }
+        .hc-stat-lbl {
+            font-size: 10px;
+            color: rgba(255,255,255,.4);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+        .hc-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+        .btn-view-report {
+            background: var(--orange);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: .5px;
+            cursor: pointer;
+            transition: .18s;
+        }
+        .btn-view-report:hover { background: var(--orange-dark); transform: translateY(-1px); }
+        .btn-del-history {
+            background: none;
+            border: 1px solid rgba(255,255,255,.15);
+            color: rgba(255,255,255,.35);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: .18s;
+        }
+        .btn-del-history:hover { border-color: var(--red); color: var(--red); }
+
+        /* ============ MODAL END MATCH (di statistik.html) ============ */
+        #modal-end-match {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.75);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+        #modal-end-match.show { display: flex; }
+        .em-box {
+            background: linear-gradient(145deg,#0f2535,#1a3a50);
+            border: 1px solid rgba(255,255,255,.12);
+            border-radius: 20px;
+            padding: 36px 40px;
+            width: min(520px, 95vw);
+            text-align: center;
+            box-shadow: 0 40px 100px rgba(0,0,0,.6);
+            animation: modalIn .25s ease;
+        }
+        .em-headline {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            color: rgba(255,255,255,.4);
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+        .em-winner-label {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            margin-bottom: 28px;
+            text-transform: uppercase;
+        }
+        .em-winner-label.em-winner-a { color: #6dffaa; }
+        .em-winner-label.em-winner-b { color: #7dd3fc; }
+        .em-winner-label.em-draw     { color: #ffd27a; }
+        .em-scoreline {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+        .em-team-block {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            flex: 1;
+        }
+        .em-team-dot-large {
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,.3);
+        }
+        .em-team-name {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: rgba(255,255,255,.75);
+            letter-spacing: 1.5px;
+        }
+        .em-final-score {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 72px;
+            font-weight: 800;
+            color: white;
+            line-height: 1;
+        }
+        .em-dash {
+            font-size: 42px;
+            color: rgba(255,255,255,.25);
+            font-weight: 300;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .em-info-row {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 22px;
+        }
+        .em-info-chip {
+            background: rgba(255,255,255,.07);
+            border: 1px solid rgba(255,255,255,.1);
+            border-radius: 20px;
+            padding: 5px 14px;
+            font-size: 12px;
+            color: rgba(255,255,255,.5);
+        }
+        .em-scorers-row {
+            background: rgba(255,255,255,.05);
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin-bottom: 24px;
+            text-align: left;
+        }
+        .em-scorers-label {
+            font-size: 10px;
+            color: rgba(255,255,255,.35);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+        .em-scorer {
+            display: block;
+            font-size: 13px;
+            color: rgba(255,255,255,.7);
+            margin-bottom: 4px;
+        }
+        .em-scorer strong {
+            color: var(--orange);
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 17px;
+            margin-right: 6px;
+        }
+        .em-scorer em { color: rgba(255,255,255,.35); font-style: normal; font-size: 11px; }
+        .em-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn-em-report {
+            background: var(--orange);
+            color: white;
+            border: none;
+            padding: 13px 28px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: .5px;
+            cursor: pointer;
+            transition: .18s;
+            box-shadow: 0 4px 16px rgba(243,156,18,.35);
+        }
+        .btn-em-report:hover { background: var(--orange-dark); transform: translateY(-2px); }
+        .btn-em-home {
+            background: rgba(255,255,255,.1);
+            color: rgba(255,255,255,.8);
+            border: 1px solid rgba(255,255,255,.2);
+            padding: 13px 28px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: .18s;
+        }
+        .btn-em-home:hover { background: rgba(255,255,255,.18); color: white; }
+
         table {
             width: 100%;
             border-collapse: collapse
@@ -1457,8 +1824,22 @@
             <div class="menu-group">
                 <button class="menu-btn primary" onclick="goToSetup()">&#9654; New Match</button>
                 <button class="menu-btn" onclick="loadLastMatch()">&#128190; Continue Last Match</button>
+                <button class="menu-btn" onclick="showMatchHistory()">&#128202; Riwayat Pertandingan</button>
                 <button class="menu-btn" onclick="manageTeams()">&#128101; Manage Saved Teams</button>
                 <button class="menu-btn" onclick="showAbout()">&#8505; Help / About</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MATCH HISTORY PANEL -->
+    <div id="match-history-section">
+        <div class="mh-panel">
+            <div class="mh-header">
+                <div class="mh-title">&#128202; Riwayat <span>Pertandingan</span></div>
+                <button class="mh-close-btn" onclick="hideMatchHistory()" title="Tutup">&times;</button>
+            </div>
+            <div class="mh-body">
+                <div id="match-history-cards"><div class="mh-empty">Memuat riwayat...</div></div>
             </div>
         </div>
     </div>
@@ -1730,6 +2111,10 @@
 
     <!-- HIDDEN INPUT FOR CSV IMPORT -->
     <input type="file" id="csv-file-input" accept=".csv" style="display:none" onchange="handleCsvFile(event)">
+
+    <!-- MODAL END MATCH (dipakai oleh statistik.html via app.js, perlu DOM-nya ada di halaman lain juga;
+         di index.html ini hanya ada sebagai placeholder untuk potensi standalone use) -->
+    <!-- NOTE: Modal ini utamanya dirender oleh statistik.html; lihat bagian statistik.html -->
 
     <!-- MODAL: TAMBAH PEMAIN -->
     <div class="modal-overlay" id="modal-add-player">
@@ -2654,6 +3039,131 @@
         }
 
         // ============================================================
+        // MATCH HISTORY
+        // ============================================================
+        function showMatchHistory() {
+            loadMatchHistory();
+            document.getElementById('match-history-section').classList.add('show');
+        }
+        function hideMatchHistory() {
+            document.getElementById('match-history-section').classList.remove('show');
+        }
+        function loadMatchHistory() {
+            const container = document.getElementById('match-history-cards');
+            if (!container) return;
+            let history = [];
+            try {
+                history = JSON.parse(localStorage.getItem('matchHistory') || '[]');
+            } catch(e) { history = []; }
+
+            if (history.length === 0) {
+                container.innerHTML = '<div class="mh-empty">&#128202; Belum ada riwayat pertandingan selesai.<br><small style="opacity:.5">Riwayat akan muncul setelah pertandingan diakhiri dari halaman statistik.</small></div>';
+                return;
+            }
+            container.innerHTML = '';
+            history.forEach((m, idx) => {
+                // Hitung statistik ringkas
+                let totalGoals = (m.scoreA || 0) + (m.scoreB || 0);
+                let totalFouls = 0;
+                let topScorer = null;
+                let topGoals  = 0;
+                ['teamA', 'teamB'].forEach(tk => {
+                    const team = m[tk];
+                    if (!team) return;
+                    (team.players || []).forEach(p => {
+                        const st = (team.stats || {})[p.nomor] || {};
+                        totalFouls += (st.fouls || 0);
+                        if ((st.goals || 0) > topGoals) {
+                            topGoals = st.goals;
+                            topScorer = { name: p.nama, goals: st.goals, team: team.name };
+                        }
+                    });
+                });
+
+                const nameA = (m.teamA?.name || 'Team A').toUpperCase();
+                const nameB = (m.teamB?.name || 'Team B').toUpperCase();
+                const colorA = m.teamA?.color || '#e74c3c';
+                const colorB = m.teamB?.color || '#1abc9c';
+                const sA = m.scoreA || 0;
+                const sB = m.scoreB || 0;
+                let winnerBadge = '';
+                if (sA > sB) winnerBadge = `<span class="hc-winner-badge win">🏆 ${nameA}</span>`;
+                else if (sB > sA) winnerBadge = `<span class="hc-winner-badge win">🏆 ${nameB}</span>`;
+                else winnerBadge = `<span class="hc-winner-badge seri">🤝 Seri</span>`;
+
+                const comp  = m.info?.competition || '';
+                const venue = m.info?.venue        || '';
+                const date  = m.info?.date         || '';
+                const finishedAt = m.finishedAt ? new Date(m.finishedAt).toLocaleString('id-ID') : '-';
+
+                const scorerHTML = topScorer
+                    ? `&#127947; <strong>${topScorer.goals} gol</strong> — ${topScorer.name} <em>(${topScorer.team})</em>`
+                    : '<em style="opacity:.4">—</em>';
+
+                const card = document.createElement('div');
+                card.className = 'history-card';
+                card.innerHTML = `
+                    <div class="hc-top">
+                        <div class="hc-score-block">
+                            <div class="hc-team-name"><span class="hc-dot" style="background:${colorA}"></span>${nameA}</div>
+                            <div class="hc-score">${sA}</div>
+                            <div class="hc-sep">—</div>
+                            <div class="hc-score">${sB}</div>
+                            <div class="hc-team-name">${nameB}<span class="hc-dot" style="background:${colorB}"></span></div>
+                        </div>
+                        ${winnerBadge}
+                    </div>
+                    <div class="hc-meta">
+                        ${comp  ? `<span class="hc-chip">🏟 ${comp}</span>`  : ''}
+                        ${venue ? `<span class="hc-chip">📍 ${venue}</span>` : ''}
+                        ${date  ? `<span class="hc-chip">📅 ${date}</span>`  : ''}
+                        <span class="hc-chip">🕐 ${finishedAt}</span>
+                    </div>
+                    <div class="hc-stats">
+                        <div class="hc-stat-item">
+                            <div class="hc-stat-val">${totalGoals}</div>
+                            <div class="hc-stat-lbl">Total Gol</div>
+                        </div>
+                        <div class="hc-stat-item">
+                            <div class="hc-stat-val">${totalFouls}</div>
+                            <div class="hc-stat-lbl">Total Foul</div>
+                        </div>
+                        <div class="hc-stat-item" style="flex:2;text-align:left;padding-left:16px">
+                            <div style="font-size:10px;color:rgba(255,255,255,.35);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">Top Scorer</div>
+                            <div style="font-size:13px;color:rgba(255,255,255,.75)">${scorerHTML}</div>
+                        </div>
+                    </div>
+                    <div class="hc-actions">
+                        <button class="btn-del-history" onclick="deleteHistoryEntry(${idx})" title="Hapus dari riwayat">&#128465; Hapus</button>
+                        <button class="btn-view-report" onclick="viewHistoryReport(${idx})">&#128202; Lihat Report Final</button>
+                    </div>`;
+                container.appendChild(card);
+            });
+        }
+        function viewHistoryReport(idx) {
+            try {
+                const history = JSON.parse(localStorage.getItem('matchHistory') || '[]');
+                if (!history[idx]) { showToast('Data pertandingan tidak ditemukan.', 'error'); return; }
+                localStorage.setItem('matchData', JSON.stringify(history[idx]));
+                window.open('report.html', '_blank');
+            } catch(e) {
+                showToast('Gagal membuka laporan: ' + e.message, 'error');
+            }
+        }
+        function deleteHistoryEntry(idx) {
+            if (!confirm('Hapus riwayat pertandingan ini?')) return;
+            try {
+                const history = JSON.parse(localStorage.getItem('matchHistory') || '[]');
+                history.splice(idx, 1);
+                localStorage.setItem('matchHistory', JSON.stringify(history));
+                loadMatchHistory();
+                showToast('Riwayat pertandingan dihapus.');
+            } catch(e) {
+                showToast('Gagal menghapus: ' + e.message, 'error');
+            }
+        }
+
+        // ============================================================
         // KEYBOARD
         // ============================================================
         document.addEventListener('keydown', e => {
@@ -2670,6 +3180,7 @@
         // Init
         updateValUI('A');
         updateValUI('B');
+        loadMatchHistory(); // pre-load history data ke memory
         checkApiHealth().then(() => {
             if (!apiAvailable) {
                 showToast('Mode offline: API tidak tersedia. Data disimpan ke localStorage.', 'warn');

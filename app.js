@@ -431,16 +431,122 @@ timeoutsB = _tempTimeouts;
 }
 function endMatch() {
     clearInterval(timerInterval);
+    isRunning = false;
     document.getElementById('period-overlay').classList.remove('show');
-    const winner = matchData.scoreA > matchData.scoreB ? matchData.teamA.name :
-                   matchData.scoreB > matchData.scoreA ? matchData.teamB.name : 'SERI';
-    const msg = winner === 'SERI'
-        ? `Pertandingan selesai! Hasil SERI ${matchData.scoreA} – ${matchData.scoreB}`
-        : `Pertandingan selesai!\n🏆 ${winner.toUpperCase()} MENANG\n${matchData.scoreA} – ${matchData.scoreB}`;
-    alert(msg);
-    addEvent({ type: 'MATCH_END', time: getFormattedTime(), scoreA: matchData.scoreA, scoreB: matchData.scoreB });
+
+    // --- Tandai pertandingan selesai ---
+    matchData.isFinished = true;
+    matchData.finishedAt = new Date().toISOString();
+    addEvent({ type: 'MATCH_END', time: getFormattedTime(), period: matchData.currentPeriod, scoreA: matchData.scoreA, scoreB: matchData.scoreB });
     saveState();
+
+    // --- Simpan ke matchHistory (max 10) ---
+    try {
+        const history = JSON.parse(localStorage.getItem('matchHistory') || '[]');
+        history.unshift(JSON.parse(JSON.stringify(matchData)));
+        if (history.length > 10) history.length = 10;
+        localStorage.setItem('matchHistory', JSON.stringify(history));
+    } catch (e) {
+        console.warn('Gagal menyimpan riwayat pertandingan:', e);
+    }
+
+    // --- Opsional: push ke Supabase (non-blocking) ---
+    (async () => {
+        try {
+            if (typeof supabaseClient !== 'undefined' && supabaseClient) {
+                const payload = {
+                    team_a_name:   matchData.teamA?.name   || 'Team A',
+                    team_b_name:   matchData.teamB?.name   || 'Team B',
+                    score_a:       matchData.scoreA,
+                    score_b:       matchData.scoreB,
+                    competition:   matchData.info?.competition || null,
+                    venue:         matchData.info?.venue        || null,
+                    match_date:    matchData.info?.date         || null,
+                    periods:       matchData.info?.periods      || 2,
+                    duration:      matchData.info?.duration     || 30,
+                    finished_at:   matchData.finishedAt,
+                    match_data:    JSON.stringify(matchData)
+                };
+                await supabaseClient.from('match_history').insert([payload]);
+            }
+        } catch (supErr) {
+            console.warn('Supabase push gagal (offline mode):', supErr);
+        }
+    })();
+
+    // --- Tampilkan modal akhir pertandingan ---
+    showEndMatchModal();
+}
+
+function showEndMatchModal() {
+    const scoreA = matchData.scoreA;
+    const scoreB = matchData.scoreB;
+    const nameA  = (matchData.teamA?.name  || 'HOME').toUpperCase();
+    const nameB  = (matchData.teamB?.name  || 'AWAY').toUpperCase();
+    const colorA = matchData.teamA?.color  || '#e74c3c';
+    const colorB = matchData.teamB?.color  || '#1abc9c';
+    const competition = matchData.info?.competition || '';
+    const venue       = matchData.info?.venue       || '';
+    const date        = matchData.info?.date        || '';
+
+    let winnerText = '';
+    let winnerClass = '';
+    if (scoreA > scoreB) {
+        winnerText  = `🏆 ${nameA} MENANG!`;
+        winnerClass = 'em-winner-a';
+    } else if (scoreB > scoreA) {
+        winnerText  = `🏆 ${nameB} MENANG!`;
+        winnerClass = 'em-winner-b';
+    } else {
+        winnerText  = '🤝 HASIL SERI';
+        winnerClass = 'em-draw';
+    }
+
+    // Hitung total gol & top scorer
+    const allStats = {};
+    ['teamA', 'teamB'].forEach(tk => {
+        const team = matchData[tk];
+        if (!team) return;
+        (team.players || []).forEach(p => {
+            const st = (team.stats || {})[p.nomor] || {};
+            const goals = st.goals || 0;
+            if (goals > 0) {
+                allStats[p.nama] = { goals, team: team.name };
+            }
+        });
+    });
+    const topScorers = Object.entries(allStats).sort((a, b) => b[1].goals - a[1].goals).slice(0, 3);
+    let scorerHTML = topScorers.length > 0
+        ? topScorers.map(([n, d]) => `<span class="em-scorer"><strong>${d.goals}</strong> ${n} <em>(${d.team})</em></span>`).join('')
+        : '<span style="color:#aaa;font-style:italic">—</span>';
+
+    const modal = document.getElementById('modal-end-match');
+    if (!modal) return;
+
+    document.getElementById('em-winner-text').textContent    = winnerText;
+    document.getElementById('em-winner-text').className      = 'em-winner-label ' + winnerClass;
+    document.getElementById('em-team-a-name').textContent    = nameA;
+    document.getElementById('em-team-b-name').textContent    = nameB;
+    document.getElementById('em-score-a').textContent        = scoreA;
+    document.getElementById('em-score-b').textContent        = scoreB;
+    document.getElementById('em-dot-a').style.background     = colorA;
+    document.getElementById('em-dot-b').style.background     = colorB;
+    document.getElementById('em-competition').textContent    = competition || '-';
+    document.getElementById('em-venue').textContent          = venue       || '-';
+    document.getElementById('em-date').textContent           = date        || '-';
+    document.getElementById('em-scorers').innerHTML          = scorerHTML;
+
+    modal.classList.add('show');
+}
+
+function endMatchGoHome() {
+    document.getElementById('modal-end-match').classList.remove('show');
     window.location.href = 'index.html';
+}
+
+function endMatchOpenReport() {
+    document.getElementById('modal-end-match').classList.remove('show');
+    window.open('report.html', 'awim_report');
 }
 
 // ============================================================
