@@ -1,4 +1,3 @@
-+
 <!DOCTYPE html>
 <html lang="id">
 
@@ -2247,26 +2246,7 @@
         };
         const ALL_POSITIONS = ['GK', 'CB', 'LB', 'RB', 'LW', 'RW', 'PV'];
 
-        let apiAvailable = false;
         let savedTeamsCache = {};
-        const apiEndpoint = 'api.php';
-
-        async function checkApiHealth() {
-            try {
-                const response = await fetch(`${apiEndpoint}?action=health`, { method: 'GET', cache: 'no-store' });
-                if (!response.ok) throw new Error('API tidak responsif');
-                const body = await response.json();
-                if (body.status === 'ok') {
-                    apiAvailable = true;
-                    await loadSavedTeamsCache();
-                    return true;
-                }
-            } catch (error) {
-                apiAvailable = false;
-                console.warn('API health check gagal:', error);
-            }
-            return false;
-        }
 
         function getLocalSavedTeams() {
             try {
@@ -2310,23 +2290,7 @@
                 console.warn('Eror Supabase saat loadSavedTeamsCache:', err);
             }
 
-            // 2. Fallback ke MySQL API jika tersedia
-            if (apiAvailable) {
-                try {
-                    const response = await fetch(`${apiEndpoint}?action=get_teams`, { method: 'GET', cache: 'no-store' });
-                    if (response.ok) {
-                        const data = await response.json();
-                        if (data && typeof data === 'object') {
-                            savedTeamsCache = data;
-                            return savedTeamsCache;
-                        }
-                    }
-                } catch (error) {
-                    console.warn('Gagal memuat tim dari API, fallback ke localStorage:', error);
-                }
-            }
-
-            // 3. Fallback ke localStorage
+            // 2. Fallback ke localStorage
             savedTeamsCache = getLocalSavedTeams();
             return savedTeamsCache;
         }
@@ -2591,30 +2555,7 @@
                 console.error('Eror Supabase:', err);
             }
 
-            // 2. Simpan ke MySQL via API (jika API tersedia)
-            if (apiAvailable) {
-                try {
-                    const response = await fetch(`${apiEndpoint}?action=save_team`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ name: nameVal, coach: coach, color: color, players: players })
-                    });
-                    if (response.ok) {
-                        const result = await response.json();
-                        if (result.status === 'success') {
-                            savedToApi = true;
-                        } else {
-                            console.error('Gagal simpan via API:', result.message);
-                        }
-                    } else {
-                        console.error('Gagal simpan via API: HTTP ' + response.status);
-                    }
-                } catch (err) {
-                    console.error('Eror API MySQL:', err);
-                }
-            }
-
-            // 3. Simpan ke localStorage (selalu sebagai fallback / cache lokal)
+            // 2. Simpan ke localStorage (selalu sebagai fallback / cache lokal)
             try {
                 const saved = getLocalSavedTeams();
                 saved[nameVal.toUpperCase()] = { name: nameVal, coach: coach, color: color, players: players };
@@ -2625,10 +2566,9 @@
             }
 
             // Beri feedback ke user
-            if (savedToSupabase || savedToApi || savedToLocal) {
+            if (savedToSupabase || savedToLocal) {
                 const details = [];
                 if (savedToSupabase) details.push('Supabase');
-                if (savedToApi) details.push('Database');
                 if (savedToLocal) details.push('Lokal');
                 showToast('💾 Tim ' + nameVal + ' berhasil disimpan (' + details.join(', ') + ')!');
                 await loadSavedTeamsCache();
@@ -2714,14 +2654,7 @@
                 console.warn('Eror Supabase saat deleteTeamSaved:', err);
             }
 
-            // 2. Hapus dari MySQL API (jika API tersedia)
-            if (apiAvailable) {
-                try {
-                    await fetch(`${apiEndpoint}?action=delete_team&name=${encodeURIComponent(nameToDelete)}`, { method: 'DELETE' });
-                } catch (error) {
-                    console.warn('Hapus tim via API gagal:', error);
-                }
-            }
+
 
             // 3. Hapus dari localStorage
             try {
@@ -3180,12 +3113,8 @@
         // Init
         updateValUI('A');
         updateValUI('B');
-        loadMatchHistory(); // pre-load history data ke memory
-        checkApiHealth().then(() => {
-            if (!apiAvailable) {
-                showToast('Mode offline: API tidak tersedia. Data disimpan ke localStorage.', 'warn');
-            }
-        });
+        loadSavedTeamsCache();
+        loadMatchHistory();
     </script>
 </body>
 
