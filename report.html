@@ -517,10 +517,12 @@
         
         .player-profile-header {
             background: linear-gradient(135deg, var(--blue-dark) 0%, #1c5270 100%);
-            padding: 24px;
+            padding: 20px 20px 20px 24px;
             color: white;
-            display: flex; justify-content: space-between; align-items: center;
-            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
         }
         .player-profile-main {
             display: flex; align-items: center; gap: 16px;
@@ -650,17 +652,35 @@
         .player-card-icon.red    { background: var(--red); }
         .player-card-icon.blue   { background: #2980b9; }
 
+        /* Wrapper kanan header: berisi baris tombol (atas) + rating box (bawah) */
+        .player-header-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        /* Baris tombol: Cetak (kiri) + Close (kanan) */
+        .player-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
         .player-modal-close-btn {
-            background: none; border: none;
-            color: rgba(255,255,255,0.7);
-            font-size: 28px; font-weight: 300;
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.85);
+            font-size: 22px; font-weight: 400;
             cursor: pointer; line-height: 1;
-            padding: 4px;
-            transition: color 0.15s;
-            position: absolute;
-            top: 12px; right: 12px;
+            width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 8px;
+            padding: 0;
+            transition: background 0.15s, color 0.15s;
+            flex-shrink: 0;
         }
         .player-modal-close-btn:hover {
+            background: rgba(255,255,255,0.25);
             color: white;
         }
         
@@ -677,12 +697,12 @@
             border: 1px solid rgba(255,255,255,0.25);
             color: white;
             font-size: 12px; font-weight: 600;
-            padding: 6px 12px; border-radius: 6px;
+            padding: 5px 11px; border-radius: 8px;
             cursor: pointer;
             transition: all 0.15s ease;
-            position: absolute;
-            top: 16px; right: 48px;
             display: flex; align-items: center; gap: 4px;
+            white-space: nowrap;
+            height: 32px;
         }
         .player-modal-print-btn:hover {
             background: rgba(255,255,255,0.25);
@@ -815,6 +835,166 @@
             padding: 32px 0; text-align: center;
             color: var(--gray-mid); font-size: 13px;
         }
+
+        /* ===== GK CLICKABLE ELEMENTS ===== */
+        .gk-stat-box.clickable,
+        .gk-zone-cell.clickable {
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+            user-select: none;
+        }
+        .gk-stat-box.clickable:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 14px rgba(26,107,140,0.15);
+            background: #e4ecf3;
+        }
+        .gk-stat-box.clickable:active { transform: scale(0.97); }
+        .gk-zone-cell.clickable:hover {
+            background: #dce8f2;
+            box-shadow: 0 2px 8px rgba(26,107,140,0.18);
+            transform: scale(1.06);
+            z-index: 1;
+        }
+        .gk-zone-cell.clickable:active { transform: scale(0.98); }
+
+        /* ===== GK SHOT LOG MODAL ===== */
+        .gk-shot-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(13, 35, 58, 0.55);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 2000;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+        .gk-shot-modal-overlay.show {
+            opacity: 1; pointer-events: auto;
+        }
+        .gk-shot-modal-box {
+            background: #fff;
+            border-radius: 20px;
+            width: 92%; max-width: 520px;
+            max-height: 82vh;
+            display: flex; flex-direction: column;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.28);
+            border: 1px solid rgba(255,255,255,0.5);
+            transform: scale(0.92) translateY(10px);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+        }
+        .gk-shot-modal-overlay.show .gk-shot-modal-box {
+            transform: scale(1) translateY(0);
+        }
+        .gk-shot-modal-header {
+            background: linear-gradient(135deg, #1a2a4a 0%, #1a4a6b 100%);
+            padding: 18px 20px;
+            display: flex; align-items: center; gap: 12px;
+            flex-shrink: 0;
+        }
+        .gk-shot-modal-icon {
+            font-size: 26px; line-height: 1; flex-shrink: 0;
+        }
+        .gk-shot-modal-title-block { flex: 1; min-width: 0; }
+        .gk-shot-modal-title {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 18px; font-weight: 800;
+            color: white; letter-spacing: 1px;
+            line-height: 1.2;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .gk-shot-modal-subtitle {
+            font-size: 11px; color: rgba(255,255,255,0.6);
+            margin-top: 2px;
+        }
+        .gk-shot-modal-close {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.85);
+            font-size: 20px; font-weight: 400;
+            width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 8px; cursor: pointer;
+            transition: background 0.15s;
+            flex-shrink: 0;
+        }
+        .gk-shot-modal-close:hover { background: rgba(255,255,255,0.25); color: white; }
+        .gk-shot-modal-body {
+            overflow-y: auto;
+            flex: 1;
+            padding: 16px 20px;
+        }
+        .gk-shot-modal-body::-webkit-scrollbar { width: 6px; }
+        .gk-shot-modal-body::-webkit-scrollbar-track { background: #f0f4f7; border-radius: 3px; }
+        .gk-shot-modal-body::-webkit-scrollbar-thumb { background: #b0c4d8; border-radius: 3px; }
+        .gk-shot-summary-bar {
+            display: flex; gap: 8px; margin-bottom: 14px;
+        }
+        .gk-shot-summary-pill {
+            flex: 1; text-align: center;
+            border-radius: 10px; padding: 8px 4px;
+            border: 1px solid #e0e8f0;
+            background: #f7fafc;
+        }
+        .gk-shot-summary-pill-val {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 22px; font-weight: 800;
+            line-height: 1;
+        }
+        .gk-shot-summary-pill-val.green { color: var(--green); }
+        .gk-shot-summary-pill-val.red   { color: var(--red); }
+        .gk-shot-summary-pill-val.blue  { color: var(--blue-dark); }
+        .gk-shot-summary-pill-lbl {
+            font-size: 9px; font-weight: 700;
+            color: var(--gray-text); text-transform: uppercase;
+            letter-spacing: 0.5px; margin-top: 2px;
+        }
+        .gk-shot-log-empty {
+            text-align: center; padding: 40px 0;
+            color: var(--gray-mid); font-size: 14px;
+        }
+        .gk-shot-log-list { display: flex; flex-direction: column; gap: 8px; }
+        .gk-shot-log-item {
+            display: flex; align-items: stretch; gap: 0;
+            background: #f7fafc;
+            border: 1px solid #e0e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: box-shadow 0.15s;
+        }
+        .gk-shot-log-item:hover { box-shadow: 0 3px 10px rgba(26,107,140,0.12); }
+        .gk-shot-log-result-strip {
+            width: 6px; flex-shrink: 0;
+        }
+        .gk-shot-log-result-strip.goal  { background: var(--red); }
+        .gk-shot-log-result-strip.saved { background: var(--green); }
+        .gk-shot-log-content {
+            flex: 1; padding: 10px 12px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .gk-shot-log-badge {
+            font-size: 20px; flex-shrink: 0;
+        }
+        .gk-shot-log-main { flex: 1; min-width: 0; }
+        .gk-shot-log-shooter {
+            font-size: 13px; font-weight: 700;
+            color: #1a2a4a;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .gk-shot-log-meta {
+            font-size: 11px; color: #6b7f8e;
+            margin-top: 2px;
+            display: flex; flex-wrap: wrap; gap: 4px 8px;
+        }
+        .gk-shot-log-meta span { display: flex; align-items: center; gap: 3px; }
+        .gk-shot-log-result-tag {
+            font-size: 11px; font-weight: 700;
+            padding: 3px 8px; border-radius: 20px;
+            white-space: nowrap; flex-shrink: 0;
+        }
+        .gk-shot-log-result-tag.goal  { background: rgba(231,76,60,0.1); color: var(--red); }
+        .gk-shot-log-result-tag.saved { background: rgba(26,188,156,0.1); color: var(--green); }
 
         /* ===== COURT EVENT MAP ===== */
         .court-map-section { margin-bottom: 24px; }
@@ -1350,8 +1530,9 @@ function buildGKSection() {
                 const zSave = shots.filter(e => e.type === 'MISS').length;
                 const zGoal = shots.filter(e => e.type === 'GOAL').length;
                 const isSaved = zSave > 0 && zGoal === 0;
-                return `<div class="gk-zone-cell">
-                    <div class="gk-zone-cell-val${isSaved ? ' green' : (zGoal > 0 ? ' red' : '')}">${shots.length > 0 ? (zSave + '/' + shots.length) : '—'}</div>
+                const hasData = shots.length > 0;
+                return `<div class="gk-zone-cell${hasData ? ' clickable' : ''}" ${hasData ? `onclick="openGKShotLog('${oppTeamChar}','zone','${z.key}','${z.lbl}','${gk.nama}')" title="Lihat detail tembakan zona ${z.lbl}"` : ''}>
+                    <div class="gk-zone-cell-val${isSaved ? ' green' : (zGoal > 0 ? ' red' : '')}">${hasData ? (zSave + '/' + shots.length) : '—'}</div>
                     <div class="gk-zone-cell-lbl">${z.lbl}</div>
                 </div>`;
             }).join('');
@@ -1373,15 +1554,15 @@ function buildGKSection() {
                 </div>
                 <div class="gk-card-body">
                     <div class="gk-main-stats">
-                        <div class="gk-stat-box">
+                        <div class="gk-stat-box clickable" onclick="openGKShotLog('${oppTeamChar}','saves',null,'Saves','${gk.nama}')" title="Lihat daftar tembakan yang diselamatkan">
                             <div class="gk-stat-box-value green">${saves}</div>
                             <div class="gk-stat-box-label">🧤 Saves</div>
                         </div>
-                        <div class="gk-stat-box">
+                        <div class="gk-stat-box clickable" onclick="openGKShotLog('${oppTeamChar}','goals',null,'Kemasukan','${gk.nama}')" title="Lihat daftar gol yang kemasukan">
                             <div class="gk-stat-box-value red">${goalsConceded}</div>
                             <div class="gk-stat-box-label">⚽ Kemasukan</div>
                         </div>
-                        <div class="gk-stat-box">
+                        <div class="gk-stat-box clickable" onclick="openGKShotLog('${oppTeamChar}','all',null,'Semua Shot','${gk.nama}')" title="Lihat semua tembakan ke gawang">
                             <div class="gk-stat-box-value">${totalFaced}</div>
                             <div class="gk-stat-box-label">🎯 Shot Dihadapi</div>
                         </div>
@@ -1395,7 +1576,7 @@ function buildGKSection() {
                             <div class="gk-save-bar-fill" style="width:${savePct}%"></div>
                         </div>
                     </div>
-                    <div class="gk-zone-section-title">Peta Zona (Save/Shot)</div>
+                    <div class="gk-zone-section-title">Peta Zona (Save/Shot) — klik zona untuk detail</div>
                     <div class="gk-zone-grid">${zoneCells}</div>
                 </div>
             </div>`;
@@ -1414,6 +1595,116 @@ function buildGKSection() {
             ${cardB || ''}
         </div>
     </div>`;
+}
+
+// ============================================================
+// GK SHOT LOG MODAL
+// ============================================================
+const GK_INNER_ZONES = [
+    'Atas Kiri','Atas Tengah','Atas Kanan',
+    'Tengah Kiri','Tengah','Tengah Kanan',
+    'Bawah Kiri','Bawah Tengah','Bawah Kanan'
+];
+
+/**
+ * Buka modal log tembakan untuk GK tertentu.
+ * @param {string} oppTeamChar  - Tim lawan (penembak): 'A' atau 'B'
+ * @param {string} filter       - 'all' | 'saves' | 'goals' | 'zone'
+ * @param {string|null} zone    - Nama zona gawang jika filter==='zone'
+ * @param {string} filterLabel  - Label untuk judul modal
+ * @param {string} gkName       - Nama GK
+ */
+function openGKShotLog(oppTeamChar, filter, zone, filterLabel, gkName) {
+    const evs = md.events || [];
+    const oppTeam = oppTeamChar === 'A' ? md.teamA : md.teamB;
+
+    // Ambil semua tembakan dari tim lawan ke zona dalam gawang
+    let shots = evs.filter(e =>
+        (e.type === 'GOAL' || e.type === 'MISS') &&
+        e.team === oppTeamChar &&
+        GK_INNER_ZONES.includes(e.zone)
+    );
+
+    // Filter sesuai mode
+    if (filter === 'saves')  shots = shots.filter(e => e.type === 'MISS');
+    if (filter === 'goals')  shots = shots.filter(e => e.type === 'GOAL');
+    if (filter === 'zone')   shots = shots.filter(e => e.zone === zone);
+
+    const totalShots  = shots.length;
+    const totalGoals  = shots.filter(e => e.type === 'GOAL').length;
+    const totalSaved  = shots.filter(e => e.type === 'MISS').length;
+
+    // Icon & warna header
+    const headerIconMap = { all:'🎯', saves:'🧤', goals:'⚽', zone:'📍' };
+    const headerIcon = headerIconMap[filter] || '🎯';
+    const teamName = oppTeam?.name?.toUpperCase() || oppTeamChar;
+
+    // Buat HTML baris log
+    const rowsHtml = shots.length === 0
+        ? `<div class="gk-shot-log-empty">🚫 Tidak ada data tembakan untuk filter ini.</div>`
+        : `<div class="gk-shot-log-list">${shots.map((e, idx) => {
+            const isGoal   = e.type === 'GOAL';
+            const resultCls = isGoal ? 'goal' : 'saved';
+            const resultTag = isGoal ? '⚽ GOAL' : '🧤 SAVED';
+            const shooterTxt = e.player
+                ? `#${e.player.nomor} ${e.player.nama}`
+                : `${teamName} (tanpa nomor)`;
+            const babak = e.period ? `Babak ${e.period}` : '';
+            const waktu = e.time || '—';
+            const jenis = e.subtype || '—';
+            const serangan = e.attackType || null;
+            const zonaGawang = e.zone || '—';
+            return `
+            <div class="gk-shot-log-item">
+                <div class="gk-shot-log-result-strip ${resultCls}"></div>
+                <div class="gk-shot-log-content">
+                    <div class="gk-shot-log-badge">${isGoal ? '⚽' : '🧤'}</div>
+                    <div class="gk-shot-log-main">
+                        <div class="gk-shot-log-shooter">${shooterTxt}</div>
+                        <div class="gk-shot-log-meta">
+                            <span>⏱ ${waktu}${babak ? ' · ' + babak : ''}</span>
+                            <span>🎯 ${jenis}</span>
+                            ${serangan ? `<span>⚡ ${serangan}</span>` : ''}
+                            <span>📍 ${zonaGawang}</span>
+                        </div>
+                    </div>
+                    <div class="gk-shot-log-result-tag ${resultCls}">${resultTag}</div>
+                </div>
+            </div>`;
+        }).join('')}</div>`;
+
+    const summaryHtml = `
+    <div class="gk-shot-summary-bar">
+        <div class="gk-shot-summary-pill">
+            <div class="gk-shot-summary-pill-val blue">${totalShots}</div>
+            <div class="gk-shot-summary-pill-lbl">Total Shot</div>
+        </div>
+        <div class="gk-shot-summary-pill">
+            <div class="gk-shot-summary-pill-val green">${totalSaved}</div>
+            <div class="gk-shot-summary-pill-lbl">Diselamatkan</div>
+        </div>
+        <div class="gk-shot-summary-pill">
+            <div class="gk-shot-summary-pill-val red">${totalGoals}</div>
+            <div class="gk-shot-summary-pill-lbl">Kemasukan</div>
+        </div>
+    </div>`;
+
+    const subtitle = filter === 'zone'
+        ? `Zona: ${zone} · ${teamName} vs 🧤 ${gkName}`
+        : `${teamName} · 🧤 ${gkName}`;
+
+    document.getElementById('gk-shot-modal-icon').textContent   = headerIcon;
+    document.getElementById('gk-shot-modal-title').textContent  = filterLabel;
+    document.getElementById('gk-shot-modal-subtitle').textContent = subtitle;
+    document.getElementById('gk-shot-modal-body').innerHTML = summaryHtml + rowsHtml;
+
+    document.getElementById('gk-shot-modal').classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeGKShotLog() {
+    document.getElementById('gk-shot-modal').classList.remove('show');
+    document.body.style.overflow = '';
 }
 
 // ============================================================
@@ -1975,87 +2266,156 @@ function parseMins(minStr) {
 }
 
 function showPlayerDetail(teamChar, nomor) {
-    const team = teamChar === 'A' ? md.teamA : md.teamB;
+    const team   = teamChar === 'A' ? md.teamA : md.teamB;
     const player = team.players.find(p => p.nomor === nomor);
     if (!player) return;
-    
+
     const s = team.stats?.[nomor] || { goals:0, misses:0, saves:0, fouls:0, yellowCards:0, twoMins:0, redCard:false, blueCard:false };
     const playingMinutes = getPlayingMinutes(teamChar);
     const playTimeStr = playingMinutes[nomor] || "0'";
     const minVal = parseMins(playTimeStr);
 
-    const goals = s.goals || 0;
-    const misses = s.misses || 0;
-    const saves = s.saves || 0;
-    const fouls = s.fouls || 0;
-    const shots = goals + misses;
-    const acc = shots > 0 ? Math.round((goals / shots) * 100) : 0;
+    const fouls  = s.fouls  || 0;
     const yCards = s.yellowCards || 0;
-    const twoMin = s.twoMins || 0;
-    const rCard = s.redCard || false;
-    const bCard = s.blueCard || false;
+    const twoMin = s.twoMins    || 0;
+    const rCard  = s.redCard    || false;
+    const bCard  = s.blueCard   || false;
 
-    // Hitung rating bola tangan dinamis (skala 1 - 10)
-    let rating = 6.0;
-    rating += (goals * 0.8);
-    rating -= (misses * 0.4);
-    rating += (saves * 0.9);
-    rating -= (fouls * 0.2);
-    if (minVal > 0) {
-        rating += (minVal * 0.04);
-    }
-    rating = Math.min(10.0, Math.max(1.0, rating));
+    const isGK = player.posisi === 'GK';
 
-    // Dapatkan max stats dari seluruh pemain di tim untuk rasio bar yang dinamis
-    let maxGoals = 1;
-    let maxMisses = 1;
-    let maxSaves = 1;
-    let maxFouls = 1;
-    for (const pNo in team.stats) {
-        const pst = team.stats[pNo];
-        if (pst.goals > maxGoals) maxGoals = pst.goals;
-        if (pst.misses > maxMisses) maxMisses = pst.misses;
-        if (pst.saves > maxSaves) maxSaves = pst.saves;
-        if (pst.fouls > maxFouls) maxFouls = pst.fouls;
-    }
-    
-    maxGoals = Math.max(maxGoals, 5);
-    maxMisses = Math.max(maxMisses, 5);
-    maxSaves = Math.max(maxSaves, 5);
-    maxFouls = Math.max(maxFouls, 5);
+    // ── Shared inner zones constant ──────────────────────────────────
+    const GK_INNER_ZONES = [
+        'Atas Kiri','Atas Tengah','Atas Kanan',
+        'Tengah Kiri','Tengah','Tengah Kanan',
+        'Bawah Kiri','Bawah Tengah','Bawah Kanan'
+    ];
 
-    // Render Header
-    const headerEl = document.getElementById('modal-player-header');
-    headerEl.innerHTML = `
-        <button class="player-modal-close-btn" onclick="closePlayerDetailModal()" title="Tutup">&times;</button>
-        <button class="player-modal-print-btn" onclick="printPlayerDetail()" title="Cetak Laporan Pemain">🖨️ Cetak</button>
-        <div class="player-profile-main">
-            <div class="player-avatar" style="background:${team.color || (teamChar === 'A' ? '#e74c3c' : '#1abc9c')}">
-                ${nomor}
+    // ────────────────────────────────────────────────────────────────
+    // BRANCH: GOALKEEPER
+    // ────────────────────────────────────────────────────────────────
+    let rating, bodyHtml;
+
+    if (isGK) {
+        // Data GK diambil dari events (sinkron dgn buildGKSection)
+        const oppTeamChar = teamChar === 'A' ? 'B' : 'A';
+        const evs = md.events || [];
+
+        const incomingShots = evs.filter(e =>
+            (e.type === 'GOAL' || e.type === 'MISS') &&
+            e.team === oppTeamChar &&
+            GK_INNER_ZONES.includes(e.zone)
+        );
+
+        const gkGoalsConceded = incomingShots.filter(e => e.type === 'GOAL').length;
+        const totalFaced      = incomingShots.length;
+        // Saves dihitung dari events: tembakan ke zona dalam yang berhasil digagalkan (MISS)
+        const gkSaves         = incomingShots.filter(e => e.type === 'MISS').length;
+        const savePct         = totalFaced > 0 ? Math.round((gkSaves / totalFaced) * 100) : 0;
+
+        // Rating khusus GK
+        rating = 6.0
+            + (gkSaves         * 0.4)
+            - (gkGoalsConceded * 0.3);
+        if (savePct >= 60) rating += 0.5;
+        if (minVal > 0)    rating += (minVal * 0.02);
+        rating = Math.min(10.0, Math.max(1.0, rating));
+
+        // Warna badge save rate
+        const saveRateColor = savePct >= 70
+            ? 'linear-gradient(to right,#1abc9c,#16a085)'
+            : savePct >= 50
+            ? 'linear-gradient(to right,#f39c12,#d35400)'
+            : 'linear-gradient(to right,#e74c3c,#c0392b)';
+
+        bodyHtml = `
+        <div class="player-stats-section-title">Statistik Kiper</div>
+
+        <!-- 3 kotak metrik utama GK -->
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px;">
+            <div style="background:#f0f9f5;border:1px solid #c3e8da;border-radius:12px;padding:12px 6px;text-align:center;">
+                <div style="font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:800;color:#16a085;line-height:1;">${gkSaves}</div>
+                <div style="font-size:9px;font-weight:700;color:#7f8c8d;text-transform:uppercase;letter-spacing:.5px;margin-top:4px;">🧤 Saves</div>
             </div>
-            <div class="player-name-club">
-                <div class="player-profile-name">${player.nama}</div>
-                <div class="player-profile-club">🏃 ${player.posisi} · 🛡️ ${team.name.toUpperCase()}</div>
+            <div style="background:#fdf3f2;border:1px solid #f0c0ba;border-radius:12px;padding:12px 6px;text-align:center;">
+                <div style="font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:800;color:#c0392b;line-height:1;">${gkGoalsConceded}</div>
+                <div style="font-size:9px;font-weight:700;color:#7f8c8d;text-transform:uppercase;letter-spacing:.5px;margin-top:4px;">⚽ Kemasukan</div>
+            </div>
+            <div style="background:#f0f4fb;border:1px solid #bfd0ec;border-radius:12px;padding:12px 6px;text-align:center;">
+                <div style="font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:800;color:var(--blue-dark);line-height:1;">${totalFaced}</div>
+                <div style="font-size:9px;font-weight:700;color:#7f8c8d;text-transform:uppercase;letter-spacing:.5px;margin-top:4px;">🎯 Shot Dihadapi</div>
             </div>
         </div>
-        <div class="player-rating-container">
-            <div class="player-rating-label">RATING</div>
-            <div class="player-rating-value">${rating.toFixed(1)}</div>
-        </div>
-    `;
 
-    // Render Body (Progress bars horizontal dengan label kiri dan nilai kanan)
-    const bodyEl = document.getElementById('modal-player-body');
-    bodyEl.innerHTML = `
+        <!-- Save Rate bar -->
+        <div class="player-stat-bar-row">
+            <div class="player-stat-bar-labels">
+                <div class="player-stat-bar-label">📊 Save Rate</div>
+                <div class="player-stat-bar-value">${savePct}%</div>
+            </div>
+            <div class="player-stat-progress-bar">
+                <div class="player-stat-progress-fill"
+                     style="width:0%;background:${saveRateColor}"
+                     data-target="${savePct}%"></div>
+            </div>
+        </div>
+
+        <!-- Fouls + Menit row -->
+        <div style="display:flex;gap:10px;margin-top:16px;margin-bottom:20px;">
+            <div style="flex:1;background:#fdf8f0;border:1px solid #fce0b0;border-radius:10px;padding:10px;text-align:center;">
+                <div style="font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:800;color:#d35400;line-height:1;">${fouls}</div>
+                <div style="font-size:9px;font-weight:700;color:#7f8c8d;text-transform:uppercase;letter-spacing:.5px;margin-top:4px;">⚠ Fouls</div>
+            </div>
+            <div style="flex:2;background:#f5f7fa;border:1px solid #dde4ef;border-radius:10px;padding:10px;display:flex;align-items:center;justify-content:space-between;">
+                <span style="font-size:13px;color:var(--gray-text);">⏱ Menit Bermain</span>
+                <strong style="font-family:'Barlow Condensed',sans-serif;font-size:20px;color:var(--blue-dark);">${playTimeStr}</strong>
+            </div>
+        </div>`;
+
+    // ────────────────────────────────────────────────────────────────
+    // BRANCH: OUTFIELD PLAYER
+    // ────────────────────────────────────────────────────────────────
+    } else {
+        const goals  = s.goals  || 0;
+        const misses = s.misses || 0;
+        const saves  = s.saves  || 0;
+        const shots  = goals + misses;
+        const acc    = shots > 0 ? Math.round((goals / shots) * 100) : 0;
+
+        // Rating outfield
+        rating = 6.0
+            + (goals  * 0.8)
+            - (misses * 0.4)
+            + (saves  * 0.9)
+            - (fouls  * 0.2);
+        if (minVal > 0) rating += (minVal * 0.04);
+        rating = Math.min(10.0, Math.max(1.0, rating));
+
+        // Max stats dari seluruh pemain tim untuk rasio bar
+        let maxGoals = 1, maxMisses = 1, maxSaves = 1, maxFouls = 1;
+        for (const pNo in team.stats) {
+            const pst = team.stats[pNo];
+            if (pst.goals  > maxGoals)  maxGoals  = pst.goals;
+            if (pst.misses > maxMisses) maxMisses = pst.misses;
+            if (pst.saves  > maxSaves)  maxSaves  = pst.saves;
+            if (pst.fouls  > maxFouls)  maxFouls  = pst.fouls;
+        }
+        maxGoals  = Math.max(maxGoals,  5);
+        maxMisses = Math.max(maxMisses, 5);
+        maxSaves  = Math.max(maxSaves,  5);
+        maxFouls  = Math.max(maxFouls,  5);
+
+        bodyHtml = `
         <div class="player-stats-section-title">Statistik Utama</div>
-        
+
         <div class="player-stat-bar-row">
             <div class="player-stat-bar-labels">
                 <div class="player-stat-bar-label">⚽ Goals (Gol)</div>
                 <div class="player-stat-bar-value">${goals}</div>
             </div>
             <div class="player-stat-progress-bar">
-                <div class="player-stat-progress-fill" style="width: 0%; background: linear-gradient(to right, #2ecc71, #27ae60)" data-target="${(goals / maxGoals) * 100}%"></div>
+                <div class="player-stat-progress-fill"
+                     style="width:0%;background:linear-gradient(to right,#2ecc71,#27ae60)"
+                     data-target="${(goals / maxGoals) * 100}%"></div>
             </div>
         </div>
 
@@ -2065,7 +2425,9 @@ function showPlayerDetail(teamChar, nomor) {
                 <div class="player-stat-bar-value">${misses}</div>
             </div>
             <div class="player-stat-progress-bar">
-                <div class="player-stat-progress-fill" style="width: 0%; background: linear-gradient(to right, #e74c3c, #c0392b)" data-target="${(misses / maxMisses) * 100}%"></div>
+                <div class="player-stat-progress-fill"
+                     style="width:0%;background:linear-gradient(to right,#e74c3c,#c0392b)"
+                     data-target="${(misses / maxMisses) * 100}%"></div>
             </div>
         </div>
 
@@ -2075,7 +2437,9 @@ function showPlayerDetail(teamChar, nomor) {
                 <div class="player-stat-bar-value">${acc}%</div>
             </div>
             <div class="player-stat-progress-bar">
-                <div class="player-stat-progress-fill" style="width: 0%; background: linear-gradient(to right, #3498db, #2980b9)" data-target="${acc}%"></div>
+                <div class="player-stat-progress-fill"
+                     style="width:0%;background:linear-gradient(to right,#3498db,#2980b9)"
+                     data-target="${acc}%"></div>
             </div>
         </div>
 
@@ -2085,7 +2449,9 @@ function showPlayerDetail(teamChar, nomor) {
                 <div class="player-stat-bar-value">${saves}</div>
             </div>
             <div class="player-stat-progress-bar">
-                <div class="player-stat-progress-fill" style="width: 0%; background: linear-gradient(to right, #1abc9c, #16a085)" data-target="${(saves / maxSaves) * 100}%"></div>
+                <div class="player-stat-progress-fill"
+                     style="width:0%;background:linear-gradient(to right,#1abc9c,#16a085)"
+                     data-target="${(saves / maxSaves) * 100}%"></div>
             </div>
         </div>
 
@@ -2095,16 +2461,21 @@ function showPlayerDetail(teamChar, nomor) {
                 <div class="player-stat-bar-value">${fouls}</div>
             </div>
             <div class="player-stat-progress-bar">
-                <div class="player-stat-progress-fill" style="width: 0%; background: linear-gradient(to right, #f39c12, #d35400)" data-target="${(fouls / maxFouls) * 100}%"></div>
+                <div class="player-stat-progress-fill"
+                     style="width:0%;background:linear-gradient(to right,#f39c12,#d35400)"
+                     data-target="${(fouls / maxFouls) * 100}%"></div>
             </div>
         </div>
 
-        <div style="font-size: 13px; color: var(--gray-text); display: flex; justify-content: space-between; margin-top: 12px; margin-bottom: 20px;">
+        <div style="font-size:13px;color:var(--gray-text);display:flex;justify-content:space-between;margin-top:12px;margin-bottom:20px;">
             <span>⏱ Menit Bermain:</span>
-            <strong style="color: var(--blue-dark); font-weight: 700;">${playTimeStr}</strong>
-        </div>
+            <strong style="color:var(--blue-dark);font-weight:700;">${playTimeStr}</strong>
+        </div>`;
+    }
 
-        <div class="player-stats-section-title">Disiplin & Kartu</div>
+    // ── Bagian Disiplin & Kartu — sama untuk GK & outfield ──────────
+    const disciplineHtml = `
+        <div class="player-stats-section-title">Disiplin &amp; Kartu</div>
         <div class="player-cards-row">
             <div class="player-card-badge yellow">
                 <div class="player-card-icon yellow"></div>
@@ -2122,15 +2493,44 @@ function showPlayerDetail(teamChar, nomor) {
                 <div class="player-card-icon blue"></div>
                 Biru: ${bCard ? 'YA' : 'TIDAK'}
             </div>
+        </div>`;
+
+    // ── Render Header ────────────────────────────────────────────────
+    const gkBadge = isGK
+        ? `<span style="font-size:10px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);padding:2px 7px;border-radius:20px;margin-left:6px;letter-spacing:.5px;">GK</span>`
+        : '';
+    const headerEl = document.getElementById('modal-player-header');
+    headerEl.innerHTML = `
+        <div class="player-profile-main">
+            <div class="player-avatar" style="background:${team.color || (teamChar === 'A' ? '#e74c3c' : '#1abc9c')}">
+                ${isGK ? '🧤' : nomor}
+            </div>
+            <div class="player-name-club">
+                <div class="player-profile-name">${player.nama}${gkBadge}</div>
+                <div class="player-profile-club">${isGK ? '🧤' : '🏃'} ${player.posisi} · 🛡️ ${team.name.toUpperCase()}</div>
+            </div>
+        </div>
+        <div class="player-header-right">
+            <div class="player-header-actions">
+                <button class="player-modal-print-btn" onclick="printPlayerDetail()" title="Cetak Laporan Pemain">🖨️ Cetak</button>
+                <button class="player-modal-close-btn" onclick="closePlayerDetailModal()" title="Tutup">&times;</button>
+            </div>
+            <div class="player-rating-container">
+                <div class="player-rating-label">${isGK ? 'GK RTG' : 'RATING'}</div>
+                <div class="player-rating-value">${rating.toFixed(1)}</div>
+            </div>
         </div>
     `;
 
-    const modal = document.getElementById('player-detail-modal');
-    modal.classList.add('show');
+    // ── Render Body ──────────────────────────────────────────────────
+    const bodyEl = document.getElementById('modal-player-body');
+    bodyEl.innerHTML = bodyHtml + disciplineHtml;
 
+    document.getElementById('player-detail-modal').classList.add('show');
+
+    // Animasi progress bar
     setTimeout(() => {
-        const fills = bodyEl.querySelectorAll('.player-stat-progress-fill');
-        fills.forEach(f => {
+        bodyEl.querySelectorAll('.player-stat-progress-fill').forEach(f => {
             f.style.width = f.getAttribute('data-target');
         });
     }, 150);
@@ -2163,6 +2563,7 @@ loadAndRender();
 setInterval(loadAndRender, 10000);
 </script>
 
+
 <!-- MODAL DETAIL PEMAIN INDIVIDU -->
 <div class="player-modal-overlay" id="player-detail-modal" onclick="closePlayerDetail(event)">
     <div class="player-modal-box" onclick="event.stopPropagation()">
@@ -2171,5 +2572,21 @@ setInterval(loadAndRender, 10000);
     </div>
 </div>
 
+<!-- MODAL LOG TEMBAKAN KIPER (GK) -->
+<div class="gk-shot-modal-overlay" id="gk-shot-modal" onclick="if(event.target===this)closeGKShotLog()">
+    <div class="gk-shot-modal-box">
+        <div class="gk-shot-modal-header">
+            <div class="gk-shot-modal-icon" id="gk-shot-modal-icon">🎯</div>
+            <div class="gk-shot-modal-title-block">
+                <div class="gk-shot-modal-title" id="gk-shot-modal-title">Log Tembakan</div>
+                <div class="gk-shot-modal-subtitle" id="gk-shot-modal-subtitle"></div>
+            </div>
+            <button class="gk-shot-modal-close" onclick="closeGKShotLog()" title="Tutup">&times;</button>
+        </div>
+        <div class="gk-shot-modal-body" id="gk-shot-modal-body"></div>
+    </div>
+</div>
+
 </body>
+
 </html>
