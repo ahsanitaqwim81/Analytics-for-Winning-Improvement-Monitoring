@@ -502,9 +502,9 @@
             opacity: 1; pointer-events: auto;
         }
         .player-modal-box {
-            background: rgba(255, 255, 255, 0.96);
+            background: rgba(255, 255, 255, 0.98);
             border-radius: 20px;
-            width: 90%; max-width: 480px;
+            width: 92%; max-width: 580px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.3);
             border: 1px solid rgba(255,255,255,0.4);
             overflow: hidden;
@@ -576,7 +576,9 @@
         }
         
         .player-modal-body {
-            padding: 24px;
+            padding: 20px 24px;
+            max-height: calc(88vh - 85px);
+            overflow-y: auto;
         }
         .player-stats-section-title {
             font-family: 'Barlow Condensed', sans-serif;
@@ -707,6 +709,134 @@
         .player-modal-print-btn:hover {
             background: rgba(255,255,255,0.25);
             border-color: rgba(255,255,255,0.4);
+        }
+
+        /* ===== PLAYER ACTIVITY VISUALS (MODAL & PRINT) ===== */
+        .player-activity-section {
+            margin-top: 18px;
+            padding-top: 14px;
+            border-top: 1px solid #eee;
+        }
+        .player-activity-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 8px;
+        }
+        .player-activity-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+        .player-activity-card-title {
+            font-size: 10.5px;
+            font-weight: 700;
+            color: var(--blue-dark);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .player-activity-count {
+            font-size: 9.5px;
+            font-weight: 600;
+            color: var(--gray-text);
+        }
+        .player-mini-court-wrap {
+            width: 100%;
+            border-radius: 6px;
+            overflow: hidden;
+            background: #152e47;
+        }
+        .player-mini-court-wrap svg {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .player-mini-court-legend,
+        .player-mini-goal-legend {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            align-items: center;
+            margin-top: 6px;
+            font-size: 9px;
+            color: var(--gray-text);
+            flex-wrap: wrap;
+        }
+        .player-mini-court-legend .legend-dot,
+        .player-mini-goal-legend .legend-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .legend-dot.green { background: #2ecc71; }
+        .legend-dot.red { background: #e74c3c; }
+        .legend-dot.yellow { background: #f1c40f; }
+
+        /* Mini Goal Grid */
+        .player-mini-goal-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3px;
+            background: #334155;
+            padding: 3px;
+            border-radius: 6px;
+            border: 2px solid #1e293b;
+            margin: 0 auto;
+            max-width: 180px;
+        }
+        .player-mini-goal-cell {
+            background: #ffffff;
+            height: 32px;
+            border-radius: 3px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            font-weight: 700;
+            color: #475569;
+            position: relative;
+        }
+        .player-mini-goal-cell.has-goal {
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            color: #059669;
+        }
+        .player-mini-goal-cell.has-miss {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+        }
+        .player-mini-goal-cell.has-both {
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            color: #d97706;
+        }
+        .player-mini-goal-cell-val {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 12px;
+            font-weight: 800;
+            line-height: 1;
+        }
+        .player-mini-goal-cell-lbl {
+            font-size: 7px;
+            color: #94a3b8;
+            letter-spacing: 0.2px;
+        }
+        .player-activity-meta-text {
+            font-size: 9.5px;
+            color: var(--gray-text);
+            text-align: center;
+            margin-top: 5px;
+            line-height: 1.3;
         }
 
         /* ===== GK STATS PANEL ===== */
@@ -1059,80 +1189,244 @@
             padding: 4px 12px; border-radius: 20px;
         }
 
+        /* ===== SCREEN HELPERS FOR PLAYER TABLES ===== */
+        .player-tables-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .player-table-wrapper {
+            width: 100%;
+        }
+
         /* ===== PRINT — GLOBAL REPORT ===== */
         @media print {
-            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            @page {
+                size: A4 portrait;
+                margin: 12mm 10mm;
+            }
 
-            .nav-bar { display: none !important; }
-            .report-container { padding: 0 !important; }
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
 
-            /* Prevent cards from splitting across pages */
+            /* Sembunyikan elemen UI layar saat print */
+            .nav-bar,
+            .court-map-tab-bar,
+            .court-map-tab,
+            .log-filter,
+            .log-filter-btn,
+            button,
+            #toast-container {
+                display: none !important;
+            }
+
+            .report-container {
+                padding: 0 !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+            }
+
+            /* Manajemen Halaman & Pemotongan (Page Breaks) */
             .match-header,
+            .team-stats-grid,
+            .attack-cards,
+            .shot-charts,
+            .court-map-section,
+            .gk-stats-section,
             .player-table-card,
-            .shot-chart-card,
-            .attack-card,
-            .court-map-card,
-            .gk-card,
-            .team-stat-block,
-            .stat-card {
+            .log-card {
                 break-inside: avoid !important;
                 page-break-inside: avoid !important;
             }
 
-            /* Sections start on new page when they overflow */
+            .section-title {
+                break-after: avoid !important;
+                page-break-after: avoid !important;
+                font-size: 13px !important;
+                margin: 8px 0 6px 0 !important;
+                padding-bottom: 3px !important;
+            }
+
+            /* Struktur per lembar laporan (Maksimal 4 lembar terstruktur) */
+            .report-page {
+                break-after: page !important;
+                page-break-after: always !important;
+                display: block !important;
+            }
+            .report-page:last-child {
+                break-after: avoid !important;
+                page-break-after: avoid !important;
+            }
+
+            /* ── Halaman 1: Header Pertandingan, Statistik Tim, Tipe Serangan ── */
+            .match-header {
+                padding: 12px 16px !important;
+                margin-bottom: 10px !important;
+                border-radius: 8px !important;
+            }
+            .match-meta {
+                margin-bottom: 8px !important;
+                font-size: 11px !important;
+                gap: 10px !important;
+            }
+            .match-score-row {
+                gap: 12px !important;
+            }
+            .score-display {
+                font-size: 34px !important;
+            }
+            .match-team-name {
+                font-size: 20px !important;
+            }
+            .team-stats-grid {
+                margin-bottom: 10px !important;
+                border-radius: 8px !important;
+            }
+            .stat-row {
+                padding: 3px 10px !important;
+            }
+            .attack-cards {
+                gap: 10px !important;
+                margin-bottom: 0 !important;
+            }
+            .attack-card {
+                padding: 10px 12px !important;
+                border-radius: 8px !important;
+                box-shadow: none !important;
+                border: 1px solid #e2e8f0 !important;
+            }
+            .attack-card-title {
+                margin-bottom: 8px !important;
+            }
+
+            /* ── Halaman 2: Shot charts, Court Map, GK Stats ── */
             .shot-charts,
-            .attack-cards,
             .court-map-grid,
             .gk-panel-grid {
-                break-inside: avoid !important;
+                gap: 8px !important;
+                margin-bottom: 6px !important;
             }
-
-            /* Cap SVG sizes so they don't bleed past page footer */
-            .court-map-svg-wrap svg,
-            .goal-svg-wrapper svg {
-                max-height: 280px !important;
-                width: 100% !important;
-            }
-
-            /* ── PRINT HEADER — inserted before report content ── */
-            .print-report-header {
-                display: flex !important;
-                align-items: center;
-                justify-content: space-between;
-                background: #0d3a52 !important;
-                padding: 16px 24px !important;
-                border-radius: 0 !important;
-                margin-bottom: 20px !important;
-                break-inside: avoid;
-            }
-            .print-report-header { display: none; } /* hidden on screen */
-
-            /* ── MATCH HEADER — keep colors alive ── */
-            .match-header {
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-            .match-team-color-dot {
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-
-            /* ── GK card colors ── */
-            .gk-card-header,
-            .gk-rating-pill {
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-
-            /* ── Shot/Attack card colors ── */
             .shot-chart-card,
-            .attack-card {
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
+            .court-map-card,
+            .gk-card {
+                padding: 8px 10px !important;
+                border-radius: 8px !important;
+                box-shadow: none !important;
+                border: 1px solid #e2e8f0 !important;
+            }
+            .shot-chart-header,
+            .court-map-header {
+                padding: 4px 0 6px 0 !important;
+                font-size: 11.5px !important;
+            }
+            .shot-chart-body,
+            .court-map-body {
+                padding: 4px 0 !important;
+            }
+            /* Cap SVG & goal-grid sizes proporsional saat print (tidak memakan satu halaman penuh) */
+            .court-map-svg-wrap svg {
+                max-height: 175px !important;
+                width: 100% !important;
+                display: block !important;
+            }
+            .goal-grid {
+                max-width: 210px !important;
+                margin: 0 auto 4px !important;
+            }
+            .goal-cell {
+                height: 35px !important;
+            }
+            .goal-cell .cell-goals {
+                font-size: 14px !important;
+            }
+            .gk-card-header {
+                padding: 6px 10px !important;
+            }
+            .gk-card-body {
+                padding: 8px 10px !important;
+            }
+            .gk-stat-box {
+                padding: 4px 2px !important;
+            }
+            .gk-stat-box-value {
+                font-size: 18px !important;
+            }
+            .gk-zone-cell {
+                padding: 3px 2px !important;
+            }
+            .gk-zone-section-title {
+                margin: 6px 0 4px 0 !important;
+                font-size: 9px !important;
+            }
+
+            /* ── Halaman 3: Tabel Pemain Bersebelahan ── */
+            .report-players-main-title {
+                display: block !important;
+            }
+            .player-table-title {
+                display: none !important;
+            }
+            .player-tables-container {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr !important;
+                gap: 10px !important;
+                align-items: start !important;
+            }
+            .player-table-card {
+                box-shadow: none !important;
+                border: 1px solid #e2e8f0 !important;
+                border-radius: 8px !important;
+                margin-bottom: 0 !important;
+            }
+            .player-table-header {
+                padding: 6px 10px !important;
+                font-size: 12.5px !important;
+            }
+            .rpt-table th,
+            .rpt-table td {
+                padding: 4px 4px !important;
+                font-size: 9.5px !important;
+            }
+            .stat-num {
+                font-size: 12px !important;
+            }
+
+            /* ── Halaman 4: Event Log Kronologi & Footer Ringkas ── */
+            .log-card {
+                box-shadow: none !important;
+                border: 1px solid #e2e8f0 !important;
+                border-radius: 8px !important;
+                margin-bottom: 8px !important;
+            }
+            .log-card-header {
+                padding: 8px 12px !important;
+                font-size: 12.5px !important;
+            }
+            .log-list {
+                max-height: none !important;
+                overflow: visible !important;
+                padding: 4px !important;
+            }
+            .log-item {
+                padding: 4px 8px !important;
+                margin-bottom: 2px !important;
+                font-size: 10px !important;
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
+            }
+            .report-footer {
+                break-before: avoid !important;
+                page-break-before: avoid !important;
+                break-inside: avoid !important;
+                padding: 10px 0 !important;
+                font-size: 10px !important;
+                margin-top: 10px !important;
             }
 
             /* ============================================================
-               CETAK SINGLE PLAYER
+               CETAK SINGLE PLAYER (RAPOR INDIVIDU — 1 HALAMAN PENUH A4)
             ============================================================ */
             body.print-single-player .report-container,
             body.print-single-player .nav-bar,
@@ -1153,12 +1447,36 @@
             }
             body.print-single-player .player-modal-box {
                 box-shadow: none !important;
-                border: none !important;
+                border: 1px solid #cbd5e1 !important;
+                border-radius: 12px !important;
                 width: 100% !important;
                 max-width: 100% !important;
                 transform: none !important;
                 margin: 0 !important;
                 background: white !important;
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
+                break-after: avoid !important;
+                page-break-after: avoid !important;
+            }
+            body.print-single-player .player-modal-body {
+                max-height: none !important;
+                overflow: visible !important;
+                padding: 14px 18px !important;
+            }
+            body.print-single-player .player-activity-grid {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr !important;
+                gap: 10px !important;
+            }
+            body.print-single-player .player-mini-court-wrap svg {
+                max-height: 130px !important;
+            }
+            body.print-single-player .player-mini-goal-grid {
+                max-width: 170px !important;
+            }
+            body.print-single-player .player-mini-goal-cell {
+                height: 28px !important;
             }
             body.print-single-player .player-stat-progress-bar {
                 border: 1px solid #ddd !important;
@@ -1166,13 +1484,15 @@
             }
             body.print-single-player .player-stat-progress-fill,
             body.print-single-player .player-card-badge,
-            body.print-single-player .player-card-icon {
+            body.print-single-player .player-card-icon,
+            body.print-single-player .player-activity-card,
+            body.print-single-player .player-mini-goal-cell {
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
 
             /* ============================================================
-               CETAK SEMUA PEMAIN (batch)
+               CETAK SEMUA PEMAIN (BATCH PRINT — 2 PEMAIN PER HALAMAN A4 GRID)
             ============================================================ */
             body.print-all-players .report-container,
             body.print-all-players .nav-bar,
@@ -1182,46 +1502,78 @@
             }
             body.print-all-players #all-players-print-container {
                 display: block !important;
+                width: 100% !important;
             }
 
-            /* Each player card fills its own page */
-            .print-player-page {
-                break-after: page;
-                page-break-after: always;
-                padding: 0;
-                width: 100%;
+            /* Grid: 2 pemain per halaman A4 menggunakan page-break-after: always */
+            .print-player-sheet {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr !important;
+                gap: 14px !important;
+                break-after: page !important;
+                page-break-after: always !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
+                align-items: start !important;
+                padding: 0 !important;
+                margin: 0 !important;
             }
-            .print-player-page:last-child {
-                break-after: avoid;
-                page-break-after: avoid;
+            .print-player-sheet:last-child {
+                break-after: avoid !important;
+                page-break-after: avoid !important;
             }
 
-            /* Player card print header */
-            .print-player-header {
-                background: linear-gradient(135deg, #0d3a52 0%, #1a6b8c 100%) !important;
-                padding: 20px 24px !important;
+            .print-player-card {
+                border: 1px solid #cbd5e1 !important;
+                border-radius: 12px !important;
+                overflow: hidden !important;
+                background: white !important;
+                display: flex !important;
+                flex-direction: column !important;
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
+                box-sizing: border-box !important;
+            }
+
+            .print-player-meta-bar {
+                background: #092535 !important;
+                padding: 8px 12px !important;
                 display: flex !important;
                 align-items: center !important;
                 justify-content: space-between !important;
+                color: white !important;
+                font-size: 9.5px !important;
+            }
+
+            .print-player-header {
+                background: linear-gradient(135deg, #0d3a52 0%, #1a6b8c 100%) !important;
+                padding: 12px 14px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: space-between !important;
+                gap: 10px !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
+
             .print-player-stats {
-                padding: 20px 24px;
+                padding: 12px 14px !important;
+                flex: 1 !important;
             }
+
             .print-player-stat-progress-bar {
-                height: 10px;
+                height: 8px !important;
                 background: #e9ecef !important;
                 border: 1px solid #ddd !important;
-                border-radius: 5px;
-                overflow: hidden;
-                margin-top: 4px;
+                border-radius: 4px !important;
+                overflow: hidden !important;
+                margin-top: 3px !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
             .print-player-stat-progress-fill {
-                height: 100%;
-                border-radius: 5px;
+                height: 100% !important;
+                border-radius: 4px !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
@@ -1336,7 +1688,7 @@
     <div class="nav-right">
         <span class="nav-period-chip" id="nav-live"><span class="live-dot"></span>LIVE DATA</span>
         <span class="nav-period-chip" id="nav-score">0 &ndash; 0</span>
-        <button class="nav-btn" onclick="printAllPlayers()" title="Cetak semua rapor pemain sekaligus">&#128438; Semua Pemain</button>
+        <button class="nav-btn" onclick="printAllPlayers()" title="Cetak semua rapor pemain sekaligus">🖨️ Cetak Semua Pemain</button>
         <button class="nav-btn primary" onclick="window.print()">&#128438; Print / PDF</button>
     </div>
 </div>
@@ -1396,16 +1748,36 @@ function render() {
     document.title = `AWIM Report — ${md.teamA?.name || 'A'} vs ${md.teamB?.name || 'B'}`;
 
     const root = document.getElementById('report-root');
-    root.innerHTML = buildMatchHeader()
-        + buildTeamOverview()
-        + buildAttackBreakdown()
-        + buildShotZones()
-        + buildCourtMap()
-        + buildGKSection()
-        + buildPlayerTable('A')
-        + buildPlayerTable('B')
-        + buildEventLog()
-        + `<div class="report-footer">AWIM Handball Stats · Generated ${new Date().toLocaleString('id-ID')} · Data from localStorage</div>`;
+    root.innerHTML = `
+    <!-- HALAMAN 1: Header Pertandingan, Statistik Tim, Tipe Serangan -->
+    <div class="report-page report-page-1">
+        ${buildMatchHeader()}
+        ${buildTeamOverview()}
+        ${buildAttackBreakdown()}
+    </div>
+
+    <!-- HALAMAN 2: Peta Tembakan Gawang, Peta Lapangan, Statistik Kiper -->
+    <div class="report-page report-page-2">
+        ${buildShotZones()}
+        ${buildCourtMap()}
+        ${buildGKSection()}
+    </div>
+
+    <!-- HALAMAN 3: Tabel Pemain Tim A & Tim B -->
+    <div class="report-page report-page-3">
+        <div class="section-title report-players-main-title" style="display:none;">👤 Statistik Pemain (Tim A & Tim B)</div>
+        <div class="player-tables-container">
+            ${buildPlayerTable('A')}
+            ${buildPlayerTable('B')}
+        </div>
+    </div>
+
+    <!-- HALAMAN 4: Event Log Kronologi & Footer Ringkas -->
+    <div class="report-page report-page-4">
+        ${buildEventLog()}
+        <div class="report-footer">AWIM Handball Stats · Generated ${new Date().toLocaleString('id-ID')} · Data from localStorage</div>
+    </div>
+    `;
 
     // Animate bars after DOM update
     setTimeout(animateBars, 100);
@@ -2289,30 +2661,32 @@ function buildPlayerTable(team) {
     }).join('');
 
     return `
-    <div class="section-title">👤 Pemain — ${name.toUpperCase()}</div>
-    <div class="player-table-card">
-        <div class="player-table-header">
-            <div class="jersey-mini" style="background:${color}"></div>
-            ${name.toUpperCase()}
-            <span style="font-size:11px;font-weight:400;opacity:.65;margin-left:6px">Coach: ${data?.coach||'-'}</span>
-        </div>
-        <div style="overflow-x:auto">
-        <table class="rpt-table">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Nama</th>
-                    <th>MAIN</th>
-                    <th>GOL</th>
-                    <th>MISS</th>
-                    <th>ACC</th>
-                    <th>SAVE</th>
-                    <th>FOUL</th>
-                    <th>KARTU</th>
-                </tr>
-            </thead>
-            <tbody>${rows}</tbody>
-        </table>
+    <div class="player-table-wrapper">
+        <div class="section-title player-table-title">👤 Pemain — ${name.toUpperCase()}</div>
+        <div class="player-table-card">
+            <div class="player-table-header">
+                <div class="jersey-mini" style="background:${color}"></div>
+                ${name.toUpperCase()}
+                <span style="font-size:11px;font-weight:400;opacity:.65;margin-left:6px">Coach: ${data?.coach||'-'}</span>
+            </div>
+            <div style="overflow-x:auto">
+            <table class="rpt-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nama</th>
+                        <th>MAIN</th>
+                        <th>GOL</th>
+                        <th>MISS</th>
+                        <th>ACC</th>
+                        <th>SAVE</th>
+                        <th>FOUL</th>
+                        <th>KARTU</th>
+                    </tr>
+                </thead>
+                <tbody>${rows}</tbody>
+            </table>
+            </div>
         </div>
     </div>`;
 }
@@ -2641,8 +3015,9 @@ function showPlayerDetail(teamChar, nomor) {
     `;
 
     // ── Render Body ──────────────────────────────────────────────────
+    const activityHtml = buildPlayerActivitySection(player, teamChar, isGK);
     const bodyEl = document.getElementById('modal-player-body');
-    bodyEl.innerHTML = bodyHtml + disciplineHtml;
+    bodyEl.innerHTML = bodyHtml + disciplineHtml + activityHtml;
 
     document.getElementById('player-detail-modal').classList.add('show');
 
@@ -2652,6 +3027,217 @@ function showPlayerDetail(teamChar, nomor) {
             f.style.width = f.getAttribute('data-target');
         });
     }, 150);
+}
+
+// ============================================================
+// PLAYER ACTIVITY VISUALS (MINI COURT & MINI GOAL GRID)
+// ============================================================
+function buildPlayerActivitySection(player, teamChar, isGK) {
+    const oppTeamChar = teamChar === 'A' ? 'B' : 'A';
+    const evs = md.events || [];
+
+    const ZONE_CENTERS = {
+        'L1':{cx:95,cy:65},'L2':{cx:125,cy:145},'L3':{cx:135,cy:220},'L4':{cx:125,cy:295},'L5':{cx:95,cy:375},
+        'L6':{cx:280,cy:65},'L7':{cx:300,cy:145},'L8':{cx:310,cy:220},'L9':{cx:300,cy:295},'L10':{cx:280,cy:375},
+        'R1':{cx:785,cy:65},'R2':{cx:755,cy:145},'R3':{cx:745,cy:220},'R4':{cx:755,cy:295},'R5':{cx:785,cy:375},
+        'R6':{cx:600,cy:65},'R7':{cx:580,cy:145},'R8':{cx:570,cy:220},'R9':{cx:580,cy:295},'R10':{cx:600,cy:375}
+    };
+
+    const ZONE_SHORT_LABELS = {
+        'Atas Kiri':'AT KI', 'Atas Tengah':'AT TG', 'Atas Kanan':'AT KN',
+        'Tengah Kiri':'TG KI', 'Tengah':'TG', 'Tengah Kanan':'TG KN',
+        'Bawah Kiri':'BW KI', 'Bawah Tengah':'BW TG', 'Bawah Kanan':'BW KN'
+    };
+
+    const GK_INNER_ZONES = [
+        'Atas Kiri','Atas Tengah','Atas Kanan',
+        'Tengah Kiri','Tengah','Tengah Kanan',
+        'Bawah Kiri','Bawah Tengah','Bawah Kanan'
+    ];
+
+    // 1. FILTER EVENT INDIVIDU
+    // Semua aksi yang dilakukan oleh pemain ini
+    const playerEvents = evs.filter(e => e.player && e.player.nomor === player.nomor && (!e.team || e.team === teamChar));
+
+    // Aksi Lapangan
+    let courtEvents = [];
+    if (isGK) {
+        // Untuk GK: tembakan lawan yang datang ke gawangnya + foul dari kiper
+        const oppShots = evs.filter(e => (e.type === 'GOAL' || e.type === 'MISS') && e.team === oppTeamChar && e.courtZone);
+        const gkFouls = playerEvents.filter(e => e.type === 'FOUL' && e.courtZone);
+        courtEvents = [...oppShots, ...gkFouls];
+    } else {
+        courtEvents = playerEvents.filter(e => e.courtZone);
+    }
+
+    // Render Pin SVG Lapangan
+    const zoneUsage = {};
+    const pinsSvg = courtEvents.map((e) => {
+        const z = e.courtZone;
+        if (!z || !ZONE_CENTERS[z]) return '';
+        const center = ZONE_CENTERS[z];
+        const count = zoneUsage[z] || 0;
+        zoneUsage[z] = count + 1;
+        const angle = count * 1.5;
+        const dist = count === 0 ? 0 : (14 + count * 3);
+        const px = Math.round(center.cx + Math.cos(angle) * dist);
+        const py = Math.round(center.cy + Math.sin(angle) * dist);
+
+        let pinColor = '#2ecc71';
+        let pinSym = '⚽';
+        if (e.type === 'GOAL') {
+            pinColor = '#2ecc71'; pinSym = '⚽';
+        } else if (e.type === 'MISS') {
+            pinColor = '#e74c3c'; pinSym = '✕';
+        } else if (e.type === 'FOUL') {
+            if (e.subtype === 'Kartu Kuning') { pinColor = '#f1c40f'; pinSym = '🟨'; }
+            else if (e.subtype === '2 Menit') { pinColor = '#e67e22'; pinSym = '⏱'; }
+            else if (e.subtype === 'Kartu Merah') { pinColor = '#e74c3c'; pinSym = '🟥'; }
+            else if (e.subtype === 'Kartu Biru') { pinColor = '#2980b9'; pinSym = '🔵'; }
+            else { pinColor = '#f39c12'; pinSym = '⚠️'; }
+        } else if (e.type === 'SAVE') {
+            pinColor = '#1abc9c'; pinSym = '🧤';
+        }
+        return `<g transform="translate(${px},${py})">
+            <circle r="13" fill="${pinColor}" stroke="#ffffff" stroke-width="2.5" />
+            <text y="4" text-anchor="middle" font-size="10" font-weight="800" fill="#ffffff">${pinSym}</text>
+        </g>`;
+    }).join('');
+
+    const courtSvg = `
+    <svg viewBox="0 0 880 440" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;border-radius:6px">
+      <rect width="880" height="440" fill="#152e47"/>
+      <rect x="40" y="20" width="800" height="400" fill="#1a3d60" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+      <line x1="440" y1="20" x2="440" y2="420" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+      <circle cx="440" cy="220" r="60" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+      <path d="M 40,70 A 120,120 0 0,1 160,190 L 160,250 A 120,120 0 0,1 40,370 Z" fill="rgba(241,196,15,0.08)"/>
+      <path d="M 840,70 A 120,120 0 0,0 720,190 L 720,250 A 120,120 0 0,0 840,370 Z" fill="rgba(241,196,15,0.08)"/>
+      <path d="M 40,70 A 120,120 0 0,1 160,190 L 160,250 A 120,120 0 0,1 40,370" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>
+      <path d="M 840,70 A 120,120 0 0,0 720,190 L 720,250 A 120,120 0 0,0 840,370" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>
+      <path d="M 40,10 A 180,180 0 0,1 220,190 L 220,250 A 180,180 0 0,1 40,430" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" stroke-dasharray="6,5"/>
+      <path d="M 840,10 A 180,180 0 0,0 660,190 L 660,250 A 180,180 0 0,0 840,430" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" stroke-dasharray="6,5"/>
+      <rect x="25" y="190" width="15" height="60" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2"/>
+      <rect x="840" y="190" width="15" height="60" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2"/>
+      ${pinsSvg}
+    </svg>`;
+
+    // 2. TARGET GAWANG MINI (SHOT PLACEMENT / GK EFFECTIVENESS)
+    let goalGridHtml = '';
+    let goalMetaText = '';
+
+    if (isGK) {
+        // Tembakan lawan ke gawang kiper ini
+        const incomingShots = evs.filter(e => (e.type === 'GOAL' || e.type === 'MISS') && e.team === oppTeamChar && GK_INNER_ZONES.includes(e.zone));
+        const saveMap = {}, conMap = {};
+        incomingShots.forEach(e => {
+            const z = e.zone;
+            if (e.type === 'MISS') saveMap[z] = (saveMap[z] || 0) + 1;
+            if (e.type === 'GOAL') conMap[z] = (conMap[z] || 0) + 1;
+        });
+
+        const cells = GOAL_ZONE_ORDER.map(zk => {
+            const s = saveMap[zk] || 0;
+            const c = conMap[zk] || 0;
+            const tot = s + c;
+            const short = ZONE_SHORT_LABELS[zk] || zk;
+            let cls = 'player-mini-goal-cell';
+            let val = '<span style="color:#94a3b8;font-size:11px;">—</span>';
+            if (tot > 0) {
+                if (c === 0) {
+                    cls += ' has-goal';
+                    val = `<span class="player-mini-goal-cell-val" style="color:#059669;">🧤${s}/${tot}</span>`;
+                } else if (s === 0) {
+                    cls += ' has-miss';
+                    val = `<span class="player-mini-goal-cell-val" style="color:#dc2626;">⚽${c}</span>`;
+                } else {
+                    cls += ' has-both';
+                    val = `<span class="player-mini-goal-cell-val" style="color:#d97706;">🧤${s} ⚽${c}</span>`;
+                }
+            }
+            return `<div class="${cls}">${val}<span class="player-mini-goal-cell-lbl">${short}</span></div>`;
+        }).join('');
+
+        goalGridHtml = `<div class="player-mini-goal-grid">${cells}</div>`;
+        const totalFaced = incomingShots.length;
+        const totalSaved = incomingShots.filter(e => e.type === 'MISS').length;
+        const totalConceded = incomingShots.filter(e => e.type === 'GOAL').length;
+        const savePct = totalFaced > 0 ? Math.round((totalSaved / totalFaced) * 100) : 0;
+        goalMetaText = `Dihadapi: ${totalFaced} shot · 🧤${totalSaved} Save · ⚽${totalConceded} Gol · <strong>${savePct}% Save Rate</strong>`;
+    } else {
+        // Outfield: tembakan pemain ke gawang
+        const pShots = playerEvents.filter(e => e.type === 'GOAL' || e.type === 'MISS');
+        const goalMap = {}, missMap = {};
+        pShots.forEach(e => {
+            const z = e.zone;
+            if (e.type === 'GOAL' && z) goalMap[z] = (goalMap[z] || 0) + 1;
+            if (e.type === 'MISS' && z) missMap[z] = (missMap[z] || 0) + 1;
+        });
+
+        const cells = GOAL_ZONE_ORDER.map(zk => {
+            const g = goalMap[zk] || 0;
+            const m = missMap[zk] || 0;
+            const short = ZONE_SHORT_LABELS[zk] || zk;
+            let cls = 'player-mini-goal-cell';
+            let val = '<span style="color:#94a3b8;font-size:11px;">—</span>';
+            if (g > 0 && m > 0) {
+                cls += ' has-both';
+                val = `<span class="player-mini-goal-cell-val" style="color:#d97706;">⚽${g} ✕${m}</span>`;
+            } else if (g > 0) {
+                cls += ' has-goal';
+                val = `<span class="player-mini-goal-cell-val" style="color:#059669;">⚽${g}</span>`;
+            } else if (m > 0) {
+                cls += ' has-miss';
+                val = `<span class="player-mini-goal-cell-val" style="color:#dc2626;">✕${m}</span>`;
+            }
+            return `<div class="${cls}">${val}<span class="player-mini-goal-cell-lbl">${short}</span></div>`;
+        }).join('');
+
+        goalGridHtml = `<div class="player-mini-goal-grid">${cells}</div>`;
+        const totalG = pShots.filter(e => e.type === 'GOAL').length;
+        const totalM = pShots.filter(e => e.type === 'MISS').length;
+        const totalS = totalG + totalM;
+        const acc = totalS > 0 ? Math.round((totalG / totalS) * 100) : 0;
+        
+        // Off-target
+        const offTargets = pShots.filter(e => ['Luar Kiri','Luar Atas','Luar Kanan','Tiang/Mistar'].includes(e.zone));
+        const offText = offTargets.length ? ` · Off: ${offTargets.length}` : '';
+        goalMetaText = `Total: ${totalS} shot · ⚽${totalG} Gol · ✕${totalM} Miss · <strong>${acc}% Acc</strong>${offText}`;
+    }
+
+    return `
+    <div class="player-activity-section">
+        <div class="player-stats-section-title">Aktivitas Lapangan &amp; Target Gawang</div>
+        <div class="player-activity-grid">
+            <!-- Kolom Kiri: Peta Lapangan Mini -->
+            <div class="player-activity-card">
+                <div class="player-activity-card-title">
+                    <span>🏃 ${isGK ? 'Peta Ancaman Lawan' : 'Peta Aksi Lapangan'}</span>
+                    <span class="player-activity-count">${courtEvents.length} aksi</span>
+                </div>
+                <div class="player-mini-court-wrap">
+                    ${courtSvg}
+                </div>
+                <div class="player-mini-court-legend">
+                    <span class="legend-item"><span class="legend-dot green"></span> Gol</span>
+                    <span class="legend-item"><span class="legend-dot red"></span> Miss</span>
+                    <span class="legend-item"><span class="legend-dot yellow"></span> Foul</span>
+                </div>
+            </div>
+
+            <!-- Kolom Kanan: Peta Target Gawang Mini -->
+            <div class="player-activity-card">
+                <div class="player-activity-card-title">
+                    <span>${isGK ? '🧤 Efektivitas Zona Gawang' : '🎯 Arah Tembakan (Gawang)'}</span>
+                </div>
+                <div class="player-mini-goal-wrap">
+                    ${goalGridHtml}
+                </div>
+                <div class="player-activity-meta-text">
+                    ${goalMetaText}
+                </div>
+            </div>
+        </div>
+    </div>`;
 }
 
 function closePlayerDetailModal() {
@@ -2706,7 +3292,7 @@ function printAllPlayers() {
         return;
     }
 
-    const pages = allPlayers.map(({ tc, team, player }) => {
+    function renderPlayerCard(tc, team, player) {
         const nomor = player.nomor;
         const s = team.stats?.[nomor] || { goals:0, misses:0, saves:0, fouls:0, yellowCards:0, twoMins:0, redCard:false, blueCard:false };
         const isGK = player.posisi === 'GK';
@@ -2739,34 +3325,34 @@ function printAllPlayers() {
             ));
 
             statsHtml = `
-            <div style="display:flex;gap:8px;margin-bottom:14px;">
-                <div style="flex:1;text-align:center;background:#f0f9f5;border:1px solid #c3e8da;border-radius:10px;padding:10px 4px;">
-                    <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:#16a085;">${gkSaves}</div>
-                    <div style="font-size:8px;font-weight:700;color:#7f8c8d;text-transform:uppercase;margin-top:2px;">🧤 Saves</div>
+            <div style="display:flex;gap:6px;margin-bottom:12px;">
+                <div style="flex:1;text-align:center;background:#f0f9f5;border:1px solid #c3e8da;border-radius:8px;padding:8px 2px;">
+                    <div style="font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:800;color:#16a085;">${gkSaves}</div>
+                    <div style="font-size:7.5px;font-weight:700;color:#7f8c8d;text-transform:uppercase;">🧤 Saves</div>
                 </div>
-                <div style="flex:1;text-align:center;background:#fdf3f2;border:1px solid #f0c0ba;border-radius:10px;padding:10px 4px;">
-                    <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:#c0392b;">${gkConcede}</div>
-                    <div style="font-size:8px;font-weight:700;color:#7f8c8d;text-transform:uppercase;margin-top:2px;">⚽ Kemasukan</div>
+                <div style="flex:1;text-align:center;background:#fdf3f2;border:1px solid #f0c0ba;border-radius:8px;padding:8px 2px;">
+                    <div style="font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:800;color:#c0392b;">${gkConcede}</div>
+                    <div style="font-size:7.5px;font-weight:700;color:#7f8c8d;text-transform:uppercase;">⚽ Kemasukan</div>
                 </div>
-                <div style="flex:1;text-align:center;background:#f0f4fb;border:1px solid #bfd0ec;border-radius:10px;padding:10px 4px;">
-                    <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:#1a3a52;">${totalFaced}</div>
-                    <div style="font-size:8px;font-weight:700;color:#7f8c8d;text-transform:uppercase;margin-top:2px;">🎯 Shot Dihadapi</div>
+                <div style="flex:1;text-align:center;background:#f0f4fb;border:1px solid #bfd0ec;border-radius:8px;padding:8px 2px;">
+                    <div style="font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:800;color:#1a3a52;">${totalFaced}</div>
+                    <div style="font-size:7.5px;font-weight:700;color:#7f8c8d;text-transform:uppercase;">🎯 Hadapi</div>
                 </div>
             </div>
-            <div style="margin-bottom:6px;display:flex;justify-content:space-between;font-size:12px;font-weight:600;color:#444;">
+            <div style="margin-bottom:4px;display:flex;justify-content:space-between;font-size:11px;font-weight:600;color:#444;">
                 <span>📊 Save Rate</span><span>${savePct}%</span>
             </div>
             <div class="print-player-stat-progress-bar">
                 <div class="print-player-stat-progress-fill" style="width:${savePct}%;background:${saveBarColor};"></div>
             </div>
-            <div style="display:flex;gap:8px;margin-top:14px;">
-                <div style="flex:1;background:#fdf8f0;border:1px solid #fce0b0;border-radius:8px;padding:8px;text-align:center;">
-                    <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:#d35400;">${fouls}</div>
-                    <div style="font-size:8px;font-weight:700;color:#7f8c8d;text-transform:uppercase;margin-top:2px;">⚠ Fouls</div>
+            <div style="display:flex;gap:6px;margin-top:12px;">
+                <div style="flex:1;background:#fdf8f0;border:1px solid #fce0b0;border-radius:6px;padding:6px;text-align:center;">
+                    <div style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;color:#d35400;">${fouls}</div>
+                    <div style="font-size:7.5px;font-weight:700;color:#7f8c8d;text-transform:uppercase;">⚠ Fouls</div>
                 </div>
-                <div style="flex:2;background:#f5f7fa;border:1px solid #dde4ef;border-radius:8px;padding:8px;display:flex;align-items:center;justify-content:space-between;">
-                    <span style="font-size:12px;color:#888;">⏱ Menit Bermain</span>
-                    <span style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;color:#1a3a52;">${s._playTime || '—'}</span>
+                <div style="flex:2;background:#f5f7fa;border:1px solid #dde4ef;border-radius:6px;padding:6px 10px;display:flex;align-items:center;justify-content:space-between;">
+                    <span style="font-size:11px;color:#888;">⏱ Menit</span>
+                    <span style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;color:#1a3a52;">${s._playTime || '—'}</span>
                 </div>
             </div>`;
         } else {
@@ -2778,12 +3364,7 @@ function printAllPlayers() {
             rating = Math.min(10, Math.max(1,
                 6.0 + goals * 0.8 - misses * 0.4 + saves * 0.9 - fouls * 0.2
             ));
-            const bar = (val, max, color) => `
-                <div class="print-player-stat-progress-bar">
-                    <div class="print-player-stat-progress-fill" style="width:${Math.round((val / Math.max(max, 5)) * 100)}%;background:${color};"></div>
-                </div>`;
 
-            // compute team max for bar scaling
             let mxG = 1, mxM = 1, mxS = 1, mxF = 1;
             for (const pNo in team.stats) {
                 const ps = team.stats[pNo];
@@ -2795,11 +3376,13 @@ function printAllPlayers() {
             mxG = Math.max(mxG, 5); mxM = Math.max(mxM, 5); mxS = Math.max(mxS, 5); mxF = Math.max(mxF, 5);
 
             const row = (icon, label, val, max, color) => `
-            <div style="margin-bottom:12px;">
-                <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600;color:#444;margin-bottom:4px;">
+            <div style="margin-bottom:8px;">
+                <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:600;color:#444;margin-bottom:2px;">
                     <span>${icon} ${label}</span><span>${val}${label==='Accuracy'?'%':''}</span>
                 </div>
-                ${bar(val, max, color)}
+                <div class="print-player-stat-progress-bar">
+                    <div class="print-player-stat-progress-fill" style="width:${Math.round((val / Math.max(max, 5)) * 100)}%;background:${color};"></div>
+                </div>
             </div>`;
 
             statsHtml =
@@ -2810,65 +3393,65 @@ function printAllPlayers() {
                 row('⚠', 'Fouls', fouls, mxF, 'linear-gradient(to right,#f39c12,#d35400)');
         }
 
-        // Card badges (disiplin)
-        const badgeStyle = (bg, border) => `background:${bg};border:1px solid ${border};border-radius:6px;padding:5px 8px;font-size:10px;font-weight:700;display:inline-flex;align-items:center;gap:4px;`;
-        const cardDot = (c) => `<span style="width:10px;height:14px;border-radius:2px;background:${c};display:inline-block;"></span>`;
+        const badgeStyle = (bg, border) => `background:${bg};border:1px solid ${border};border-radius:4px;padding:3px 6px;font-size:9px;font-weight:700;display:inline-flex;align-items:center;gap:3px;`;
+        const cardDot = (c) => `<span style="width:8px;height:11px;border-radius:2px;background:${c};display:inline-block;"></span>`;
         const discipline = `
-        <div style="margin-top:14px;padding-top:12px;border-top:1px solid #eee;display:flex;gap:6px;flex-wrap:wrap;">
-            <span style="${badgeStyle('rgba(241,196,15,.1)','rgba(241,196,15,.4)')}">${cardDot('#f1c40f')} Kuning: ${yCards}</span>
+        <div style="margin-top:10px;padding-top:8px;border-top:1px solid #eee;display:flex;gap:4px;flex-wrap:wrap;">
+            <span style="${badgeStyle('rgba(241,196,15,.1)','rgba(241,196,15,.4)')}">${cardDot('#f1c40f')} K: ${yCards}</span>
             <span style="${badgeStyle('rgba(230,126,34,.1)','rgba(230,126,34,.4)')}">${cardDot('#e67e22')} 2' (x${twoMin})</span>
             <span style="${badgeStyle('rgba(231,76,60,.1)','rgba(231,76,60,.4)')}">${cardDot('#e74c3c')} Merah: ${rCard ? 'YA' : 'TDK'}</span>
             <span style="${badgeStyle('rgba(41,128,185,.1)','rgba(41,128,185,.4)')}">${cardDot('#2980b9')} Biru: ${bCard ? 'YA' : 'TDK'}</span>
         </div>`;
 
-        // Print report header (AWIM badge + match info + score)
-        const printHeader = `
-        <div style="background:linear-gradient(135deg,#0d3a52 0%,#1a6b8c 100%);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;">
-            <div style="display:flex;align-items:center;gap:10px;">
-                <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:#f39c12;letter-spacing:2px;">AWIM</div>
-                <div style="width:1px;height:28px;background:rgba(255,255,255,0.2);"></div>
-                <div>
-                    <div style="font-size:11px;font-weight:700;color:white;">${compName}</div>
-                    <div style="font-size:9px;color:rgba(255,255,255,0.6);">${[matchDate, venue].filter(Boolean).join(' · ')}</div>
-                </div>
-            </div>
-            <div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;color:white;background:rgba(255,255,255,0.12);padding:4px 14px;border-radius:8px;">${scoreLabel}</div>
+        const metaBar = `
+        <div class="print-player-meta-bar">
+            <div style="font-weight:800;letter-spacing:1px;color:#f39c12;">AWIM · ${compName}</div>
+            <div style="font-weight:700;">Skor: ${scoreLabel}</div>
         </div>`;
 
-        // Player header
-        const gkBadge = isGK ? `<span style="font-size:9px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);padding:2px 6px;border-radius:12px;margin-left:5px;">GK</span>` : '';
+        const gkBadge = isGK ? `<span style="font-size:8px;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);padding:1px 5px;border-radius:8px;margin-left:4px;">GK</span>` : '';
         const playerHeader = `
         <div class="print-player-header">
-            <div style="display:flex;align-items:center;gap:14px;">
-                <div style="width:50px;height:50px;border-radius:50%;background:${teamColor};display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:${isGK?'22px':'20px'};font-weight:800;color:white;border:2px solid rgba(255,255,255,0.3);">${isGK ? '🧤' : nomor}</div>
-                <div>
-                    <div style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;color:white;letter-spacing:1px;">${player.nama}${gkBadge}</div>
-                    <div style="font-size:11px;color:rgba(255,255,255,0.65);margin-top:2px;">${isGK?'🧤':'🏃'} ${player.posisi} · 🛡️ ${team.name.toUpperCase()}</div>
+            <div style="display:flex;align-items:center;gap:10px;overflow:hidden;">
+                <div style="width:40px;height:40px;border-radius:50%;background:${teamColor};display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:800;color:white;border:2px solid rgba(255,255,255,0.4);flex-shrink:0;">${isGK ? '🧤' : nomor}</div>
+                <div style="overflow:hidden;">
+                    <div style="font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:800;color:white;letter-spacing:0.5px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${player.nama}${gkBadge}</div>
+                    <div style="font-size:10px;color:rgba(255,255,255,0.7);margin-top:2px;">${isGK?'🧤':'🏃'} ${player.posisi} · 🛡️ ${team.name.toUpperCase()}</div>
                 </div>
             </div>
-            <div style="text-align:center;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:6px 12px;min-width:64px;">
-                <div style="font-size:8px;font-weight:700;color:${isGK?'#f39c12':'var(--orange,#f39c12)'};letter-spacing:1px;text-transform:uppercase;">${isGK?'GK RTG':'RATING'}</div>
-                <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:white;line-height:1.1;">${rating.toFixed(1)}</div>
+            <div style="text-align:center;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:3px 7px;min-width:50px;flex-shrink:0;">
+                <div style="font-size:7.5px;font-weight:700;color:#f39c12;letter-spacing:0.5px;text-transform:uppercase;">${isGK?'GK RTG':'RATING'}</div>
+                <div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;color:white;line-height:1.1;">${rating.toFixed(1)}</div>
             </div>
         </div>`;
 
         return `
-        <div class="print-player-page">
-            ${printHeader}
+        <div class="print-player-card">
+            ${metaBar}
             ${playerHeader}
             <div class="print-player-stats">
-                <div style="font-size:10px;font-weight:700;color:#7f8c8d;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;display:flex;align-items:center;gap:6px;">
+                <div style="font-size:9.5px;font-weight:700;color:#7f8c8d;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
                     ${isGK ? '🧤 Statistik Kiper' : '🎯 Statistik Utama'}
-                    <div style="flex:1;height:1px;background:#ddd;"></div>
+                    <div style="flex:1;height:1px;background:#e2e8f0;"></div>
                 </div>
                 ${statsHtml}
                 ${discipline}
             </div>
         </div>`;
-    });
+    }
+
+    // Kelompokkan 2 pemain per halaman (sheet)
+    const sheets = [];
+    for (let i = 0; i < allPlayers.length; i += 2) {
+        const p1 = allPlayers[i];
+        const p2 = allPlayers[i + 1];
+        const card1 = renderPlayerCard(p1.tc, p1.team, p1.player);
+        const card2 = p2 ? renderPlayerCard(p2.tc, p2.team, p2.player) : `<div class="print-player-card" style="border:1px dashed #cbd5e1;background:#fafbfc;min-height:200px;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:12px;">Halaman Akhir</div>`;
+        sheets.push(`<div class="print-player-sheet">${card1}${card2}</div>`);
+    }
 
     const container = document.getElementById('all-players-print-container');
-    container.innerHTML = pages.join('');
+    container.innerHTML = sheets.join('');
     document.body.classList.add('print-all-players');
     window.print();
 }
