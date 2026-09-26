@@ -1249,119 +1249,288 @@
                 padding-bottom: 3px !important;
             }
 
-            /* Struktur per lembar laporan (Maksimal 4 lembar terstruktur) */
+            /* Struktur per lembar laporan (Tepat 4 lembar terstruktur tanpa ruang kosong) */
             .report-page {
                 break-after: page !important;
                 page-break-after: always !important;
                 display: block !important;
             }
-            .report-page:last-child {
+            .report-page-1,
+            .report-page-2,
+            .report-page-3 {
+                break-after: page !important;
+                page-break-after: always !important;
+            }
+            .report-page:last-child,
+            .report-page-4 {
                 break-after: avoid !important;
                 page-break-after: avoid !important;
             }
 
-            /* ── Halaman 1: Header Pertandingan, Statistik Tim, Tipe Serangan ── */
+            /* ── Halaman 1: Header Pertandingan, Statistik Tim, Tipe Serangan, Peta Gawang ── */
+            .report-page-1 {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 0 !important;
+            }
             .match-header {
-                padding: 12px 16px !important;
-                margin-bottom: 10px !important;
-                border-radius: 8px !important;
+                padding: 10px 14px !important;
+                margin-bottom: 6px !important;
+                border-radius: 6px !important;
             }
             .match-meta {
-                margin-bottom: 8px !important;
-                font-size: 11px !important;
-                gap: 10px !important;
+                margin-bottom: 5px !important;
+                font-size: 10px !important;
+                gap: 8px !important;
             }
             .match-score-row {
-                gap: 12px !important;
+                gap: 10px !important;
             }
             .score-display {
-                font-size: 34px !important;
+                font-size: 30px !important;
+                letter-spacing: 4px !important;
             }
             .match-team-name {
-                font-size: 20px !important;
+                font-size: 18px !important;
+            }
+            .match-team-coach {
+                font-size: 9.5px !important;
+            }
+            .period-badge {
+                font-size: 9px !important;
+                padding: 2px 8px !important;
             }
             .team-stats-grid {
-                margin-bottom: 10px !important;
-                border-radius: 8px !important;
+                margin-bottom: 6px !important;
+                border-radius: 6px !important;
+            }
+            .team-col-header {
+                padding: 5px 10px !important;
+                font-size: 13px !important;
+            }
+            .stat-divider-header {
+                font-size: 8.5px !important;
             }
             .stat-row {
-                padding: 3px 10px !important;
+                padding: 2px 6px !important;
+            }
+            .stat-val {
+                padding: 2.5px 10px !important;
+                font-size: 12px !important;
+            }
+            .stat-divider-val {
+                padding: 2.5px 6px !important;
+                font-size: 8.5px !important;
+                min-width: 90px !important;
             }
             .attack-cards {
-                gap: 10px !important;
-                margin-bottom: 0 !important;
+                display: grid !important;
+                grid-template-columns: 1fr 1fr !important;
+                gap: 8px !important;
+                margin-bottom: 6px !important;
             }
             .attack-card {
-                padding: 10px 12px !important;
-                border-radius: 8px !important;
+                padding: 6px 10px !important;
+                border-radius: 6px !important;
                 box-shadow: none !important;
                 border: 1px solid #e2e8f0 !important;
             }
             .attack-card-title {
-                margin-bottom: 8px !important;
+                margin-bottom: 4px !important;
+                font-size: 9.5px !important;
+            }
+            .attack-type-row {
+                padding: 2.5px 0 !important;
+            }
+            .attack-type-label {
+                font-size: 10px !important;
+            }
+            .attack-type-bars {
+                padding: 0 8px !important;
+            }
+            .attack-mini-bar {
+                height: 5px !important;
+            }
+            .attack-type-count {
+                font-size: 12px !important;
             }
 
-            /* ── Halaman 2: Shot charts, Court Map, GK Stats ── */
-            .shot-charts,
-            .court-map-grid,
-            .gk-panel-grid {
+            /* Peta Tembakan ke Gawang di Lembar 1: Sejajar 2 kolom Tim A & Tim B */
+            .shot-charts {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr !important;
                 gap: 8px !important;
-                margin-bottom: 6px !important;
+                margin-bottom: 0 !important;
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
             }
-            .shot-chart-card,
-            .court-map-card,
-            .gk-card {
-                padding: 8px 10px !important;
+            .shot-chart-card {
+                padding: 6px 8px !important;
+                border-radius: 6px !important;
+                box-shadow: none !important;
+                border: 1px solid #e2e8f0 !important;
+            }
+            .shot-chart-header {
+                padding: 2px 0 4px 0 !important;
+                font-size: 10.5px !important;
+            }
+            .shot-chart-body {
+                padding: 2px 0 !important;
+            }
+            .goal-grid {
+                display: grid !important;
+                grid-template-columns: repeat(3, 1fr) !important;
+                max-width: 170px !important;
+                margin: 0 auto 3px !important;
+                gap: 2px !important;
+                padding: 2px !important;
+                border-width: 2px !important;
+            }
+            .goal-cell {
+                height: 24px !important;
+                min-height: 24px !important;
+            }
+            .goal-cell .cell-goals {
+                font-size: 11.5px !important;
+                line-height: 1 !important;
+            }
+            .goal-cell .cell-miss {
+                font-size: 8px !important;
+                line-height: 1 !important;
+            }
+            .goal-cell .cell-label {
+                font-size: 6.5px !important;
+            }
+            .shot-legend {
+                margin-top: 4px !important;
+                font-size: 8.5px !important;
+                gap: 8px !important;
+            }
+
+            /* ── Halaman 2: Peta Lapangan + Statistik Kiper (GK) ── */
+            .report-page-2 {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 0 !important;
+            }
+            .court-map-section {
+                margin-bottom: 6px !important;
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
+            }
+            .court-map-grid {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr !important;
+                gap: 8px !important;
+                margin-bottom: 0 !important;
+            }
+            .court-map-card {
+                padding: 6px 8px !important;
                 border-radius: 8px !important;
                 box-shadow: none !important;
                 border: 1px solid #e2e8f0 !important;
             }
-            .shot-chart-header,
             .court-map-header {
-                padding: 4px 0 6px 0 !important;
-                font-size: 11.5px !important;
+                padding: 3px 6px !important;
+                font-size: 11px !important;
             }
-            .shot-chart-body,
             .court-map-body {
-                padding: 4px 0 !important;
+                padding: 3px 0 !important;
             }
-            /* Cap SVG & goal-grid sizes proporsional saat print (tidak memakan satu halaman penuh) */
             .court-map-svg-wrap svg {
-                max-height: 175px !important;
+                max-height: 185px !important;
                 width: 100% !important;
                 display: block !important;
             }
-            .goal-grid {
-                max-width: 210px !important;
-                margin: 0 auto 4px !important;
+            .court-map-legend {
+                margin-top: 4px !important;
+                font-size: 8.5px !important;
+                gap: 10px !important;
             }
-            .goal-cell {
-                height: 35px !important;
+
+            /* Statistik Kiper tepat di bawah Peta Lapangan */
+            .gk-stats-section {
+                margin-bottom: 0 !important;
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
             }
-            .goal-cell .cell-goals {
-                font-size: 14px !important;
+            .gk-panel-grid {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr !important;
+                gap: 8px !important;
+                margin-bottom: 0 !important;
+            }
+            .gk-card {
+                padding: 0 !important;
+                border-radius: 8px !important;
+                box-shadow: none !important;
+                border: 1px solid #e2e8f0 !important;
+                overflow: hidden !important;
             }
             .gk-card-header {
-                padding: 6px 10px !important;
+                padding: 5px 10px !important;
+            }
+            .gk-jersey-badge {
+                width: 26px !important;
+                height: 26px !important;
+                font-size: 11px !important;
+            }
+            .gk-header-name {
+                font-size: 12.5px !important;
+            }
+            .gk-header-team {
+                font-size: 9px !important;
+            }
+            .gk-rating-pill {
+                font-size: 13px !important;
+                padding: 2px 7px !important;
             }
             .gk-card-body {
-                padding: 8px 10px !important;
+                padding: 6px 8px !important;
+            }
+            .gk-main-stats {
+                gap: 6px !important;
+                margin-bottom: 6px !important;
             }
             .gk-stat-box {
-                padding: 4px 2px !important;
-            }
-            .gk-stat-box-value {
-                font-size: 18px !important;
-            }
-            .gk-zone-cell {
                 padding: 3px 2px !important;
             }
+            .gk-stat-box-value {
+                font-size: 17px !important;
+            }
+            .gk-stat-box-label {
+                font-size: 7.5px !important;
+            }
+            .gk-save-bar-section {
+                margin-bottom: 5px !important;
+            }
+            .gk-save-bar-label {
+                font-size: 8px !important;
+            }
+            .gk-save-bar-track {
+                height: 5px !important;
+            }
             .gk-zone-section-title {
-                margin: 6px 0 4px 0 !important;
-                font-size: 9px !important;
+                margin: 4px 0 3px 0 !important;
+                font-size: 8px !important;
+            }
+            .gk-zone-grid {
+                display: grid !important;
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 2px !important;
+                max-width: 170px !important;
+                margin: 0 auto !important;
+            }
+            .gk-zone-cell {
+                padding: 2px 1px !important;
+                font-size: 7.5px !important;
+                min-height: 20px !important;
             }
 
             /* ── Halaman 3: Tabel Pemain Bersebelahan ── */
+            .report-page-3 {
+                display: block !important;
+            }
             .report-players-main-title {
                 display: block !important;
             }
@@ -1371,7 +1540,7 @@
             .player-tables-container {
                 display: grid !important;
                 grid-template-columns: 1fr 1fr !important;
-                gap: 10px !important;
+                gap: 8px !important;
                 align-items: start !important;
             }
             .player-table-card {
@@ -1381,48 +1550,70 @@
                 margin-bottom: 0 !important;
             }
             .player-table-header {
-                padding: 6px 10px !important;
-                font-size: 12.5px !important;
+                padding: 5px 10px !important;
+                font-size: 12px !important;
             }
             .rpt-table th,
             .rpt-table td {
-                padding: 4px 4px !important;
-                font-size: 9.5px !important;
+                padding: 3px 3px !important;
+                font-size: 8.5px !important;
+                line-height: 1.2 !important;
             }
             .stat-num {
-                font-size: 12px !important;
+                font-size: 11px !important;
+            }
+            .card-chip {
+                font-size: 7.5px !important;
+                padding: 1px 3px !important;
+            }
+            .acc-pill {
+                font-size: 8px !important;
+                padding: 1px 4px !important;
             }
 
-            /* ── Halaman 4: Event Log Kronologi & Footer Ringkas ── */
+            /* ── Halaman 4: Event Log Kronologi (2 Kolom Padat) & Footer Ringkas ── */
+            .report-page-4 {
+                display: block !important;
+            }
             .log-card {
                 box-shadow: none !important;
                 border: 1px solid #e2e8f0 !important;
                 border-radius: 8px !important;
-                margin-bottom: 8px !important;
+                margin-bottom: 6px !important;
             }
             .log-card-header {
-                padding: 8px 12px !important;
-                font-size: 12.5px !important;
+                padding: 6px 12px !important;
+                font-size: 12px !important;
             }
             .log-list {
                 max-height: none !important;
                 overflow: visible !important;
-                padding: 4px !important;
+                padding: 6px !important;
+                column-count: 2 !important;
+                column-gap: 12px !important;
             }
             .log-item {
-                padding: 4px 8px !important;
-                margin-bottom: 2px !important;
-                font-size: 10px !important;
+                padding: 3px 6px !important;
+                margin-bottom: 3px !important;
+                font-size: 8.5px !important;
                 break-inside: avoid !important;
                 page-break-inside: avoid !important;
+                display: flex !important;
+            }
+            .log-icon {
+                font-size: 11px !important;
+            }
+            .log-chip {
+                font-size: 7.5px !important;
+                padding: 1px 3px !important;
             }
             .report-footer {
                 break-before: avoid !important;
                 page-break-before: avoid !important;
                 break-inside: avoid !important;
-                padding: 10px 0 !important;
-                font-size: 10px !important;
-                margin-top: 10px !important;
+                padding: 8px 0 !important;
+                font-size: 9px !important;
+                margin-top: 6px !important;
             }
 
             /* ============================================================
@@ -1808,16 +1999,16 @@ function render() {
 
     const root = document.getElementById('report-root');
     root.innerHTML = `
-    <!-- HALAMAN 1: Header Pertandingan, Statistik Tim, Tipe Serangan -->
+    <!-- HALAMAN 1: Header Pertandingan, Statistik Tim, Tipe Serangan, Peta Tembakan ke Gawang -->
     <div class="report-page report-page-1">
         ${buildMatchHeader()}
         ${buildTeamOverview()}
         ${buildAttackBreakdown()}
+        ${buildShotZones()}
     </div>
 
-    <!-- HALAMAN 2: Peta Tembakan Gawang, Peta Lapangan, Statistik Kiper -->
+    <!-- HALAMAN 2: Peta Lapangan, Statistik Kiper -->
     <div class="report-page report-page-2">
-        ${buildShotZones()}
         ${buildCourtMap()}
         ${buildGKSection()}
     </div>
