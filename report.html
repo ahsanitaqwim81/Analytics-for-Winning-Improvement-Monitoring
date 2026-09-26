@@ -1492,7 +1492,7 @@
             }
 
             /* ============================================================
-               CETAK SEMUA PEMAIN (BATCH PRINT — 2 PEMAIN PER HALAMAN A4 GRID)
+               CETAK SEMUA PEMAIN (BATCH PRINT — 1 PEMAIN PER HALAMAN A4)
             ============================================================ */
             body.print-all-players .report-container,
             body.print-all-players .nav-bar,
@@ -1505,61 +1505,120 @@
                 width: 100% !important;
             }
 
-            /* Grid: 2 pemain per halaman A4 menggunakan page-break-after: always */
-            .print-player-sheet {
-                display: grid !important;
-                grid-template-columns: 1fr 1fr !important;
-                gap: 14px !important;
-                break-after: page !important;
-                page-break-after: always !important;
+            /* 1 pemain = 1 halaman A4 penuh */
+            .print-player-card {
                 width: 100% !important;
                 box-sizing: border-box !important;
-                align-items: start !important;
-                padding: 0 !important;
-                margin: 0 !important;
-            }
-            .print-player-sheet:last-child {
-                break-after: avoid !important;
-                page-break-after: avoid !important;
-            }
-
-            .print-player-card {
                 border: 1px solid #cbd5e1 !important;
-                border-radius: 12px !important;
+                border-radius: 0 !important;
                 overflow: hidden !important;
                 background: white !important;
                 display: flex !important;
                 flex-direction: column !important;
+                break-after: page !important;
+                page-break-after: always !important;
                 break-inside: avoid !important;
                 page-break-inside: avoid !important;
-                box-sizing: border-box !important;
+                min-height: 100vh !important;
+            }
+            .print-player-card:last-child {
+                break-after: avoid !important;
+                page-break-after: avoid !important;
+                min-height: unset !important;
             }
 
             .print-player-meta-bar {
                 background: #092535 !important;
-                padding: 8px 12px !important;
+                padding: 8px 14px !important;
                 display: flex !important;
                 align-items: center !important;
                 justify-content: space-between !important;
                 color: white !important;
-                font-size: 9.5px !important;
+                font-size: 10px !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
 
             .print-player-header {
                 background: linear-gradient(135deg, #0d3a52 0%, #1a6b8c 100%) !important;
-                padding: 12px 14px !important;
+                padding: 16px 20px !important;
                 display: flex !important;
                 align-items: center !important;
                 justify-content: space-between !important;
-                gap: 10px !important;
+                gap: 14px !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
 
             .print-player-stats {
-                padding: 12px 14px !important;
-                flex: 1 !important;
+                padding: 14px 20px !important;
             }
+
+            .print-player-activity {
+                padding: 10px 20px 16px !important;
+                border-top: 1px solid #e9ecef !important;
+            }
+
+            .print-player-activity-grid {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr !important;
+                gap: 12px !important;
+                margin-top: 8px !important;
+            }
+
+            .print-player-activity-card {
+                border: 1px solid #e0e8f0 !important;
+                border-radius: 8px !important;
+                overflow: hidden !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .print-player-activity-header {
+                background: #f0f4f8 !important;
+                padding: 6px 10px !important;
+                font-size: 9px !important;
+                font-weight: 700 !important;
+                color: #4a5a6b !important;
+                text-transform: uppercase !important;
+                letter-spacing: 0.5px !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .print-player-activity-card svg {
+                width: 100% !important;
+                display: block !important;
+                max-height: 160px !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .print-player-mini-goal-grid {
+                display: grid !important;
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 3px !important;
+                padding: 8px !important;
+            }
+
+            .print-player-mini-goal-cell {
+                border: 1px solid #dde4ef !important;
+                border-radius: 5px !important;
+                padding: 5px 3px !important;
+                text-align: center !important;
+                font-size: 9px !important;
+                min-height: 36px !important;
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                justify-content: center !important;
+                gap: 2px !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            .print-player-mini-goal-cell.has-goal { background: #ecfdf5 !important; border-color: #6ee7b7 !important; }
+            .print-player-mini-goal-cell.has-miss  { background: #fff1f2 !important; border-color: #fca5a5 !important; }
+            .print-player-mini-goal-cell.has-both  { background: #fffbeb !important; border-color: #fcd34d !important; }
 
             .print-player-stat-progress-bar {
                 height: 8px !important;
@@ -3272,11 +3331,26 @@ function printAllPlayers() {
         'Tengah Kiri','Tengah','Tengah Kanan',
         'Bawah Kiri','Bawah Tengah','Bawah Kanan'
     ];
+    const GOAL_ZONE_ORDER_P = [
+        'Atas Kiri','Atas Tengah','Atas Kanan',
+        'Tengah Kiri','Tengah','Tengah Kanan',
+        'Bawah Kiri','Bawah Tengah','Bawah Kanan'
+    ];
+    const ZONE_SHORT_P = {
+        'Atas Kiri':'AT KI','Atas Tengah':'AT TG','Atas Kanan':'AT KN',
+        'Tengah Kiri':'TG KI','Tengah':'TG','Tengah Kanan':'TG KN',
+        'Bawah Kiri':'BW KI','Bawah Tengah':'BW TG','Bawah Kanan':'BW KN'
+    };
+    const ZONE_CENTERS_P = {
+        'L1':{cx:95,cy:65},'L2':{cx:125,cy:145},'L3':{cx:135,cy:220},'L4':{cx:125,cy:295},'L5':{cx:95,cy:375},
+        'L6':{cx:280,cy:65},'L7':{cx:300,cy:145},'L8':{cx:310,cy:220},'L9':{cx:300,cy:295},'L10':{cx:280,cy:375},
+        'R1':{cx:785,cy:65},'R2':{cx:755,cy:145},'R3':{cx:745,cy:220},'R4':{cx:755,cy:295},'R5':{cx:785,cy:375},
+        'R6':{cx:600,cy:65},'R7':{cx:580,cy:145},'R8':{cx:570,cy:220},'R9':{cx:580,cy:295},'R10':{cx:600,cy:375}
+    };
+
     const evs = md.events || [];
     const info = md.info || {};
     const compName = info.competition || 'AWIM Report';
-    const matchDate = info.date || '';
-    const venue = info.venue || '';
     const scoreLabel = `${md.scoreA} – ${md.scoreB}`;
 
     // Kumpulkan semua pemain dari kedua tim
@@ -3292,11 +3366,110 @@ function printAllPlayers() {
         return;
     }
 
+    function buildMiniCourtSvg(courtEvents) {
+        const zoneUsage = {};
+        const pins = courtEvents.map(e => {
+            const z = e.courtZone;
+            if (!z || !ZONE_CENTERS_P[z]) return '';
+            const center = ZONE_CENTERS_P[z];
+            const count = zoneUsage[z] || 0;
+            zoneUsage[z] = count + 1;
+            const angle = count * 1.5;
+            const dist = count === 0 ? 0 : (14 + count * 3);
+            const px = Math.round(center.cx + Math.cos(angle) * dist);
+            const py = Math.round(center.cy + Math.sin(angle) * dist);
+            let pinColor = '#2ecc71';
+            let pinSym = '●';
+            if (e.type === 'GOAL') { pinColor = '#2ecc71'; pinSym = '⚽'; }
+            else if (e.type === 'MISS') { pinColor = '#e74c3c'; pinSym = '✕'; }
+            else if (e.type === 'FOUL') {
+                if (e.subtype === 'Kartu Kuning') { pinColor = '#f1c40f'; pinSym = '🟨'; }
+                else if (e.subtype === '2 Menit') { pinColor = '#e67e22'; pinSym = '⏱'; }
+                else if (e.subtype === 'Kartu Merah') { pinColor = '#e74c3c'; pinSym = '🟥'; }
+                else if (e.subtype === 'Kartu Biru') { pinColor = '#2980b9'; pinSym = '🔵'; }
+                else { pinColor = '#f39c12'; pinSym = '⚠️'; }
+            }
+            return `<g transform="translate(${px},${py})">
+                <circle r="12" fill="${pinColor}" stroke="#fff" stroke-width="2"/>
+                <text y="4" text-anchor="middle" font-size="9" font-weight="800" fill="#fff">${pinSym}</text>
+            </g>`;
+        }).join('');
+        return `<svg viewBox="0 0 880 440" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;border-radius:6px;">
+          <rect width="880" height="440" fill="#152e47"/>
+          <rect x="40" y="20" width="800" height="400" fill="#1a3d60" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+          <line x1="440" y1="20" x2="440" y2="420" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+          <circle cx="440" cy="220" r="60" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+          <path d="M 40,70 A 120,120 0 0,1 160,190 L 160,250 A 120,120 0 0,1 40,370 Z" fill="rgba(241,196,15,0.08)"/>
+          <path d="M 840,70 A 120,120 0 0,0 720,190 L 720,250 A 120,120 0 0,0 840,370 Z" fill="rgba(241,196,15,0.08)"/>
+          <rect x="25" y="190" width="15" height="60" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2"/>
+          <rect x="840" y="190" width="15" height="60" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2"/>
+          ${pins}
+        </svg>`;
+    }
+
+    function buildMiniGoalGrid(isGK, tc, playerEvents) {
+        const oppTc = tc === 'A' ? 'B' : 'A';
+        let metaText = '';
+        if (isGK) {
+            const shots = evs.filter(e => (e.type === 'GOAL' || e.type === 'MISS') && e.team === oppTc && GK_INNER_ZONES.includes(e.zone));
+            const saveMap = {}, conMap = {};
+            shots.forEach(e => {
+                if (e.type === 'MISS') saveMap[e.zone] = (saveMap[e.zone] || 0) + 1;
+                if (e.type === 'GOAL') conMap[e.zone] = (conMap[e.zone] || 0) + 1;
+            });
+            const tot = shots.length;
+            const saved = shots.filter(e => e.type === 'MISS').length;
+            const conc = tot - saved;
+            const pct = tot > 0 ? Math.round((saved / tot) * 100) : 0;
+            metaText = `Dihadapi: ${tot} · 🧤${saved} · ⚽${conc} · ${pct}% SR`;
+            const cells = GOAL_ZONE_ORDER_P.map(zk => {
+                const s = saveMap[zk] || 0;
+                const c = conMap[zk] || 0;
+                const t = s + c;
+                const short = ZONE_SHORT_P[zk] || zk;
+                let cls = 'print-player-mini-goal-cell';
+                let val = '<span style="color:#94a3b8;font-size:8px;">—</span>';
+                if (t > 0) {
+                    if (c === 0) { cls += ' has-goal'; val = `<span style="color:#059669;font-size:9px;font-weight:700;">🧤${s}</span>`; }
+                    else if (s === 0) { cls += ' has-miss'; val = `<span style="color:#dc2626;font-size:9px;font-weight:700;">⚽${c}</span>`; }
+                    else { cls += ' has-both'; val = `<span style="color:#d97706;font-size:8px;font-weight:700;">🧤${s}⚽${c}</span>`; }
+                }
+                return `<div class="${cls}">${val}<span style="font-size:7px;color:#94a3b8;display:block;margin-top:1px;">${short}</span></div>`;
+            }).join('');
+            return { cells, metaText };
+        } else {
+            const pShots = playerEvents.filter(e => (e.type === 'GOAL' || e.type === 'MISS') && GK_INNER_ZONES.includes(e.zone));
+            const goalMap = {}, missMap = {};
+            pShots.forEach(e => {
+                if (e.type === 'GOAL' && e.zone) goalMap[e.zone] = (goalMap[e.zone] || 0) + 1;
+                if (e.type === 'MISS' && e.zone) missMap[e.zone] = (missMap[e.zone] || 0) + 1;
+            });
+            const tot = pShots.length;
+            const g = pShots.filter(e => e.type === 'GOAL').length;
+            const m = tot - g;
+            const acc = tot > 0 ? Math.round((g / tot) * 100) : 0;
+            metaText = `Total: ${tot} shot · ⚽${g} · ✕${m} · ${acc}% Acc`;
+            const cells = GOAL_ZONE_ORDER_P.map(zk => {
+                const gv = goalMap[zk] || 0;
+                const mv = missMap[zk] || 0;
+                const short = ZONE_SHORT_P[zk] || zk;
+                let cls = 'print-player-mini-goal-cell';
+                let val = '<span style="color:#94a3b8;font-size:8px;">—</span>';
+                if (gv > 0 && mv > 0) { cls += ' has-both'; val = `<span style="color:#d97706;font-size:8px;font-weight:700;">⚽${gv}✕${mv}</span>`; }
+                else if (gv > 0) { cls += ' has-goal'; val = `<span style="color:#059669;font-size:9px;font-weight:700;">⚽${gv}</span>`; }
+                else if (mv > 0) { cls += ' has-miss'; val = `<span style="color:#dc2626;font-size:9px;font-weight:700;">✕${mv}</span>`; }
+                return `<div class="${cls}">${val}<span style="font-size:7px;color:#94a3b8;display:block;margin-top:1px;">${short}</span></div>`;
+            }).join('');
+            return { cells, metaText };
+        }
+    }
+
     function renderPlayerCard(tc, team, player) {
         const nomor = player.nomor;
         const s = team.stats?.[nomor] || { goals:0, misses:0, saves:0, fouls:0, yellowCards:0, twoMins:0, redCard:false, blueCard:false };
         const isGK = player.posisi === 'GK';
         const teamColor = team.color || (tc === 'A' ? '#e74c3c' : '#1abc9c');
+        const oppTc = tc === 'A' ? 'B' : 'A';
 
         const fouls  = s.fouls  || 0;
         const yCards = s.yellowCards || 0;
@@ -3304,11 +3477,20 @@ function printAllPlayers() {
         const rCard  = s.redCard    || false;
         const bCard  = s.blueCard   || false;
 
+        const playerEvents = evs.filter(e => e.player && e.player.nomor === nomor && (!e.team || e.team === tc));
+        let courtEvents = [];
+        if (isGK) {
+            const oppShots = evs.filter(e => (e.type === 'GOAL' || e.type === 'MISS') && e.team === oppTc && e.courtZone);
+            const gkFouls  = playerEvents.filter(e => e.type === 'FOUL' && e.courtZone);
+            courtEvents = [...oppShots, ...gkFouls];
+        } else {
+            courtEvents = playerEvents.filter(e => e.courtZone);
+        }
+
         let statsHtml = '';
         let rating;
 
         if (isGK) {
-            const oppTc = tc === 'A' ? 'B' : 'A';
             const incoming = evs.filter(e =>
                 (e.type === 'GOAL' || e.type === 'MISS') &&
                 e.team === oppTc &&
@@ -3319,40 +3501,37 @@ function printAllPlayers() {
             const totalFaced = incoming.length;
             const savePct   = totalFaced > 0 ? Math.round((gkSaves / totalFaced) * 100) : 0;
             const saveBarColor = savePct >= 70 ? '#1abc9c' : savePct >= 50 ? '#f39c12' : '#e74c3c';
-
-            rating = Math.min(10, Math.max(1,
-                6.0 + gkSaves * 0.4 - gkConcede * 0.3 + (savePct >= 60 ? 0.5 : 0)
-            ));
+            rating = Math.min(10, Math.max(1, 6.0 + gkSaves * 0.4 - gkConcede * 0.3 + (savePct >= 60 ? 0.5 : 0)));
 
             statsHtml = `
-            <div style="display:flex;gap:6px;margin-bottom:12px;">
-                <div style="flex:1;text-align:center;background:#f0f9f5;border:1px solid #c3e8da;border-radius:8px;padding:8px 2px;">
-                    <div style="font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:800;color:#16a085;">${gkSaves}</div>
-                    <div style="font-size:7.5px;font-weight:700;color:#7f8c8d;text-transform:uppercase;">🧤 Saves</div>
+            <div style="display:flex;gap:8px;margin-bottom:12px;">
+                <div style="flex:1;text-align:center;background:#f0f9f5;border:1px solid #c3e8da;border-radius:8px;padding:10px 4px;">
+                    <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:#16a085;">${gkSaves}</div>
+                    <div style="font-size:8px;font-weight:700;color:#7f8c8d;text-transform:uppercase;">🧤 Saves</div>
                 </div>
-                <div style="flex:1;text-align:center;background:#fdf3f2;border:1px solid #f0c0ba;border-radius:8px;padding:8px 2px;">
-                    <div style="font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:800;color:#c0392b;">${gkConcede}</div>
-                    <div style="font-size:7.5px;font-weight:700;color:#7f8c8d;text-transform:uppercase;">⚽ Kemasukan</div>
+                <div style="flex:1;text-align:center;background:#fdf3f2;border:1px solid #f0c0ba;border-radius:8px;padding:10px 4px;">
+                    <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:#c0392b;">${gkConcede}</div>
+                    <div style="font-size:8px;font-weight:700;color:#7f8c8d;text-transform:uppercase;">⚽ Kemasukan</div>
                 </div>
-                <div style="flex:1;text-align:center;background:#f0f4fb;border:1px solid #bfd0ec;border-radius:8px;padding:8px 2px;">
-                    <div style="font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:800;color:#1a3a52;">${totalFaced}</div>
-                    <div style="font-size:7.5px;font-weight:700;color:#7f8c8d;text-transform:uppercase;">🎯 Hadapi</div>
+                <div style="flex:1;text-align:center;background:#f0f4fb;border:1px solid #bfd0ec;border-radius:8px;padding:10px 4px;">
+                    <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:#1a3a52;">${totalFaced}</div>
+                    <div style="font-size:8px;font-weight:700;color:#7f8c8d;text-transform:uppercase;">🎯 Hadapi</div>
                 </div>
             </div>
-            <div style="margin-bottom:4px;display:flex;justify-content:space-between;font-size:11px;font-weight:600;color:#444;">
+            <div style="margin-bottom:4px;display:flex;justify-content:space-between;font-size:12px;font-weight:600;color:#444;">
                 <span>📊 Save Rate</span><span>${savePct}%</span>
             </div>
             <div class="print-player-stat-progress-bar">
                 <div class="print-player-stat-progress-fill" style="width:${savePct}%;background:${saveBarColor};"></div>
             </div>
-            <div style="display:flex;gap:6px;margin-top:12px;">
-                <div style="flex:1;background:#fdf8f0;border:1px solid #fce0b0;border-radius:6px;padding:6px;text-align:center;">
-                    <div style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;color:#d35400;">${fouls}</div>
-                    <div style="font-size:7.5px;font-weight:700;color:#7f8c8d;text-transform:uppercase;">⚠ Fouls</div>
+            <div style="display:flex;gap:8px;margin-top:12px;">
+                <div style="flex:1;background:#fdf8f0;border:1px solid #fce0b0;border-radius:6px;padding:8px;text-align:center;">
+                    <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:#d35400;">${fouls}</div>
+                    <div style="font-size:8px;font-weight:700;color:#7f8c8d;text-transform:uppercase;">⚠️ Fouls</div>
                 </div>
-                <div style="flex:2;background:#f5f7fa;border:1px solid #dde4ef;border-radius:6px;padding:6px 10px;display:flex;align-items:center;justify-content:space-between;">
-                    <span style="font-size:11px;color:#888;">⏱ Menit</span>
-                    <span style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;color:#1a3a52;">${s._playTime || '—'}</span>
+                <div style="flex:2;background:#f5f7fa;border:1px solid #dde4ef;border-radius:6px;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;">
+                    <span style="font-size:12px;color:#888;">⏱ Menit Bermain</span>
+                    <span style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;color:#1a3a52;">${s._playTime || '—'}</span>
                 </div>
             </div>`;
         } else {
@@ -3361,9 +3540,7 @@ function printAllPlayers() {
             const saves  = s.saves  || 0;
             const shots  = goals + misses;
             const acc    = shots > 0 ? Math.round((goals / shots) * 100) : 0;
-            rating = Math.min(10, Math.max(1,
-                6.0 + goals * 0.8 - misses * 0.4 + saves * 0.9 - fouls * 0.2
-            ));
+            rating = Math.min(10, Math.max(1, 6.0 + goals * 0.8 - misses * 0.4 + saves * 0.9 - fouls * 0.2));
 
             let mxG = 1, mxM = 1, mxS = 1, mxF = 1;
             for (const pNo in team.stats) {
@@ -3376,8 +3553,8 @@ function printAllPlayers() {
             mxG = Math.max(mxG, 5); mxM = Math.max(mxM, 5); mxS = Math.max(mxS, 5); mxF = Math.max(mxF, 5);
 
             const row = (icon, label, val, max, color) => `
-            <div style="margin-bottom:8px;">
-                <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:600;color:#444;margin-bottom:2px;">
+            <div style="margin-bottom:10px;">
+                <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600;color:#444;margin-bottom:3px;">
                     <span>${icon} ${label}</span><span>${val}${label==='Accuracy'?'%':''}</span>
                 </div>
                 <div class="print-player-stat-progress-bar">
@@ -3390,17 +3567,43 @@ function printAllPlayers() {
                 row('✕', 'Misses', misses, mxM, 'linear-gradient(to right,#e74c3c,#c0392b)') +
                 row('🎯', 'Accuracy', acc, 100, 'linear-gradient(to right,#3498db,#2980b9)') +
                 row('🧤', 'Saves', saves, mxS, 'linear-gradient(to right,#1abc9c,#16a085)') +
-                row('⚠', 'Fouls', fouls, mxF, 'linear-gradient(to right,#f39c12,#d35400)');
+                row('⚠️', 'Fouls', fouls, mxF, 'linear-gradient(to right,#f39c12,#d35400)');
         }
 
-        const badgeStyle = (bg, border) => `background:${bg};border:1px solid ${border};border-radius:4px;padding:3px 6px;font-size:9px;font-weight:700;display:inline-flex;align-items:center;gap:3px;`;
-        const cardDot = (c) => `<span style="width:8px;height:11px;border-radius:2px;background:${c};display:inline-block;"></span>`;
+        const badgeStyle = (bg, border) => `background:${bg};border:1px solid ${border};border-radius:4px;padding:3px 8px;font-size:10px;font-weight:700;display:inline-flex;align-items:center;gap:3px;`;
+        const cardDot = (c) => `<span style="width:9px;height:12px;border-radius:2px;background:${c};display:inline-block;"></span>`;
         const discipline = `
-        <div style="margin-top:10px;padding-top:8px;border-top:1px solid #eee;display:flex;gap:4px;flex-wrap:wrap;">
-            <span style="${badgeStyle('rgba(241,196,15,.1)','rgba(241,196,15,.4)')}">${cardDot('#f1c40f')} K: ${yCards}</span>
-            <span style="${badgeStyle('rgba(230,126,34,.1)','rgba(230,126,34,.4)')}">${cardDot('#e67e22')} 2' (x${twoMin})</span>
+        <div style="margin-top:12px;padding-top:10px;border-top:1px solid #eee;display:flex;gap:6px;flex-wrap:wrap;">
+            <span style="${badgeStyle('rgba(241,196,15,.1)','rgba(241,196,15,.4)')}">${cardDot('#f1c40f')} Kuning: ${yCards}</span>
+            <span style="${badgeStyle('rgba(230,126,34,.1)','rgba(230,126,34,.4)')}">${cardDot('#e67e22')} 2' (×${twoMin})</span>
             <span style="${badgeStyle('rgba(231,76,60,.1)','rgba(231,76,60,.4)')}">${cardDot('#e74c3c')} Merah: ${rCard ? 'YA' : 'TDK'}</span>
             <span style="${badgeStyle('rgba(41,128,185,.1)','rgba(41,128,185,.4)')}">${cardDot('#2980b9')} Biru: ${bCard ? 'YA' : 'TDK'}</span>
+        </div>`;
+
+        const miniCourtSvg = buildMiniCourtSvg(courtEvents);
+        const { cells: goalCells, metaText: goalMeta } = buildMiniGoalGrid(isGK, tc, playerEvents);
+        const activitySection = `
+        <div class="print-player-activity">
+            <div style="font-size:10px;font-weight:700;color:#7f8c8d;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+                📍 Aktivitas Lapangan &amp; Target Gawang
+                <div style="flex:1;height:1px;background:#e2e8f0;"></div>
+            </div>
+            <div class="print-player-activity-grid">
+                <div class="print-player-activity-card">
+                    <div class="print-player-activity-header">${isGK ? '🏃 Peta Ancaman Lawan' : '🏃 Peta Aksi Lapangan'} (${courtEvents.length} aksi)</div>
+                    ${miniCourtSvg}
+                    <div style="padding:4px 8px;font-size:8px;color:#6b7f8e;display:flex;gap:8px;border-top:1px solid #eee;">
+                        <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#2ecc71;margin-right:2px;"></span>Gol</span>
+                        <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#e74c3c;margin-right:2px;"></span>Miss</span>
+                        <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#f39c12;margin-right:2px;"></span>Foul</span>
+                    </div>
+                </div>
+                <div class="print-player-activity-card">
+                    <div class="print-player-activity-header">${isGK ? '🧤 Zona Gawang' : '🎯 Arah Tembakan'}</div>
+                    <div class="print-player-mini-goal-grid">${goalCells}</div>
+                    <div style="padding:4px 8px 6px;font-size:8.5px;color:#6b7f8e;border-top:1px solid #eee;">${goalMeta}</div>
+                </div>
+            </div>
         </div>`;
 
         const metaBar = `
@@ -3412,16 +3615,16 @@ function printAllPlayers() {
         const gkBadge = isGK ? `<span style="font-size:8px;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);padding:1px 5px;border-radius:8px;margin-left:4px;">GK</span>` : '';
         const playerHeader = `
         <div class="print-player-header">
-            <div style="display:flex;align-items:center;gap:10px;overflow:hidden;">
-                <div style="width:40px;height:40px;border-radius:50%;background:${teamColor};display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:800;color:white;border:2px solid rgba(255,255,255,0.4);flex-shrink:0;">${isGK ? '🧤' : nomor}</div>
+            <div style="display:flex;align-items:center;gap:12px;overflow:hidden;">
+                <div style="width:48px;height:48px;border-radius:50%;background:${teamColor};display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;color:white;border:2px solid rgba(255,255,255,0.4);flex-shrink:0;">${isGK ? '🧤' : nomor}</div>
                 <div style="overflow:hidden;">
-                    <div style="font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:800;color:white;letter-spacing:0.5px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${player.nama}${gkBadge}</div>
-                    <div style="font-size:10px;color:rgba(255,255,255,0.7);margin-top:2px;">${isGK?'🧤':'🏃'} ${player.posisi} · 🛡️ ${team.name.toUpperCase()}</div>
+                    <div style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;color:white;letter-spacing:0.5px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${player.nama}${gkBadge}</div>
+                    <div style="font-size:11px;color:rgba(255,255,255,0.7);margin-top:3px;">${isGK?'🧤':'🏃'} ${player.posisi} · 🛡️ ${team.name.toUpperCase()}</div>
                 </div>
             </div>
-            <div style="text-align:center;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:3px 7px;min-width:50px;flex-shrink:0;">
-                <div style="font-size:7.5px;font-weight:700;color:#f39c12;letter-spacing:0.5px;text-transform:uppercase;">${isGK?'GK RTG':'RATING'}</div>
-                <div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;color:white;line-height:1.1;">${rating.toFixed(1)}</div>
+            <div style="text-align:center;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:10px;padding:6px 12px;min-width:60px;flex-shrink:0;">
+                <div style="font-size:8px;font-weight:700;color:#f39c12;letter-spacing:0.5px;text-transform:uppercase;">${isGK?'GK RTG':'RATING'}</div>
+                <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:white;line-height:1.1;">${rating.toFixed(1)}</div>
             </div>
         </div>`;
 
@@ -3430,28 +3633,22 @@ function printAllPlayers() {
             ${metaBar}
             ${playerHeader}
             <div class="print-player-stats">
-                <div style="font-size:9.5px;font-weight:700;color:#7f8c8d;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+                <div style="font-size:10px;font-weight:700;color:#7f8c8d;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;display:flex;align-items:center;gap:6px;">
                     ${isGK ? '🧤 Statistik Kiper' : '🎯 Statistik Utama'}
                     <div style="flex:1;height:1px;background:#e2e8f0;"></div>
                 </div>
                 ${statsHtml}
                 ${discipline}
             </div>
+            ${activitySection}
         </div>`;
     }
 
-    // Kelompokkan 2 pemain per halaman (sheet)
-    const sheets = [];
-    for (let i = 0; i < allPlayers.length; i += 2) {
-        const p1 = allPlayers[i];
-        const p2 = allPlayers[i + 1];
-        const card1 = renderPlayerCard(p1.tc, p1.team, p1.player);
-        const card2 = p2 ? renderPlayerCard(p2.tc, p2.team, p2.player) : `<div class="print-player-card" style="border:1px dashed #cbd5e1;background:#fafbfc;min-height:200px;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:12px;">Halaman Akhir</div>`;
-        sheets.push(`<div class="print-player-sheet">${card1}${card2}</div>`);
-    }
+    // 1 pemain = 1 halaman A4
+    const cards = allPlayers.map(({ tc, team, player }) => renderPlayerCard(tc, team, player));
 
     const container = document.getElementById('all-players-print-container');
-    container.innerHTML = sheets.join('');
+    container.innerHTML = cards.join('');
     document.body.classList.add('print-all-players');
     window.print();
 }
