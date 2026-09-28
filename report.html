@@ -1350,7 +1350,26 @@
                 gap: 12px !important;
             }
             .match-score-row {
+                display: flex !important;
+                flex-direction: row !important;
+                justify-content: space-between !important;
+                align-items: center !important;
                 gap: 16px !important;
+            }
+            .match-team {
+                width: auto !important;
+                flex: 1 !important;
+                display: flex !important;
+                align-items: center !important;
+                text-align: left !important;
+            }
+            .match-team.away {
+                flex-direction: row-reverse !important;
+                text-align: right !important;
+            }
+            .match-score-center {
+                order: 0 !important;
+                margin-bottom: 0 !important;
             }
             .score-display {
                 font-size: 56px !important;
@@ -1625,40 +1644,49 @@
                 display: none !important;
             }
             .player-tables-container {
-                display: grid !important;
-                grid-template-columns: 1fr 1fr !important;
-                gap: 8px !important;
-                align-items: start !important;
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 20px !important;
+                width: 100% !important;
             }
-            .player-table-card,
             .player-table-wrapper {
+                width: 100% !important;
                 break-inside: avoid !important;
                 page-break-inside: avoid !important;
+            }
+            .player-table-card {
+                width: 100% !important;
                 box-shadow: none !important;
                 border: 1px solid #e2e8f0 !important;
                 border-radius: 8px !important;
                 margin-bottom: 0 !important;
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
+                overflow: visible !important;
             }
             .player-table-header {
-                padding: 5px 10px !important;
-                font-size: 12px !important;
+                padding: 6px 12px !important;
+                font-size: 13px !important;
+            }
+            .rpt-table {
+                width: 100% !important;
             }
             .rpt-table th,
             .rpt-table td {
-                padding: 3px 3px !important;
-                font-size: 8.5px !important;
-                line-height: 1.2 !important;
+                padding: 6px 8px !important;
+                font-size: 11.5px !important;
+                line-height: 1.3 !important;
             }
             .stat-num {
-                font-size: 11px !important;
+                font-size: 12px !important;
             }
             .card-chip {
-                font-size: 7.5px !important;
-                padding: 1px 3px !important;
+                font-size: 8.5px !important;
+                padding: 2px 4px !important;
             }
             .acc-pill {
-                font-size: 8px !important;
-                padding: 1px 4px !important;
+                font-size: 9px !important;
+                padding: 2px 5px !important;
             }
 
             /* ── Halaman 4: Event Log Kronologi (2 Kolom Padat) & Footer Ringkas ── */
@@ -2080,7 +2108,7 @@
         /* ============================================================
            RESPONSIVE — iPad (768px – 1024px portrait & landscape)
         ============================================================ */
-        @media (min-width: 768px) and (max-width: 1024px) {
+        @media screen and (min-width: 768px) and (max-width: 1024px) {
             .report-container {
                 max-width: 100vw;
                 padding: 16px 12px;
@@ -2127,7 +2155,7 @@
         }
 
         /* Portrait iPad and narrower screens (up to 834px) */
-        @media (max-width: 834px) {
+        @media screen and (max-width: 834px) {
             /* Full stack of all grids */
             .shot-charts, .attack-cards, .court-map-grid, .gk-panel-grid {
                 grid-template-columns: 1fr;
