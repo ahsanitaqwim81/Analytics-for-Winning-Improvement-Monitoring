@@ -1729,11 +1729,11 @@
             body.print-single-player .player-modal-body {
                 max-height: none !important;
                 overflow: visible !important;
-                padding: 10px 16px !important;
+                padding: 6px 14px !important;
             }
             body.print-single-player .player-activity-section {
-                margin-top: 8px !important;
-                padding-top: 8px !important;
+                margin-top: 4px !important;
+                padding-top: 4px !important;
             }
             body.print-single-player .player-activity-tabs {
                 display: none !important;
@@ -1741,21 +1741,21 @@
             body.print-single-player .player-period-badge {
                 display: inline-block !important;
                 font-family: 'Barlow Condensed', sans-serif !important;
-                font-size: 8.5px !important;
+                font-size: 8px !important;
                 font-weight: 800 !important;
                 letter-spacing: 0.5px !important;
                 background: #0d3a52 !important;
                 color: #ffffff !important;
-                padding: 1.5px 7px !important;
+                padding: 1px 6px !important;
                 border-radius: 3px !important;
-                margin-bottom: 3px !important;
+                margin-bottom: 2px !important;
                 text-transform: uppercase !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
             body.print-single-player .player-activity-period-panel {
                 display: block !important;
-                margin-bottom: 5px !important;
+                margin-bottom: 4px !important;
                 break-inside: avoid !important;
                 page-break-inside: avoid !important;
             }
@@ -1765,13 +1765,13 @@
             body.print-single-player .player-activity-grid {
                 display: grid !important;
                 grid-template-columns: 1fr 1fr !important;
-                gap: 8px !important;
+                gap: 5px !important;
                 margin-top: 2px !important;
                 width: 100% !important;
             }
             body.print-single-player .player-activity-card {
-                padding: 4px 6px !important;
-                border-radius: 6px !important;
+                padding: 3px 5px !important;
+                border-radius: 5px !important;
                 background: #f8fafc !important;
                 border: 1px solid #e2e8f0 !important;
                 display: flex !important;
@@ -1780,12 +1780,12 @@
                 box-sizing: border-box !important;
             }
             body.print-single-player .player-activity-card-title {
-                font-size: 8.5px !important;
-                margin-bottom: 2px !important;
+                font-size: 7.5px !important;
+                margin-bottom: 1px !important;
                 font-weight: 700 !important;
             }
             body.print-single-player .player-activity-count {
-                font-size: 8px !important;
+                font-size: 7px !important;
             }
             body.print-single-player .player-mini-court-wrap {
                 width: 100% !important;
@@ -1794,15 +1794,15 @@
                 align-items: center !important;
             }
             body.print-single-player .player-mini-court-wrap svg {
-                max-height: 65px !important;
                 width: 100% !important;
                 height: auto !important;
                 display: block !important;
+                max-height: none !important;
             }
             body.print-single-player .player-mini-court-legend {
-                margin-top: 2px !important;
-                font-size: 7px !important;
-                gap: 5px !important;
+                margin-top: 1px !important;
+                font-size: 6.5px !important;
+                gap: 4px !important;
             }
             body.print-single-player .player-mini-court-legend .legend-dot {
                 width: 5px !important;
@@ -1819,7 +1819,7 @@
                 width: 100% !important;
                 max-width: none !important;
                 gap: 2px !important;
-                padding: 2.5px !important;
+                padding: 2px !important;
                 border-width: 1.5px !important;
                 border-radius: 4px !important;
                 margin: 0 !important;
@@ -1828,26 +1828,30 @@
                 grid-template-columns: repeat(3, 1fr) !important;
             }
             body.print-single-player .player-mini-goal-cell {
-                height: 19px !important;
-                min-height: 19px !important;
-                padding: 0 !important;
-                border-radius: 2px !important;
+                min-height: 44px !important;
+                height: 44px !important;
+                padding: 2px 0 !important;
+                border-radius: 3px !important;
                 font-size: 7px !important;
                 display: flex !important;
                 flex-direction: column !important;
                 align-items: center !important;
                 justify-content: center !important;
+                gap: 1px !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
             body.print-single-player .player-mini-goal-cell-val {
-                font-size: 9px !important;
+                font-size: 13px !important;
+                font-weight: 800 !important;
                 line-height: 1 !important;
             }
             body.print-single-player .player-mini-goal-cell-lbl {
-                font-size: 6px !important;
+                font-size: 6.5px !important;
                 line-height: 1 !important;
             }
             body.print-single-player .player-activity-meta-text {
-                font-size: 7.5px !important;
+                font-size: 7px !important;
                 margin-top: 2px !important;
                 line-height: 1.1 !important;
             }
@@ -1892,48 +1896,47 @@
                 page-break-after: always !important;
                 break-inside: avoid !important;
                 page-break-inside: avoid !important;
-                min-height: 100vh !important;
+                max-height: 290mm !important;
             }
             .print-player-card:last-child {
                 break-after: avoid !important;
                 page-break-after: avoid !important;
-                min-height: unset !important;
             }
 
             .print-player-meta-bar {
                 background: #092535 !important;
-                padding: 8px 14px !important;
+                padding: 5px 14px !important;
                 display: flex !important;
                 align-items: center !important;
                 justify-content: space-between !important;
                 color: white !important;
-                font-size: 10px !important;
+                font-size: 9.5px !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
 
             .print-player-header {
                 background: linear-gradient(135deg, #0d3a52 0%, #1a6b8c 100%) !important;
-                padding: 14px 18px !important;
+                padding: 8px 16px !important;
                 display: flex !important;
                 align-items: center !important;
                 justify-content: space-between !important;
-                gap: 14px !important;
+                gap: 10px !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
 
             .print-player-stats {
-                padding: 10px 18px !important;
+                padding: 6px 16px !important;
             }
 
             .print-player-activity {
-                padding: 8px 18px 12px !important;
+                padding: 5px 16px 8px !important;
                 border-top: 1px solid #e9ecef !important;
             }
 
             .print-player-period-panel {
-                margin-bottom: 5px !important;
+                margin-bottom: 4px !important;
                 break-inside: avoid !important;
                 page-break-inside: avoid !important;
             }
@@ -1944,14 +1947,14 @@
             .print-player-period-badge {
                 display: inline-block !important;
                 font-family: 'Barlow Condensed', sans-serif !important;
-                font-size: 8.5px !important;
+                font-size: 8px !important;
                 font-weight: 800 !important;
                 letter-spacing: 0.5px !important;
                 background: #0d3a52 !important;
                 color: #ffffff !important;
-                padding: 1.5px 7px !important;
+                padding: 1px 6px !important;
                 border-radius: 3px !important;
-                margin-bottom: 3px !important;
+                margin-bottom: 2px !important;
                 text-transform: uppercase !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
@@ -1997,8 +2000,8 @@
             .print-player-activity-card svg {
                 width: 100% !important;
                 display: block !important;
-                max-height: 65px !important;
                 height: auto !important;
+                max-height: none !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
@@ -2013,22 +2016,22 @@
                 margin: 0 !important;
                 box-sizing: border-box !important;
                 flex: 1 !important;
-                align-content: center !important;
+                align-content: stretch !important;
             }
 
             .print-player-mini-goal-cell {
                 border: 1px solid #dde4ef !important;
-                border-radius: 2px !important;
-                padding: 0 !important;
+                border-radius: 3px !important;
+                padding: 2px 0 !important;
                 text-align: center !important;
                 font-size: 7px !important;
-                min-height: 19px !important;
-                height: 19px !important;
+                min-height: 44px !important;
+                height: 44px !important;
                 display: flex !important;
                 flex-direction: column !important;
                 align-items: center !important;
                 justify-content: center !important;
-                gap: 0.5px !important;
+                gap: 1px !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
