@@ -516,6 +516,7 @@
         }
         
         .player-profile-header {
+            /* Background diatur dinamis oleh JavaScript sesuai team.color */
             background: linear-gradient(135deg, var(--blue-dark) 0%, #1c5270 100%);
             padding: 20px 20px 20px 24px;
             color: white;
@@ -523,6 +524,7 @@
             justify-content: space-between;
             align-items: center;
             gap: 12px;
+            transition: background 0.3s ease;
         }
         .player-profile-main {
             display: flex; align-items: center; gap: 16px;
@@ -1916,7 +1918,8 @@
             }
 
             .print-player-header {
-                background: linear-gradient(135deg, #0d3a52 0%, #1a6b8c 100%) !important;
+                /* Background diatur dinamis oleh JavaScript sesuai team.color */
+                background: #0d3a52 !important;
                 padding: 8px 16px !important;
                 display: flex !important;
                 align-items: center !important;
@@ -3466,13 +3469,15 @@ function showPlayerDetail(teamChar, nomor) {
         </div>`;
 
     // ── Render Header ────────────────────────────────────────────────
+    const teamColor = team.color || (teamChar === 'A' ? '#e74c3c' : '#1abc9c');
     const gkBadge = isGK
         ? `<span style="font-size:10px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);padding:2px 7px;border-radius:20px;margin-left:6px;letter-spacing:.5px;">GK</span>`
         : '';
     const headerEl = document.getElementById('modal-player-header');
+    headerEl.style.background = `linear-gradient(135deg, ${teamColor} 0%, #1a2c3a 100%)`;
     headerEl.innerHTML = `
         <div class="player-profile-main">
-            <div class="player-avatar" style="background:${team.color || (teamChar === 'A' ? '#e74c3c' : '#1abc9c')}">
+            <div class="player-avatar" style="background:${teamColor}">
                 ${isGK ? '🧤' : nomor}
             </div>
             <div class="player-name-club">
@@ -4120,7 +4125,7 @@ function printAllPlayers() {
 
         const gkBadge = isGK ? `<span style="font-size:8px;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);padding:1px 5px;border-radius:8px;margin-left:4px;">GK</span>` : '';
         const playerHeader = `
-        <div class="print-player-header">
+        <div class="print-player-header" style="background: linear-gradient(135deg, ${teamColor} 0%, #1a2c3a 100%) !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">
             <div style="display:flex;align-items:center;gap:12px;overflow:hidden;">
                 <div style="width:48px;height:48px;border-radius:50%;background:${teamColor};display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;color:white;border:2px solid rgba(255,255,255,0.4);flex-shrink:0;">${isGK ? '🧤' : nomor}</div>
                 <div style="overflow:hidden;">
