@@ -5,7 +5,7 @@
    - Subtype popup untuk GOAL, MISS, FOUL
    - GOAL/MISS subtypes: Shot 7m, Shot 9m,
      Backthrought, Fastbreak, Penalti
-   - FOUL subtypes: 9m, Kartu Kuning, 2 Menit,
+   - FOUL subtypes: Line, Kartu Kuning, 2 Menit,
      Kartu Merah, Kartu Biru
    - Hapus tombol YELLOW & RED dari panel utama
    - Kartu sekarang dicatat di dalam popup FOUL
@@ -18,13 +18,13 @@ const SUBTYPES = {
     GOAL: ['Shot 9m', 'Backthrought', 'Penalti', 'Rebound'],
     MISS: ['Shot 9m', 'Backthrought', 'Penalti', 'Rebound'],
     SAVE: ['Block', 'Steal', 'Tackle', 'Offensive'],
-    FOUL: ['9m', 'Travelling', 'Double Dribbling', 'Offensive Foul', 'Tackle Ringan',
+    FOUL: ['Line', 'Travelling', 'Double Dribbling', 'Offensive Foul', 'Tackle Ringan',
            'Kartu Kuning', '2 Menit', 'Kartu Merah', 'Kartu Biru'],
 };
 
 // CSS class untuk tiap subtype FOUL
 const FOUL_CSS = {
-    '9m':           'foul-9m',
+    'Line':         'foul-line',
     'Kartu Kuning': 'foul-yellow',
     '2 Menit':      'foul-2min',
     'Kartu Merah':  'foul-red',
@@ -33,7 +33,7 @@ const FOUL_CSS = {
 
 // Icon tiap subtype (FOUL & SAVE)
 const FOUL_ICONS = {
-    '9m':             '🚫',
+    'Line':           '🚫',
     'Kartu Kuning':   '🟨',
     '2 Menit':        '⏱',
     'Kartu Merah':    '🟥',
