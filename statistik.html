@@ -440,9 +440,9 @@
             </div>
             <div class="em-dash">&#8212;</div>
             <div class="em-team-block">
-                <div class="em-final-score" id="em-score-b">0</div>
-                <div class="em-team-name" id="em-team-b-name">AWAY</div>
                 <div class="em-team-dot-large" id="em-dot-b"></div>
+                <div class="em-team-name" id="em-team-b-name">AWAY</div>
+                <div class="em-final-score" id="em-score-b">0</div>
             </div>
         </div>
         <div class="em-info-row">
@@ -510,7 +510,7 @@
     .em-winner-label.em-draw     { color: #ffd27a; }
     .em-scoreline {
         display: flex;
-        align-items: center;
+        align-items: flex-end;
         justify-content: center;
         gap: 12px;
         margin-bottom: 26px;
@@ -543,11 +543,16 @@
         line-height: 1;
     }
     .em-dash {
+        font-family: 'Barlow Condensed', sans-serif;
         font-size: 44px;
+        line-height: 1;
         color: rgba(255,255,255,.2);
         font-weight: 300;
-        align-self: center;
         flex-shrink: 0;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     .em-info-row {
         display: flex;

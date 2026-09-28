@@ -3095,6 +3095,7 @@ function buildPlayerTable(team) {
         const s = stats[p.nomor] || {};
         const goals  = s.goals || 0;
         const misses = s.misses || 0;
+        const mPen   = s.missPenalti || 0;
         const saves  = s.saves || 0;
         const fouls  = s.fouls || 0;
         const shots  = goals + misses;
@@ -3127,6 +3128,11 @@ function buildPlayerTable(team) {
 
         const numCls = n => n===0 ? 'stat-num zero' : 'stat-num';
 
+        // Badge M.PEN: merah terang jika > 0, abu jika 0
+        const mPenHTML = mPen > 0
+            ? `<span style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;color:#e74c3c;background:rgba(231,76,60,0.1);border:1px solid rgba(231,76,60,0.35);border-radius:5px;padding:1px 5px;" title="Miss Penalti">🎯${mPen}</span>`
+            : `<span class="stat-num zero">0</span>`;
+
         return `<tr onclick="showPlayerDetail('${team}', '${p.nomor}')" class="player-row-clickable" title="Klik untuk melihat detail statistik ${p.nama}">
             <td><strong style="font-family:'Barlow Condensed',sans-serif;font-size:16px">${p.nomor}</strong>
                 <br><span style="font-size:9px;color:var(--gray-text)">${p.posisi}</span></td>
@@ -3134,6 +3140,7 @@ function buildPlayerTable(team) {
             <td><span class="stat-num" style="font-size:14px;color:var(--blue-main)">${playingMinutes[p.nomor] || "0'"}</span></td>
             <td><span class="${goals>0?'stat-num green':numCls(goals)}">${goals}</span></td>
             <td><span class="${misses>0?'stat-num red':numCls(misses)}">${misses}</span></td>
+            <td>${mPenHTML}</td>
             <td>${accHTML}</td>
             <td><span class="${numCls(saves)}">${saves}</span></td>
             <td><span class="${fouls>0?'stat-num orange':numCls(fouls)}">${fouls}</span></td>
@@ -3159,6 +3166,7 @@ function buildPlayerTable(team) {
                         <th>MAIN</th>
                         <th>GOL</th>
                         <th>MISS</th>
+                        <th title="Miss Penalti">🎯 M.PEN</th>
                         <th>ACC</th>
                         <th>SAVE</th>
                         <th>FOUL</th>
@@ -3403,6 +3411,12 @@ function showPlayerDetail(teamChar, nomor) {
                      data-target="${(misses / maxMisses) * 100}%"></div>
             </div>
         </div>
+        ${s.missPenalti > 0 ? `
+        <div style="margin-top:6px;margin-bottom:2px;">
+            <span style="display:inline-flex;align-items:center;gap:5px;background:rgba(231,76,60,0.12);border:1px solid rgba(231,76,60,0.45);border-radius:8px;padding:4px 10px;font-size:11.5px;font-weight:700;color:#c0392b;">
+                🎯 Gagal Penalti: <strong style="font-size:14px;font-family:'Barlow Condensed',sans-serif;">${s.missPenalti}</strong> kali
+            </span>
+        </div>` : ''}
 
         <div class="player-stat-bar-row">
             <div class="player-stat-bar-labels">

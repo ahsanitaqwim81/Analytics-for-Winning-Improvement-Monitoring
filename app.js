@@ -15,10 +15,10 @@
 // SUBTYPE DEFINITIONS
 // ============================================================
 const SUBTYPES = {
-    GOAL: ['Shot 9m', 'Backthrought', 'Penalti'],
-    MISS: ['Shot 9m', 'Backthrought', 'Penalti'],
+    GOAL: ['Shot 9m', 'Backthrought', 'Penalti', 'Rebound'],
+    MISS: ['Shot 9m', 'Backthrought', 'Penalti', 'Rebound'],
     SAVE: ['Block', 'Steal', 'Tackle', 'Offensive'],
-    FOUL: ['9m', 'Travelling', 'Double Dribbling', 'Offensive Foul',
+    FOUL: ['9m', 'Travelling', 'Double Dribbling', 'Offensive Foul', 'Tackle Ringan',
            'Kartu Kuning', '2 Menit', 'Kartu Merah', 'Kartu Biru'],
 };
 
@@ -33,16 +33,20 @@ const FOUL_CSS = {
 
 // Icon tiap subtype (FOUL & SAVE)
 const FOUL_ICONS = {
-    '9m':           '🚫',
-    'Kartu Kuning': '🟨',
-    '2 Menit':      '⏱',
-    'Kartu Merah':  '🟥',
-    'Kartu Biru':   '🔵',
+    '9m':             '🚫',
+    'Kartu Kuning':   '🟨',
+    '2 Menit':        '⏱',
+    'Kartu Merah':    '🟥',
+    'Kartu Biru':     '🔵',
+    'Tackle Ringan':  '✋',
     // Save Subtypes
-    'Block':        '🛡️',
-    'Steal':        '⚡',
-    'Tackle':       '🛡️',
-    'Offensive':    '💥',
+    'Block':          '🛡️',
+    'Steal':          '⚡',
+    'Tackle':         '🛡️',
+    'Offensive':      '💥',
+    // Goal/Miss subtypes
+    'Penalti':        '🎯',
+    'Rebound':        '🔄',
 };
 
 // Efek kartu ke statistik pemain
@@ -667,9 +671,14 @@ function goToStep2() {
         btn.onclick = () => {
             pendingAction.subtype = sub;
             document.getElementById('modal-step2').classList.remove('show');
-            // GOAL & MISS → lanjut ke step 2.5 (tipe serangan)
+            // GOAL & MISS: Penalti & Rebound bypass step 2.5 (langsung ke zona gawang)
             if (type === 'GOAL' || type === 'MISS') {
-                openStep25();
+                if (sub === 'Penalti' || sub === 'Rebound') {
+                    pendingAction.attackType = null;
+                    openStep3();
+                } else {
+                    openStep25();
+                }
             } else {
                 processAction(team, type, player, sub, null, null);
             }
@@ -730,7 +739,13 @@ function backToStep2() {
 
 function backToStep25() {
     document.getElementById('modal-step3').classList.remove('show');
-    openStep25();
+    // Jika subtype Penalti atau Rebound, bypass step25 kembali ke step2
+    const sub = pendingAction?.subtype;
+    if (sub === 'Penalti' || sub === 'Rebound') {
+        goToStep2();
+    } else {
+        openStep25();
+    }
 }
 
 // ============================================================
@@ -835,6 +850,8 @@ function processAction(team, type, player, subtype, attackType, zone) {
         if (type === 'GOAL') st.goals++;
         if (type === 'MISS') {
             st.misses++;
+            // Catat miss penalti secara terpisah
+            if (subtype === 'Penalti') st.missPenalti = (st.missPenalti || 0) + 1;
             // Hitung save otomatis untuk GK lawan jika miss diarahkan ke dalam gawang
             const INNER_GOAL_ZONES = [
                 'Atas Kiri', 'Atas Tengah', 'Atas Kanan',
@@ -1428,12 +1445,13 @@ function exportReport() {
         const playingMinutes = getPlayingMinutes(teamChar);
 
         txt += `\n${tm.name} (Coach: ${tm.coach})\n`;
-        txt += 'No  | Nama             | Pos | Main     | Gol | Miss| Save|Foul|K.K|2Min|K.M|K.B\n';
-        txt += '---------------------------------------------------------------------------------\n';
+        txt += 'No  | Nama             | Pos | Main     | Gol | Miss|M.PEN| Save|Foul|K.K|2Min|K.M|K.B\n';
+        txt += '---------------------------------------------------------------------------------------\n';
         (tm.players||[]).forEach(p => {
             const st = (tm.stats||{})[p.nomor] || {};
             const playTime = playingMinutes[p.nomor] || "0'";
-            txt += `${p.nomor.padEnd(3)} | ${p.nama.padEnd(16)} | ${p.posisi.padEnd(3)} | ${playTime.padEnd(8)} | ${String(st.goals||0).padEnd(3)} | ${String(st.misses||0).padEnd(3)} | ${String(st.saves||0).padEnd(3)} | ${String(st.fouls||0).padEnd(2)} | ${String(st.yellowCards||0).padEnd(1)} | ${String(st.twoMins||0).padEnd(2)} | ${st.redCard?'Y':'N'} | ${st.blueCard?'Y':'N'}\n`;
+            const mPen = st.missPenalti || 0;
+            txt += `${p.nomor.padEnd(3)} | ${p.nama.padEnd(16)} | ${p.posisi.padEnd(3)} | ${playTime.padEnd(8)} | ${String(st.goals||0).padEnd(3)} | ${String(st.misses||0).padEnd(3)} | ${String(mPen).padEnd(3)} | ${String(st.saves||0).padEnd(3)} | ${String(st.fouls||0).padEnd(2)} | ${String(st.yellowCards||0).padEnd(1)} | ${String(st.twoMins||0).padEnd(2)} | ${st.redCard?'Y':'N'} | ${st.blueCard?'Y':'N'}\n`;
         });
     });
 
