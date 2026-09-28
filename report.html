@@ -717,11 +717,48 @@
             padding-top: 14px;
             border-top: 1px solid #eee;
         }
+        .player-activity-tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 12px;
+            align-items: center;
+        }
+        .player-activity-tab-btn {
+            background: #e2e8f0;
+            color: #475569;
+            border: none;
+            border-radius: 6px;
+            padding: 5px 14px;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .player-activity-tab-btn:hover {
+            background: #cbd5e1;
+            color: #0f172a;
+        }
+        .player-activity-tab-btn.active {
+            background: var(--blue-dark);
+            color: #ffffff;
+            box-shadow: 0 2px 6px rgba(13, 58, 82, 0.25);
+        }
+        .player-period-badge {
+            display: none;
+        }
+        .player-activity-period-panel {
+            display: none;
+        }
+        .player-activity-period-panel.active {
+            display: block;
+        }
         .player-activity-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
-            margin-top: 8px;
+            margin-top: 6px;
         }
         .player-activity-card {
             background: #f8fafc;
@@ -1271,108 +1308,125 @@
             .report-page-1 {
                 display: flex !important;
                 flex-direction: column !important;
+                min-height: 245mm !important;
+                box-sizing: border-box !important;
                 gap: 0 !important;
+                break-after: page !important;
+                page-break-after: always !important;
+            }
+            .report-page-1 .section-title {
+                font-size: 14px !important;
+                margin: 8px 0 6px 0 !important;
+                padding-bottom: 2px !important;
             }
             .match-header {
-                padding: 10px 14px !important;
-                margin-bottom: 6px !important;
-                border-radius: 6px !important;
+                padding: 14px 20px !important;
+                margin-bottom: 8px !important;
+                border-radius: 8px !important;
             }
             .match-meta {
-                margin-bottom: 5px !important;
-                font-size: 10px !important;
-                gap: 8px !important;
+                margin-bottom: 6px !important;
+                font-size: 11px !important;
+                gap: 12px !important;
             }
             .match-score-row {
-                gap: 10px !important;
+                gap: 12px !important;
             }
             .score-display {
-                font-size: 30px !important;
-                letter-spacing: 4px !important;
+                font-size: 42px !important;
+                letter-spacing: 6px !important;
+                line-height: 1 !important;
             }
             .match-team-name {
-                font-size: 18px !important;
+                font-size: 22px !important;
             }
             .match-team-coach {
-                font-size: 9.5px !important;
+                font-size: 10px !important;
             }
             .period-badge {
-                font-size: 9px !important;
-                padding: 2px 8px !important;
+                font-size: 11px !important;
+                padding: 3px 10px !important;
             }
             .team-stats-grid {
-                margin-bottom: 6px !important;
-                border-radius: 6px !important;
+                margin-bottom: 8px !important;
+                border-radius: 8px !important;
             }
             .team-col-header {
-                padding: 5px 10px !important;
-                font-size: 13px !important;
+                padding: 7px 12px !important;
+                font-size: 14px !important;
             }
             .stat-divider-header {
-                font-size: 8.5px !important;
+                font-size: 9.5px !important;
             }
             .stat-row {
-                padding: 2px 6px !important;
+                padding: 0 !important;
             }
             .stat-val {
-                padding: 2.5px 10px !important;
-                font-size: 12px !important;
+                padding: 6px 12px !important;
+                font-size: 16px !important;
             }
+            .report-page-1 th,
+            .report-page-1 td,
             .stat-divider-val {
-                padding: 2.5px 6px !important;
-                font-size: 8.5px !important;
-                min-width: 90px !important;
+                padding: 6px 12px !important;
+                font-size: 11.5px !important;
+                min-width: 100px !important;
+            }
+            .stat-bar-row {
+                padding: 2px 12px 6px !important;
             }
             .attack-cards {
                 display: grid !important;
                 grid-template-columns: 1fr 1fr !important;
-                gap: 8px !important;
-                margin-bottom: 6px !important;
+                gap: 10px !important;
+                margin-bottom: 8px !important;
             }
             .attack-card {
-                padding: 6px 10px !important;
+                padding: 8px 12px !important;
                 border-radius: 6px !important;
                 box-shadow: none !important;
                 border: 1px solid #e2e8f0 !important;
             }
             .attack-card-title {
-                margin-bottom: 4px !important;
-                font-size: 9.5px !important;
+                margin-bottom: 6px !important;
+                font-size: 11px !important;
             }
             .attack-type-row {
-                padding: 2.5px 0 !important;
+                padding: 3.5px 0 !important;
             }
             .attack-type-label {
-                font-size: 10px !important;
+                font-size: 11.5px !important;
             }
             .attack-type-bars {
-                padding: 0 8px !important;
+                padding: 0 10px !important;
             }
             .attack-mini-bar {
-                height: 5px !important;
+                height: 6px !important;
             }
             .attack-type-count {
-                font-size: 12px !important;
+                font-size: 16px !important;
             }
 
             /* Peta Tembakan ke Gawang di Lembar 1: Sejajar 2 kolom Tim A & Tim B */
             .shot-charts {
                 display: grid !important;
                 grid-template-columns: 1fr 1fr !important;
-                gap: 8px !important;
+                gap: 10px !important;
                 margin-bottom: 0 !important;
                 break-inside: avoid !important;
                 page-break-inside: avoid !important;
+                break-after: page !important;
+                page-break-after: always !important;
             }
             .shot-chart-card {
-                padding: 6px 8px !important;
+                padding: 8px 10px !important;
                 border-radius: 6px !important;
                 box-shadow: none !important;
                 border: 1px solid #e2e8f0 !important;
             }
             .shot-chart-header {
-                padding: 2px 0 4px 0 !important;
-                font-size: 10.5px !important;
+                padding: 2px 0 5px 0 !important;
+                font-size: 11.5px !important;
             }
             .shot-chart-body {
                 padding: 2px 0 !important;
@@ -1380,35 +1434,39 @@
             .goal-grid {
                 display: grid !important;
                 grid-template-columns: repeat(3, 1fr) !important;
-                max-width: 170px !important;
-                margin: 0 auto 3px !important;
-                gap: 2px !important;
-                padding: 2px !important;
-                border-width: 2px !important;
+                max-width: 270px !important;
+                width: 100% !important;
+                margin: 0 auto 4px !important;
+                gap: 3px !important;
+                padding: 3px !important;
+                border-width: 2.5px !important;
             }
             .goal-cell {
-                height: 24px !important;
-                min-height: 24px !important;
+                height: 46px !important;
+                min-height: 46px !important;
             }
             .goal-cell .cell-goals {
-                font-size: 11.5px !important;
+                font-size: 16px !important;
                 line-height: 1 !important;
             }
             .goal-cell .cell-miss {
-                font-size: 8px !important;
+                font-size: 13px !important;
                 line-height: 1 !important;
             }
             .goal-cell .cell-label {
-                font-size: 6.5px !important;
+                font-size: 9px !important;
+                font-weight: 700 !important;
             }
             .shot-legend {
-                margin-top: 4px !important;
-                font-size: 8.5px !important;
-                gap: 8px !important;
+                margin-top: 6px !important;
+                font-size: 9.5px !important;
+                gap: 10px !important;
             }
 
             /* ── Halaman 2: Peta Lapangan + Statistik Kiper (GK) ── */
             .report-page-2 {
+                break-before: page !important;
+                page-break-before: always !important;
                 display: flex !important;
                 flex-direction: column !important;
                 gap: 0 !important;
@@ -1653,21 +1711,98 @@
             body.print-single-player .player-modal-body {
                 max-height: none !important;
                 overflow: visible !important;
-                padding: 14px 18px !important;
+                padding: 10px 16px !important;
+            }
+            body.print-single-player .player-activity-section {
+                margin-top: 8px !important;
+                padding-top: 8px !important;
+            }
+            body.print-single-player .player-activity-tabs {
+                display: none !important;
+            }
+            body.print-single-player .player-period-badge {
+                display: inline-block !important;
+                font-family: 'Barlow Condensed', sans-serif !important;
+                font-size: 8.5px !important;
+                font-weight: 800 !important;
+                letter-spacing: 0.5px !important;
+                background: #0d3a52 !important;
+                color: #ffffff !important;
+                padding: 1.5px 7px !important;
+                border-radius: 3px !important;
+                margin-bottom: 3px !important;
+                text-transform: uppercase !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            body.print-single-player .player-activity-period-panel {
+                display: block !important;
+                margin-bottom: 5px !important;
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
+            }
+            body.print-single-player .player-activity-period-panel:last-child {
+                margin-bottom: 0 !important;
             }
             body.print-single-player .player-activity-grid {
                 display: grid !important;
                 grid-template-columns: 1fr 1fr !important;
-                gap: 10px !important;
+                gap: 8px !important;
+                margin-top: 2px !important;
+            }
+            body.print-single-player .player-activity-card {
+                padding: 4px 6px !important;
+                border-radius: 6px !important;
+                background: #f8fafc !important;
+                border: 1px solid #e2e8f0 !important;
+            }
+            body.print-single-player .player-activity-card-title {
+                font-size: 8px !important;
+                margin-bottom: 2px !important;
+            }
+            body.print-single-player .player-activity-count {
+                font-size: 7.5px !important;
             }
             body.print-single-player .player-mini-court-wrap svg {
-                max-height: 130px !important;
+                max-height: 52px !important;
+                width: 100% !important;
+            }
+            body.print-single-player .player-mini-court-legend {
+                margin-top: 2px !important;
+                font-size: 7px !important;
+                gap: 5px !important;
+            }
+            body.print-single-player .player-mini-court-legend .legend-dot {
+                width: 5px !important;
+                height: 5px !important;
             }
             body.print-single-player .player-mini-goal-grid {
-                max-width: 170px !important;
+                max-width: 140px !important;
+                gap: 1.5px !important;
+                padding: 2px !important;
+                border-width: 1.5px !important;
+                border-radius: 4px !important;
+                margin: 0 auto !important;
             }
             body.print-single-player .player-mini-goal-cell {
-                height: 28px !important;
+                height: 16px !important;
+                min-height: 16px !important;
+                padding: 0 !important;
+                border-radius: 2px !important;
+                font-size: 6.5px !important;
+            }
+            body.print-single-player .player-mini-goal-cell-val {
+                font-size: 8px !important;
+                line-height: 1 !important;
+            }
+            body.print-single-player .player-mini-goal-cell-lbl {
+                font-size: 5.5px !important;
+                line-height: 1 !important;
+            }
+            body.print-single-player .player-activity-meta-text {
+                font-size: 7px !important;
+                margin-top: 2px !important;
+                line-height: 1.1 !important;
             }
             body.print-single-player .player-stat-progress-bar {
                 border: 1px solid #ddd !important;
@@ -1732,7 +1867,7 @@
 
             .print-player-header {
                 background: linear-gradient(135deg, #0d3a52 0%, #1a6b8c 100%) !important;
-                padding: 16px 20px !important;
+                padding: 14px 18px !important;
                 display: flex !important;
                 align-items: center !important;
                 justify-content: space-between !important;
@@ -1742,37 +1877,67 @@
             }
 
             .print-player-stats {
-                padding: 14px 20px !important;
+                padding: 10px 18px !important;
             }
 
             .print-player-activity {
-                padding: 10px 20px 16px !important;
+                padding: 8px 18px 12px !important;
                 border-top: 1px solid #e9ecef !important;
+            }
+
+            .print-player-period-panel {
+                margin-bottom: 5px !important;
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
+            }
+            .print-player-period-panel:last-child {
+                margin-bottom: 0 !important;
+            }
+
+            .print-player-period-badge {
+                display: inline-block !important;
+                font-family: 'Barlow Condensed', sans-serif !important;
+                font-size: 8.5px !important;
+                font-weight: 800 !important;
+                letter-spacing: 0.5px !important;
+                background: #0d3a52 !important;
+                color: #ffffff !important;
+                padding: 1.5px 7px !important;
+                border-radius: 3px !important;
+                margin-bottom: 3px !important;
+                text-transform: uppercase !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
 
             .print-player-activity-grid {
                 display: grid !important;
                 grid-template-columns: 1fr 1fr !important;
-                gap: 12px !important;
-                margin-top: 8px !important;
+                gap: 8px !important;
+                margin-top: 2px !important;
             }
 
             .print-player-activity-card {
                 border: 1px solid #e0e8f0 !important;
-                border-radius: 8px !important;
+                border-radius: 6px !important;
                 overflow: hidden !important;
+                background: #f8fafc !important;
+                padding: 4px 6px !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
 
             .print-player-activity-header {
-                background: #f0f4f8 !important;
-                padding: 6px 10px !important;
-                font-size: 9px !important;
+                background: none !important;
+                padding: 0 0 2px 0 !important;
+                font-size: 8px !important;
                 font-weight: 700 !important;
                 color: #4a5a6b !important;
                 text-transform: uppercase !important;
                 letter-spacing: 0.5px !important;
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: center !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
@@ -1780,7 +1945,7 @@
             .print-player-activity-card svg {
                 width: 100% !important;
                 display: block !important;
-                max-height: 160px !important;
+                max-height: 52px !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
@@ -1788,22 +1953,25 @@
             .print-player-mini-goal-grid {
                 display: grid !important;
                 grid-template-columns: repeat(3, 1fr) !important;
-                gap: 3px !important;
-                padding: 8px !important;
+                gap: 1.5px !important;
+                padding: 2px !important;
+                max-width: 140px !important;
+                margin: 0 auto !important;
             }
 
             .print-player-mini-goal-cell {
                 border: 1px solid #dde4ef !important;
-                border-radius: 5px !important;
-                padding: 5px 3px !important;
+                border-radius: 2px !important;
+                padding: 0 !important;
                 text-align: center !important;
-                font-size: 9px !important;
-                min-height: 36px !important;
+                font-size: 6.5px !important;
+                min-height: 16px !important;
+                height: 16px !important;
                 display: flex !important;
                 flex-direction: column !important;
                 align-items: center !important;
                 justify-content: center !important;
-                gap: 2px !important;
+                gap: 1px !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
@@ -3282,6 +3450,20 @@ function showPlayerDetail(teamChar, nomor) {
 // ============================================================
 // PLAYER ACTIVITY VISUALS (MINI COURT & MINI GOAL GRID)
 // ============================================================
+window.switchPlayerActivityTab = function(btn, period) {
+    const parent = btn.closest('.player-activity-section');
+    if (!parent) return;
+    parent.querySelectorAll('.player-activity-tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    parent.querySelectorAll('.player-activity-period-panel').forEach(p => {
+        if (p.getAttribute('data-period') === String(period)) {
+            p.classList.add('active');
+        } else {
+            p.classList.remove('active');
+        }
+    });
+};
+
 function buildPlayerActivitySection(player, teamChar, isGK) {
     const oppTeamChar = teamChar === 'A' ? 'B' : 'A';
     const evs = md.events || [];
@@ -3305,188 +3487,215 @@ function buildPlayerActivitySection(player, teamChar, isGK) {
         'Bawah Kiri','Bawah Tengah','Bawah Kanan'
     ];
 
-    // 1. FILTER EVENT INDIVIDU
-    // Semua aksi yang dilakukan oleh pemain ini
-    const playerEvents = evs.filter(e => e.player && e.player.nomor === player.nomor && (!e.team || e.team === teamChar));
+    // Filter event individu dasar
+    const allPlayerEvents = evs.filter(e => e.player && e.player.nomor === player.nomor && (!e.team || e.team === teamChar));
+    const allOppShots = evs.filter(e => (e.type === 'GOAL' || e.type === 'MISS') && e.team === oppTeamChar);
+    const allGkFouls = allPlayerEvents.filter(e => e.type === 'FOUL');
 
-    // Aksi Lapangan
-    let courtEvents = [];
-    if (isGK) {
-        // Untuk GK: tembakan lawan yang datang ke gawangnya + foul dari kiper
-        const oppShots = evs.filter(e => (e.type === 'GOAL' || e.type === 'MISS') && e.team === oppTeamChar && e.courtZone);
-        const gkFouls = playerEvents.filter(e => e.type === 'FOUL' && e.courtZone);
-        courtEvents = [...oppShots, ...gkFouls];
-    } else {
-        courtEvents = playerEvents.filter(e => e.courtZone);
+    function buildCourtSvg(eventsList) {
+        const zoneUsage = {};
+        const pinsSvg = eventsList.map((e) => {
+            const z = e.courtZone;
+            if (!z || !ZONE_CENTERS[z]) return '';
+            const center = ZONE_CENTERS[z];
+            const count = zoneUsage[z] || 0;
+            zoneUsage[z] = count + 1;
+            const angle = count * 1.5;
+            const dist = count === 0 ? 0 : (14 + count * 3);
+            const px = Math.round(center.cx + Math.cos(angle) * dist);
+            const py = Math.round(center.cy + Math.sin(angle) * dist);
+
+            let pinColor = '#2ecc71';
+            let pinSym = '⚽';
+            if (e.type === 'GOAL') {
+                pinColor = '#2ecc71'; pinSym = '⚽';
+            } else if (e.type === 'MISS') {
+                pinColor = '#e74c3c'; pinSym = '✕';
+            } else if (e.type === 'FOUL') {
+                if (e.subtype === 'Kartu Kuning') { pinColor = '#f1c40f'; pinSym = '🟨'; }
+                else if (e.subtype === '2 Menit') { pinColor = '#e67e22'; pinSym = '⏱'; }
+                else if (e.subtype === 'Kartu Merah') { pinColor = '#e74c3c'; pinSym = '🟥'; }
+                else if (e.subtype === 'Kartu Biru') { pinColor = '#2980b9'; pinSym = '🔵'; }
+                else { pinColor = '#f39c12'; pinSym = '⚠️'; }
+            } else if (e.type === 'SAVE') {
+                pinColor = '#1abc9c'; pinSym = '🧤';
+            }
+            return `<g transform="translate(${px},${py})">
+                <circle r="13" fill="${pinColor}" stroke="#ffffff" stroke-width="2.5" />
+                <text y="4" text-anchor="middle" font-size="10" font-weight="800" fill="#ffffff">${pinSym}</text>
+            </g>`;
+        }).join('');
+
+        return `
+        <svg viewBox="0 0 880 440" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;border-radius:6px">
+          <rect width="880" height="440" fill="#152e47"/>
+          <rect x="40" y="20" width="800" height="400" fill="#1a3d60" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+          <line x1="440" y1="20" x2="440" y2="420" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+          <circle cx="440" cy="220" r="60" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+          <path d="M 40,70 A 120,120 0 0,1 160,190 L 160,250 A 120,120 0 0,1 40,370 Z" fill="rgba(241,196,15,0.08)"/>
+          <path d="M 840,70 A 120,120 0 0,0 720,190 L 720,250 A 120,120 0 0,0 840,370 Z" fill="rgba(241,196,15,0.08)"/>
+          <path d="M 40,70 A 120,120 0 0,1 160,190 L 160,250 A 120,120 0 0,1 40,370" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>
+          <path d="M 840,70 A 120,120 0 0,0 720,190 L 720,250 A 120,120 0 0,0 840,370" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>
+          <path d="M 40,10 A 180,180 0 0,1 220,190 L 220,250 A 180,180 0 0,1 40,430" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" stroke-dasharray="6,5"/>
+          <path d="M 840,10 A 180,180 0 0,0 660,190 L 660,250 A 180,180 0 0,0 840,430" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" stroke-dasharray="6,5"/>
+          <rect x="25" y="190" width="15" height="60" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2"/>
+          <rect x="840" y="190" width="15" height="60" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2"/>
+          ${pinsSvg}
+        </svg>`;
     }
 
-    // Render Pin SVG Lapangan
-    const zoneUsage = {};
-    const pinsSvg = courtEvents.map((e) => {
-        const z = e.courtZone;
-        if (!z || !ZONE_CENTERS[z]) return '';
-        const center = ZONE_CENTERS[z];
-        const count = zoneUsage[z] || 0;
-        zoneUsage[z] = count + 1;
-        const angle = count * 1.5;
-        const dist = count === 0 ? 0 : (14 + count * 3);
-        const px = Math.round(center.cx + Math.cos(angle) * dist);
-        const py = Math.round(center.cy + Math.sin(angle) * dist);
+    function getPeriodData(period) {
+        const pFilter = (e) => (!period || period === 'all' || e.period == period);
 
-        let pinColor = '#2ecc71';
-        let pinSym = '⚽';
-        if (e.type === 'GOAL') {
-            pinColor = '#2ecc71'; pinSym = '⚽';
-        } else if (e.type === 'MISS') {
-            pinColor = '#e74c3c'; pinSym = '✕';
-        } else if (e.type === 'FOUL') {
-            if (e.subtype === 'Kartu Kuning') { pinColor = '#f1c40f'; pinSym = '🟨'; }
-            else if (e.subtype === '2 Menit') { pinColor = '#e67e22'; pinSym = '⏱'; }
-            else if (e.subtype === 'Kartu Merah') { pinColor = '#e74c3c'; pinSym = '🟥'; }
-            else if (e.subtype === 'Kartu Biru') { pinColor = '#2980b9'; pinSym = '🔵'; }
-            else { pinColor = '#f39c12'; pinSym = '⚠️'; }
-        } else if (e.type === 'SAVE') {
-            pinColor = '#1abc9c'; pinSym = '🧤';
+        let courtEvents = [];
+        if (isGK) {
+            const oppShots = allOppShots.filter(e => e.courtZone && pFilter(e));
+            const gkFouls = allGkFouls.filter(e => e.courtZone && pFilter(e));
+            courtEvents = [...oppShots, ...gkFouls];
+        } else {
+            courtEvents = allPlayerEvents.filter(e => e.courtZone && pFilter(e));
         }
-        return `<g transform="translate(${px},${py})">
-            <circle r="13" fill="${pinColor}" stroke="#ffffff" stroke-width="2.5" />
-            <text y="4" text-anchor="middle" font-size="10" font-weight="800" fill="#ffffff">${pinSym}</text>
-        </g>`;
-    }).join('');
 
-    const courtSvg = `
-    <svg viewBox="0 0 880 440" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;border-radius:6px">
-      <rect width="880" height="440" fill="#152e47"/>
-      <rect x="40" y="20" width="800" height="400" fill="#1a3d60" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
-      <line x1="440" y1="20" x2="440" y2="420" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
-      <circle cx="440" cy="220" r="60" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
-      <path d="M 40,70 A 120,120 0 0,1 160,190 L 160,250 A 120,120 0 0,1 40,370 Z" fill="rgba(241,196,15,0.08)"/>
-      <path d="M 840,70 A 120,120 0 0,0 720,190 L 720,250 A 120,120 0 0,0 840,370 Z" fill="rgba(241,196,15,0.08)"/>
-      <path d="M 40,70 A 120,120 0 0,1 160,190 L 160,250 A 120,120 0 0,1 40,370" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>
-      <path d="M 840,70 A 120,120 0 0,0 720,190 L 720,250 A 120,120 0 0,0 840,370" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>
-      <path d="M 40,10 A 180,180 0 0,1 220,190 L 220,250 A 180,180 0 0,1 40,430" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" stroke-dasharray="6,5"/>
-      <path d="M 840,10 A 180,180 0 0,0 660,190 L 660,250 A 180,180 0 0,0 840,430" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" stroke-dasharray="6,5"/>
-      <rect x="25" y="190" width="15" height="60" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2"/>
-      <rect x="840" y="190" width="15" height="60" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2"/>
-      ${pinsSvg}
-    </svg>`;
+        let goalGridHtml = '';
+        let goalMetaText = '';
 
-    // 2. TARGET GAWANG MINI (SHOT PLACEMENT / GK EFFECTIVENESS)
-    let goalGridHtml = '';
-    let goalMetaText = '';
+        if (isGK) {
+            const incomingShots = allOppShots.filter(e => GK_INNER_ZONES.includes(e.zone) && pFilter(e));
+            const saveMap = {}, conMap = {};
+            incomingShots.forEach(e => {
+                const z = e.zone;
+                if (e.type === 'MISS') saveMap[z] = (saveMap[z] || 0) + 1;
+                if (e.type === 'GOAL') conMap[z] = (conMap[z] || 0) + 1;
+            });
 
-    if (isGK) {
-        // Tembakan lawan ke gawang kiper ini
-        const incomingShots = evs.filter(e => (e.type === 'GOAL' || e.type === 'MISS') && e.team === oppTeamChar && GK_INNER_ZONES.includes(e.zone));
-        const saveMap = {}, conMap = {};
-        incomingShots.forEach(e => {
-            const z = e.zone;
-            if (e.type === 'MISS') saveMap[z] = (saveMap[z] || 0) + 1;
-            if (e.type === 'GOAL') conMap[z] = (conMap[z] || 0) + 1;
-        });
-
-        const cells = GOAL_ZONE_ORDER.map(zk => {
-            const s = saveMap[zk] || 0;
-            const c = conMap[zk] || 0;
-            const tot = s + c;
-            const short = ZONE_SHORT_LABELS[zk] || zk;
-            let cls = 'player-mini-goal-cell';
-            let val = '<span style="color:#94a3b8;font-size:11px;">—</span>';
-            if (tot > 0) {
-                if (c === 0) {
-                    cls += ' has-goal';
-                    val = `<span class="player-mini-goal-cell-val" style="color:#059669;">🧤${s}/${tot}</span>`;
-                } else if (s === 0) {
-                    cls += ' has-miss';
-                    val = `<span class="player-mini-goal-cell-val" style="color:#dc2626;">⚽${c}</span>`;
-                } else {
-                    cls += ' has-both';
-                    val = `<span class="player-mini-goal-cell-val" style="color:#d97706;">🧤${s} ⚽${c}</span>`;
+            const cells = GOAL_ZONE_ORDER.map(zk => {
+                const s = saveMap[zk] || 0;
+                const c = conMap[zk] || 0;
+                const tot = s + c;
+                const short = ZONE_SHORT_LABELS[zk] || zk;
+                let cls = 'player-mini-goal-cell';
+                let val = '<span style="color:#94a3b8;font-size:10px;">—</span>';
+                if (tot > 0) {
+                    if (c === 0) {
+                        cls += ' has-goal';
+                        val = `<span class="player-mini-goal-cell-val" style="color:#059669;">🧤${s}/${tot}</span>`;
+                    } else if (s === 0) {
+                        cls += ' has-miss';
+                        val = `<span class="player-mini-goal-cell-val" style="color:#dc2626;">⚽${c}</span>`;
+                    } else {
+                        cls += ' has-both';
+                        val = `<span class="player-mini-goal-cell-val" style="color:#d97706;">🧤${s} ⚽${c}</span>`;
+                    }
                 }
-            }
-            return `<div class="${cls}">${val}<span class="player-mini-goal-cell-lbl">${short}</span></div>`;
-        }).join('');
+                return `<div class="${cls}">${val}<span class="player-mini-goal-cell-lbl">${short}</span></div>`;
+            }).join('');
 
-        goalGridHtml = `<div class="player-mini-goal-grid">${cells}</div>`;
-        const totalFaced = incomingShots.length;
-        const totalSaved = incomingShots.filter(e => e.type === 'MISS').length;
-        const totalConceded = incomingShots.filter(e => e.type === 'GOAL').length;
-        const savePct = totalFaced > 0 ? Math.round((totalSaved / totalFaced) * 100) : 0;
-        goalMetaText = `Dihadapi: ${totalFaced} shot · 🧤${totalSaved} Save · ⚽${totalConceded} Gol · <strong>${savePct}% Save Rate</strong>`;
-    } else {
-        // Outfield: tembakan pemain ke gawang
-        const pShots = playerEvents.filter(e => e.type === 'GOAL' || e.type === 'MISS');
-        const goalMap = {}, missMap = {};
-        pShots.forEach(e => {
-            const z = e.zone;
-            if (e.type === 'GOAL' && z) goalMap[z] = (goalMap[z] || 0) + 1;
-            if (e.type === 'MISS' && z) missMap[z] = (missMap[z] || 0) + 1;
-        });
+            goalGridHtml = `<div class="player-mini-goal-grid">${cells}</div>`;
+            const totalFaced = incomingShots.length;
+            const totalSaved = incomingShots.filter(e => e.type === 'MISS').length;
+            const totalConceded = incomingShots.filter(e => e.type === 'GOAL').length;
+            const savePct = totalFaced > 0 ? Math.round((totalSaved / totalFaced) * 100) : 0;
+            goalMetaText = `Dihadapi: ${totalFaced} shot · 🧤${totalSaved} Save · ⚽${totalConceded} Gol · <strong>${savePct}% Save Rate</strong>`;
+        } else {
+            const pShots = allPlayerEvents.filter(e => (e.type === 'GOAL' || e.type === 'MISS') && pFilter(e));
+            const goalMap = {}, missMap = {};
+            pShots.forEach(e => {
+                const z = e.zone;
+                if (e.type === 'GOAL' && z) goalMap[z] = (goalMap[z] || 0) + 1;
+                if (e.type === 'MISS' && z) missMap[z] = (missMap[z] || 0) + 1;
+            });
 
-        const cells = GOAL_ZONE_ORDER.map(zk => {
-            const g = goalMap[zk] || 0;
-            const m = missMap[zk] || 0;
-            const short = ZONE_SHORT_LABELS[zk] || zk;
-            let cls = 'player-mini-goal-cell';
-            let val = '<span style="color:#94a3b8;font-size:11px;">—</span>';
-            if (g > 0 && m > 0) {
-                cls += ' has-both';
-                val = `<span class="player-mini-goal-cell-val" style="color:#d97706;">⚽${g} ✕${m}</span>`;
-            } else if (g > 0) {
-                cls += ' has-goal';
-                val = `<span class="player-mini-goal-cell-val" style="color:#059669;">⚽${g}</span>`;
-            } else if (m > 0) {
-                cls += ' has-miss';
-                val = `<span class="player-mini-goal-cell-val" style="color:#dc2626;">✕${m}</span>`;
-            }
-            return `<div class="${cls}">${val}<span class="player-mini-goal-cell-lbl">${short}</span></div>`;
-        }).join('');
+            const cells = GOAL_ZONE_ORDER.map(zk => {
+                const g = goalMap[zk] || 0;
+                const m = missMap[zk] || 0;
+                const short = ZONE_SHORT_LABELS[zk] || zk;
+                let cls = 'player-mini-goal-cell';
+                let val = '<span style="color:#94a3b8;font-size:10px;">—</span>';
+                if (g > 0 && m > 0) {
+                    cls += ' has-both';
+                    val = `<span class="player-mini-goal-cell-val" style="color:#d97706;">⚽${g} ✕${m}</span>`;
+                } else if (g > 0) {
+                    cls += ' has-goal';
+                    val = `<span class="player-mini-goal-cell-val" style="color:#059669;">⚽${g}</span>`;
+                } else if (m > 0) {
+                    cls += ' has-miss';
+                    val = `<span class="player-mini-goal-cell-val" style="color:#dc2626;">✕${m}</span>`;
+                }
+                return `<div class="${cls}">${val}<span class="player-mini-goal-cell-lbl">${short}</span></div>`;
+            }).join('');
 
-        goalGridHtml = `<div class="player-mini-goal-grid">${cells}</div>`;
-        const totalG = pShots.filter(e => e.type === 'GOAL').length;
-        const totalM = pShots.filter(e => e.type === 'MISS').length;
-        const totalS = totalG + totalM;
-        const acc = totalS > 0 ? Math.round((totalG / totalS) * 100) : 0;
-        
-        // Off-target
-        const offTargets = pShots.filter(e => ['Luar Kiri','Luar Atas','Luar Kanan','Tiang/Mistar'].includes(e.zone));
-        const offText = offTargets.length ? ` · Off: ${offTargets.length}` : '';
-        goalMetaText = `Total: ${totalS} shot · ⚽${totalG} Gol · ✕${totalM} Miss · <strong>${acc}% Acc</strong>${offText}`;
+            goalGridHtml = `<div class="player-mini-goal-grid">${cells}</div>`;
+            const totalG = pShots.filter(e => e.type === 'GOAL').length;
+            const totalM = pShots.filter(e => e.type === 'MISS').length;
+            const totalS = totalG + totalM;
+            const acc = totalS > 0 ? Math.round((totalG / totalS) * 100) : 0;
+            
+            const offTargets = pShots.filter(e => ['Luar Kiri','Luar Atas','Luar Kanan','Tiang/Mistar'].includes(e.zone));
+            const offText = offTargets.length ? ` · Off: ${offTargets.length}` : '';
+            goalMetaText = `Total: ${totalS} shot · ⚽${totalG} Gol · ✕${totalM} Miss · <strong>${acc}% Acc</strong>${offText}`;
+        }
+
+        return {
+            courtEvents,
+            courtSvg: buildCourtSvg(courtEvents),
+            goalGridHtml,
+            goalMetaText
+        };
     }
+
+    const renderPanel = (periodKey, periodLabel, isDefaultActive) => {
+        const d = getPeriodData(periodKey);
+        return `
+        <div class="player-activity-period-panel ${isDefaultActive ? 'active' : ''}" data-period="${periodKey}">
+            <div class="player-period-badge">⏱️ ${periodLabel.toUpperCase()}</div>
+            <div class="player-activity-grid">
+                <!-- Kolom Kiri: Peta Lapangan Mini -->
+                <div class="player-activity-card">
+                    <div class="player-activity-card-title">
+                        <span>🏃 ${isGK ? 'Peta Ancaman Lawan' : 'Peta Aksi Lapangan'}</span>
+                        <span class="player-activity-count">${d.courtEvents.length} aksi</span>
+                    </div>
+                    <div class="player-mini-court-wrap">
+                        ${d.courtSvg}
+                    </div>
+                    <div class="player-mini-court-legend">
+                        <span class="legend-item"><span class="legend-dot green"></span> Gol</span>
+                        <span class="legend-item"><span class="legend-dot red"></span> Miss</span>
+                        <span class="legend-item"><span class="legend-dot yellow"></span> Foul</span>
+                    </div>
+                </div>
+
+                <!-- Kolom Kanan: Peta Target Gawang Mini -->
+                <div class="player-activity-card">
+                    <div class="player-activity-card-title">
+                        <span>${isGK ? '🧤 Efektivitas Zona Gawang' : '🎯 Arah Tembakan (Gawang)'}</span>
+                    </div>
+                    <div class="player-mini-goal-wrap">
+                        ${d.goalGridHtml}
+                    </div>
+                    <div class="player-activity-meta-text">
+                        ${d.goalMetaText}
+                    </div>
+                </div>
+            </div>
+        </div>`;
+    };
 
     return `
     <div class="player-activity-section">
         <div class="player-stats-section-title">Aktivitas Lapangan &amp; Target Gawang</div>
-        <div class="player-activity-grid">
-            <!-- Kolom Kiri: Peta Lapangan Mini -->
-            <div class="player-activity-card">
-                <div class="player-activity-card-title">
-                    <span>🏃 ${isGK ? 'Peta Ancaman Lawan' : 'Peta Aksi Lapangan'}</span>
-                    <span class="player-activity-count">${courtEvents.length} aksi</span>
-                </div>
-                <div class="player-mini-court-wrap">
-                    ${courtSvg}
-                </div>
-                <div class="player-mini-court-legend">
-                    <span class="legend-item"><span class="legend-dot green"></span> Gol</span>
-                    <span class="legend-item"><span class="legend-dot red"></span> Miss</span>
-                    <span class="legend-item"><span class="legend-dot yellow"></span> Foul</span>
-                </div>
-            </div>
-
-            <!-- Kolom Kanan: Peta Target Gawang Mini -->
-            <div class="player-activity-card">
-                <div class="player-activity-card-title">
-                    <span>${isGK ? '🧤 Efektivitas Zona Gawang' : '🎯 Arah Tembakan (Gawang)'}</span>
-                </div>
-                <div class="player-mini-goal-wrap">
-                    ${goalGridHtml}
-                </div>
-                <div class="player-activity-meta-text">
-                    ${goalMetaText}
-                </div>
-            </div>
+        
+        <!-- Tab Bar Navigasi Interaktif (Layar) -->
+        <div class="player-activity-tabs">
+            <button type="button" class="player-activity-tab-btn active" onclick="switchPlayerActivityTab(this, 'all')">Semua Babak</button>
+            <button type="button" class="player-activity-tab-btn" onclick="switchPlayerActivityTab(this, '1')">Babak 1</button>
+            <button type="button" class="player-activity-tab-btn" onclick="switchPlayerActivityTab(this, '2')">Babak 2</button>
         </div>
+
+        <!-- 3 Panel Babak (Baris 1: Babak 1, Baris 2: Babak 2, Baris 3: Semua Babak) -->
+        ${renderPanel(1, 'Babak 1', false)}
+        ${renderPanel(2, 'Babak 2', false)}
+        ${renderPanel('all', 'Semua Babak (Total)', true)}
     </div>`;
 }
 
@@ -3598,11 +3807,12 @@ function printAllPlayers() {
         </svg>`;
     }
 
-    function buildMiniGoalGrid(isGK, tc, playerEvents) {
+    function buildMiniGoalGrid(isGK, tc, playerEvents, period) {
         const oppTc = tc === 'A' ? 'B' : 'A';
+        const pFilter = (e) => (!period || period === 'all' || e.period == period);
         let metaText = '';
         if (isGK) {
-            const shots = evs.filter(e => (e.type === 'GOAL' || e.type === 'MISS') && e.team === oppTc && GK_INNER_ZONES.includes(e.zone));
+            const shots = evs.filter(e => (e.type === 'GOAL' || e.type === 'MISS') && e.team === oppTc && GK_INNER_ZONES.includes(e.zone) && pFilter(e));
             const saveMap = {}, conMap = {};
             shots.forEach(e => {
                 if (e.type === 'MISS') saveMap[e.zone] = (saveMap[e.zone] || 0) + 1;
@@ -3612,24 +3822,24 @@ function printAllPlayers() {
             const saved = shots.filter(e => e.type === 'MISS').length;
             const conc = tot - saved;
             const pct = tot > 0 ? Math.round((saved / tot) * 100) : 0;
-            metaText = `Dihadapi: ${tot} · 🧤${saved} · ⚽${conc} · ${pct}% SR`;
+            metaText = `Hadapi: ${tot} · 🧤${saved} · ⚽${conc} · ${pct}% SR`;
             const cells = GOAL_ZONE_ORDER_P.map(zk => {
                 const s = saveMap[zk] || 0;
                 const c = conMap[zk] || 0;
                 const t = s + c;
                 const short = ZONE_SHORT_P[zk] || zk;
                 let cls = 'print-player-mini-goal-cell';
-                let val = '<span style="color:#94a3b8;font-size:8px;">—</span>';
+                let val = '<span style="color:#94a3b8;font-size:7px;">—</span>';
                 if (t > 0) {
-                    if (c === 0) { cls += ' has-goal'; val = `<span style="color:#059669;font-size:9px;font-weight:700;">🧤${s}</span>`; }
-                    else if (s === 0) { cls += ' has-miss'; val = `<span style="color:#dc2626;font-size:9px;font-weight:700;">⚽${c}</span>`; }
-                    else { cls += ' has-both'; val = `<span style="color:#d97706;font-size:8px;font-weight:700;">🧤${s}⚽${c}</span>`; }
+                    if (c === 0) { cls += ' has-goal'; val = `<span style="color:#059669;font-size:8px;font-weight:700;">🧤${s}</span>`; }
+                    else if (s === 0) { cls += ' has-miss'; val = `<span style="color:#dc2626;font-size:8px;font-weight:700;">⚽${c}</span>`; }
+                    else { cls += ' has-both'; val = `<span style="color:#d97706;font-size:7px;font-weight:700;">🧤${s}⚽${c}</span>`; }
                 }
-                return `<div class="${cls}">${val}<span style="font-size:7px;color:#94a3b8;display:block;margin-top:1px;">${short}</span></div>`;
+                return `<div class="${cls}">${val}<span style="font-size:5.5px;color:#94a3b8;display:block;line-height:1;">${short}</span></div>`;
             }).join('');
             return { cells, metaText };
         } else {
-            const pShots = playerEvents.filter(e => (e.type === 'GOAL' || e.type === 'MISS') && GK_INNER_ZONES.includes(e.zone));
+            const pShots = playerEvents.filter(e => (e.type === 'GOAL' || e.type === 'MISS') && GK_INNER_ZONES.includes(e.zone) && pFilter(e));
             const goalMap = {}, missMap = {};
             pShots.forEach(e => {
                 if (e.type === 'GOAL' && e.zone) goalMap[e.zone] = (goalMap[e.zone] || 0) + 1;
@@ -3639,17 +3849,17 @@ function printAllPlayers() {
             const g = pShots.filter(e => e.type === 'GOAL').length;
             const m = tot - g;
             const acc = tot > 0 ? Math.round((g / tot) * 100) : 0;
-            metaText = `Total: ${tot} shot · ⚽${g} · ✕${m} · ${acc}% Acc`;
+            metaText = `Shot: ${tot} · ⚽${g} · ✕${m} · ${acc}% Acc`;
             const cells = GOAL_ZONE_ORDER_P.map(zk => {
                 const gv = goalMap[zk] || 0;
                 const mv = missMap[zk] || 0;
                 const short = ZONE_SHORT_P[zk] || zk;
                 let cls = 'print-player-mini-goal-cell';
-                let val = '<span style="color:#94a3b8;font-size:8px;">—</span>';
-                if (gv > 0 && mv > 0) { cls += ' has-both'; val = `<span style="color:#d97706;font-size:8px;font-weight:700;">⚽${gv}✕${mv}</span>`; }
-                else if (gv > 0) { cls += ' has-goal'; val = `<span style="color:#059669;font-size:9px;font-weight:700;">⚽${gv}</span>`; }
-                else if (mv > 0) { cls += ' has-miss'; val = `<span style="color:#dc2626;font-size:9px;font-weight:700;">✕${mv}</span>`; }
-                return `<div class="${cls}">${val}<span style="font-size:7px;color:#94a3b8;display:block;margin-top:1px;">${short}</span></div>`;
+                let val = '<span style="color:#94a3b8;font-size:7px;">—</span>';
+                if (gv > 0 && mv > 0) { cls += ' has-both'; val = `<span style="color:#d97706;font-size:7.5px;font-weight:700;">⚽${gv}✕${mv}</span>`; }
+                else if (gv > 0) { cls += ' has-goal'; val = `<span style="color:#059669;font-size:8px;font-weight:700;">⚽${gv}</span>`; }
+                else if (mv > 0) { cls += ' has-miss'; val = `<span style="color:#dc2626;font-size:8px;font-weight:700;">✕${mv}</span>`; }
+                return `<div class="${cls}">${val}<span style="font-size:5.5px;color:#94a3b8;display:block;line-height:1;">${short}</span></div>`;
             }).join('');
             return { cells, metaText };
         }
@@ -3669,14 +3879,6 @@ function printAllPlayers() {
         const bCard  = s.blueCard   || false;
 
         const playerEvents = evs.filter(e => e.player && e.player.nomor === nomor && (!e.team || e.team === tc));
-        let courtEvents = [];
-        if (isGK) {
-            const oppShots = evs.filter(e => (e.type === 'GOAL' || e.type === 'MISS') && e.team === oppTc && e.courtZone);
-            const gkFouls  = playerEvents.filter(e => e.type === 'FOUL' && e.courtZone);
-            courtEvents = [...oppShots, ...gkFouls];
-        } else {
-            courtEvents = playerEvents.filter(e => e.courtZone);
-        }
 
         let statsHtml = '';
         let rating;
@@ -3695,34 +3897,34 @@ function printAllPlayers() {
             rating = Math.min(10, Math.max(1, 6.0 + gkSaves * 0.4 - gkConcede * 0.3 + (savePct >= 60 ? 0.5 : 0)));
 
             statsHtml = `
-            <div style="display:flex;gap:8px;margin-bottom:12px;">
-                <div style="flex:1;text-align:center;background:#f0f9f5;border:1px solid #c3e8da;border-radius:8px;padding:10px 4px;">
-                    <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:#16a085;">${gkSaves}</div>
-                    <div style="font-size:8px;font-weight:700;color:#7f8c8d;text-transform:uppercase;">🧤 Saves</div>
+            <div style="display:flex;gap:8px;margin-bottom:8px;">
+                <div style="flex:1;text-align:center;background:#f0f9f5;border:1px solid #c3e8da;border-radius:6px;padding:6px 4px;">
+                    <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:#16a085;">${gkSaves}</div>
+                    <div style="font-size:7.5px;font-weight:700;color:#7f8c8d;text-transform:uppercase;">🧤 Saves</div>
                 </div>
-                <div style="flex:1;text-align:center;background:#fdf3f2;border:1px solid #f0c0ba;border-radius:8px;padding:10px 4px;">
-                    <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:#c0392b;">${gkConcede}</div>
-                    <div style="font-size:8px;font-weight:700;color:#7f8c8d;text-transform:uppercase;">⚽ Kemasukan</div>
+                <div style="flex:1;text-align:center;background:#fdf3f2;border:1px solid #f0c0ba;border-radius:6px;padding:6px 4px;">
+                    <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:#c0392b;">${gkConcede}</div>
+                    <div style="font-size:7.5px;font-weight:700;color:#7f8c8d;text-transform:uppercase;">⚽ Kemasukan</div>
                 </div>
-                <div style="flex:1;text-align:center;background:#f0f4fb;border:1px solid #bfd0ec;border-radius:8px;padding:10px 4px;">
-                    <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:#1a3a52;">${totalFaced}</div>
-                    <div style="font-size:8px;font-weight:700;color:#7f8c8d;text-transform:uppercase;">🎯 Hadapi</div>
+                <div style="flex:1;text-align:center;background:#f0f4fb;border:1px solid #bfd0ec;border-radius:6px;padding:6px 4px;">
+                    <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:#1a3a52;">${totalFaced}</div>
+                    <div style="font-size:7.5px;font-weight:700;color:#7f8c8d;text-transform:uppercase;">🎯 Hadapi</div>
                 </div>
             </div>
-            <div style="margin-bottom:4px;display:flex;justify-content:space-between;font-size:12px;font-weight:600;color:#444;">
+            <div style="margin-bottom:3px;display:flex;justify-content:space-between;font-size:10.5px;font-weight:600;color:#444;">
                 <span>📊 Save Rate</span><span>${savePct}%</span>
             </div>
             <div class="print-player-stat-progress-bar">
                 <div class="print-player-stat-progress-fill" style="width:${savePct}%;background:${saveBarColor};"></div>
             </div>
-            <div style="display:flex;gap:8px;margin-top:12px;">
-                <div style="flex:1;background:#fdf8f0;border:1px solid #fce0b0;border-radius:6px;padding:8px;text-align:center;">
-                    <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:#d35400;">${fouls}</div>
-                    <div style="font-size:8px;font-weight:700;color:#7f8c8d;text-transform:uppercase;">⚠️ Fouls</div>
+            <div style="display:flex;gap:8px;margin-top:8px;">
+                <div style="flex:1;background:#fdf8f0;border:1px solid #fce0b0;border-radius:6px;padding:6px;text-align:center;">
+                    <div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;color:#d35400;">${fouls}</div>
+                    <div style="font-size:7.5px;font-weight:700;color:#7f8c8d;text-transform:uppercase;">⚠️ Fouls</div>
                 </div>
-                <div style="flex:2;background:#f5f7fa;border:1px solid #dde4ef;border-radius:6px;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;">
-                    <span style="font-size:12px;color:#888;">⏱ Menit Bermain</span>
-                    <span style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;color:#1a3a52;">${s._playTime || '—'}</span>
+                <div style="flex:2;background:#f5f7fa;border:1px solid #dde4ef;border-radius:6px;padding:6px 10px;display:flex;align-items:center;justify-content:space-between;">
+                    <span style="font-size:10.5px;color:#888;">⏱ Menit Bermain</span>
+                    <span style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;color:#1a3a52;">${s._playTime || '—'}</span>
                 </div>
             </div>`;
         } else {
@@ -3744,8 +3946,8 @@ function printAllPlayers() {
             mxG = Math.max(mxG, 5); mxM = Math.max(mxM, 5); mxS = Math.max(mxS, 5); mxF = Math.max(mxF, 5);
 
             const row = (icon, label, val, max, color) => `
-            <div style="margin-bottom:10px;">
-                <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600;color:#444;margin-bottom:3px;">
+            <div style="margin-bottom:6px;">
+                <div style="display:flex;justify-content:space-between;font-size:10.5px;font-weight:600;color:#444;margin-bottom:2px;">
                     <span>${icon} ${label}</span><span>${val}${label==='Accuracy'?'%':''}</span>
                 </div>
                 <div class="print-player-stat-progress-bar">
@@ -3761,40 +3963,70 @@ function printAllPlayers() {
                 row('⚠️', 'Fouls', fouls, mxF, 'linear-gradient(to right,#f39c12,#d35400)');
         }
 
-        const badgeStyle = (bg, border) => `background:${bg};border:1px solid ${border};border-radius:4px;padding:3px 8px;font-size:10px;font-weight:700;display:inline-flex;align-items:center;gap:3px;`;
-        const cardDot = (c) => `<span style="width:9px;height:12px;border-radius:2px;background:${c};display:inline-block;"></span>`;
+        const badgeStyle = (bg, border) => `background:${bg};border:1px solid ${border};border-radius:4px;padding:2px 6px;font-size:8.5px;font-weight:700;display:inline-flex;align-items:center;gap:3px;`;
+        const cardDot = (c) => `<span style="width:8px;height:10px;border-radius:2px;background:${c};display:inline-block;"></span>`;
         const discipline = `
-        <div style="margin-top:12px;padding-top:10px;border-top:1px solid #eee;display:flex;gap:6px;flex-wrap:wrap;">
+        <div style="margin-top:8px;padding-top:6px;border-top:1px solid #eee;display:flex;gap:5px;flex-wrap:wrap;">
             <span style="${badgeStyle('rgba(241,196,15,.1)','rgba(241,196,15,.4)')}">${cardDot('#f1c40f')} Kuning: ${yCards}</span>
             <span style="${badgeStyle('rgba(230,126,34,.1)','rgba(230,126,34,.4)')}">${cardDot('#e67e22')} 2' (×${twoMin})</span>
             <span style="${badgeStyle('rgba(231,76,60,.1)','rgba(231,76,60,.4)')}">${cardDot('#e74c3c')} Merah: ${rCard ? 'YA' : 'TDK'}</span>
             <span style="${badgeStyle('rgba(41,128,185,.1)','rgba(41,128,185,.4)')}">${cardDot('#2980b9')} Biru: ${bCard ? 'YA' : 'TDK'}</span>
         </div>`;
 
-        const miniCourtSvg = buildMiniCourtSvg(courtEvents);
-        const { cells: goalCells, metaText: goalMeta } = buildMiniGoalGrid(isGK, tc, playerEvents);
+        const periodsConfig = [
+            { key: 1, label: 'BABAK 1' },
+            { key: 2, label: 'BABAK 2' },
+            { key: 'all', label: 'SEMUA BABAK (TOTAL)' }
+        ];
+
+        const periodPanelsHtml = periodsConfig.map(pConf => {
+            const pFilter = (e) => (!pConf.key || pConf.key === 'all' || e.period == pConf.key);
+            let pCourtEvents = [];
+            if (isGK) {
+                const oppShots = evs.filter(e => (e.type === 'GOAL' || e.type === 'MISS') && e.team === oppTc && e.courtZone && pFilter(e));
+                const gkFouls  = playerEvents.filter(e => e.type === 'FOUL' && e.courtZone && pFilter(e));
+                pCourtEvents = [...oppShots, ...gkFouls];
+            } else {
+                pCourtEvents = playerEvents.filter(e => e.courtZone && pFilter(e));
+            }
+
+            const pCourtSvg = buildMiniCourtSvg(pCourtEvents);
+            const { cells: pGoalCells, metaText: pGoalMeta } = buildMiniGoalGrid(isGK, tc, playerEvents, pConf.key);
+
+            return `
+            <div class="print-player-period-panel">
+                <div class="print-player-period-badge">⏱️ ${pConf.label}</div>
+                <div class="print-player-activity-grid">
+                    <div class="print-player-activity-card">
+                        <div class="print-player-activity-header">
+                            <span>${isGK ? '🏃 Ancaman Lawan' : '🏃 Aksi Lapangan'}</span>
+                            <span>${pCourtEvents.length} aksi</span>
+                        </div>
+                        ${pCourtSvg}
+                        <div style="padding:2px 6px;font-size:7px;color:#6b7f8e;display:flex;gap:6px;border-top:1px solid #eee;">
+                            <span><span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#2ecc71;margin-right:2px;"></span>Gol</span>
+                            <span><span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#e74c3c;margin-right:2px;"></span>Miss</span>
+                            <span><span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#f39c12;margin-right:2px;"></span>Foul</span>
+                        </div>
+                    </div>
+                    <div class="print-player-activity-card">
+                        <div class="print-player-activity-header">
+                            <span>${isGK ? '🧤 Zona Gawang' : '🎯 Arah Tembakan'}</span>
+                        </div>
+                        <div class="print-player-mini-goal-grid">${pGoalCells}</div>
+                        <div style="padding:2px 6px;font-size:7px;color:#6b7f8e;border-top:1px solid #eee;text-align:center;">${pGoalMeta}</div>
+                    </div>
+                </div>
+            </div>`;
+        }).join('');
+
         const activitySection = `
         <div class="print-player-activity">
-            <div style="font-size:10px;font-weight:700;color:#7f8c8d;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+            <div style="font-size:9.5px;font-weight:700;color:#7f8c8d;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;display:flex;align-items:center;gap:6px;">
                 📍 Aktivitas Lapangan &amp; Target Gawang
                 <div style="flex:1;height:1px;background:#e2e8f0;"></div>
             </div>
-            <div class="print-player-activity-grid">
-                <div class="print-player-activity-card">
-                    <div class="print-player-activity-header">${isGK ? '🏃 Peta Ancaman Lawan' : '🏃 Peta Aksi Lapangan'} (${courtEvents.length} aksi)</div>
-                    ${miniCourtSvg}
-                    <div style="padding:4px 8px;font-size:8px;color:#6b7f8e;display:flex;gap:8px;border-top:1px solid #eee;">
-                        <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#2ecc71;margin-right:2px;"></span>Gol</span>
-                        <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#e74c3c;margin-right:2px;"></span>Miss</span>
-                        <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#f39c12;margin-right:2px;"></span>Foul</span>
-                    </div>
-                </div>
-                <div class="print-player-activity-card">
-                    <div class="print-player-activity-header">${isGK ? '🧤 Zona Gawang' : '🎯 Arah Tembakan'}</div>
-                    <div class="print-player-mini-goal-grid">${goalCells}</div>
-                    <div style="padding:4px 8px 6px;font-size:8.5px;color:#6b7f8e;border-top:1px solid #eee;">${goalMeta}</div>
-                </div>
-            </div>
+            ${periodPanelsHtml}
         </div>`;
 
         const metaBar = `
