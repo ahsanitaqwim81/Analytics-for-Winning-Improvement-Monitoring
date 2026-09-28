@@ -1350,88 +1350,88 @@
                 gap: 12px !important;
             }
             .match-score-row {
-                gap: 12px !important;
+                gap: 16px !important;
             }
             .score-display {
-                font-size: 42px !important;
+                font-size: 56px !important;
                 letter-spacing: 6px !important;
                 line-height: 1 !important;
             }
             .match-team-name {
-                font-size: 22px !important;
+                font-size: 28px !important;
             }
             .match-team-coach {
-                font-size: 10px !important;
+                font-size: 11px !important;
             }
             .period-badge {
-                font-size: 11px !important;
-                padding: 3px 10px !important;
+                font-size: 12px !important;
+                padding: 4px 12px !important;
             }
             .team-stats-grid {
-                margin-bottom: 8px !important;
+                margin-bottom: 12px !important;
                 border-radius: 8px !important;
             }
             .team-col-header {
-                padding: 7px 12px !important;
-                font-size: 14px !important;
+                padding: 9px 14px !important;
+                font-size: 15px !important;
             }
             .stat-divider-header {
-                font-size: 9.5px !important;
+                font-size: 10px !important;
             }
             .stat-row {
                 padding: 0 !important;
             }
             .stat-val {
-                padding: 6px 12px !important;
-                font-size: 16px !important;
+                padding: 8px 14px !important;
+                font-size: 18px !important;
             }
             .report-page-1 th,
             .report-page-1 td,
             .stat-divider-val {
-                padding: 6px 12px !important;
-                font-size: 11.5px !important;
-                min-width: 100px !important;
+                padding: 8px 14px !important;
+                font-size: 12px !important;
+                min-width: 105px !important;
             }
             .stat-bar-row {
-                padding: 2px 12px 6px !important;
+                padding: 3px 14px 8px !important;
             }
             .attack-cards {
                 display: grid !important;
                 grid-template-columns: 1fr 1fr !important;
-                gap: 10px !important;
-                margin-bottom: 8px !important;
+                gap: 12px !important;
+                margin-bottom: 12px !important;
             }
             .attack-card {
-                padding: 8px 12px !important;
+                padding: 10px 14px !important;
                 border-radius: 6px !important;
                 box-shadow: none !important;
                 border: 1px solid #e2e8f0 !important;
             }
             .attack-card-title {
-                margin-bottom: 6px !important;
-                font-size: 11px !important;
+                margin-bottom: 8px !important;
+                font-size: 12px !important;
             }
             .attack-type-row {
-                padding: 3.5px 0 !important;
+                padding: 5px 0 !important;
             }
             .attack-type-label {
-                font-size: 11.5px !important;
+                font-size: 12px !important;
             }
             .attack-type-bars {
                 padding: 0 10px !important;
             }
             .attack-mini-bar {
-                height: 6px !important;
+                height: 7px !important;
             }
             .attack-type-count {
-                font-size: 16px !important;
+                font-size: 17px !important;
             }
 
             /* Peta Tembakan ke Gawang di Lembar 1: Sejajar 2 kolom Tim A & Tim B */
             .shot-charts {
                 display: grid !important;
                 grid-template-columns: 1fr 1fr !important;
-                gap: 10px !important;
+                gap: 12px !important;
                 margin-bottom: 0 !important;
                 break-inside: avoid !important;
                 page-break-inside: avoid !important;
@@ -1439,14 +1439,14 @@
                 page-break-after: always !important;
             }
             .shot-chart-card {
-                padding: 8px 10px !important;
+                padding: 10px 12px !important;
                 border-radius: 6px !important;
                 box-shadow: none !important;
                 border: 1px solid #e2e8f0 !important;
             }
             .shot-chart-header {
-                padding: 2px 0 5px 0 !important;
-                font-size: 11.5px !important;
+                padding: 3px 0 6px 0 !important;
+                font-size: 12px !important;
             }
             .shot-chart-body {
                 padding: 2px 0 !important;
@@ -1454,33 +1454,33 @@
             .goal-grid {
                 display: grid !important;
                 grid-template-columns: repeat(3, 1fr) !important;
-                max-width: 270px !important;
+                max-width: 320px !important;
                 width: 100% !important;
-                margin: 0 auto 4px !important;
-                gap: 3px !important;
-                padding: 3px !important;
+                margin: 0 auto 6px !important;
+                gap: 4px !important;
+                padding: 4px !important;
                 border-width: 2.5px !important;
             }
             .goal-cell {
-                height: 46px !important;
-                min-height: 46px !important;
+                height: 60px !important;
+                min-height: 60px !important;
             }
             .goal-cell .cell-goals {
-                font-size: 16px !important;
+                font-size: 18px !important;
                 line-height: 1 !important;
             }
             .goal-cell .cell-miss {
-                font-size: 13px !important;
+                font-size: 18px !important;
                 line-height: 1 !important;
             }
             .goal-cell .cell-label {
-                font-size: 9px !important;
+                font-size: 10px !important;
                 font-weight: 700 !important;
             }
             .shot-legend {
-                margin-top: 6px !important;
-                font-size: 9.5px !important;
-                gap: 10px !important;
+                margin-top: 8px !important;
+                font-size: 10px !important;
+                gap: 12px !important;
             }
 
             /* ── Halaman 2: Peta Lapangan + Statistik Kiper (GK) ── */
@@ -3674,7 +3674,15 @@ function buildPlayerActivitySection(player, teamChar, isGK) {
             const totalSaved = incomingShots.filter(e => e.type === 'MISS').length;
             const totalConceded = incomingShots.filter(e => e.type === 'GOAL').length;
             const savePct = totalFaced > 0 ? Math.round((totalSaved / totalFaced) * 100) : 0;
-            goalMetaText = `Dihadapi: ${totalFaced} shot · 🧤${totalSaved} Save · ⚽${totalConceded} Gol · <strong>${savePct}% Save Rate</strong>`;
+            
+            const allOpp = allOppShots.filter(pFilter);
+            const missPen = allOpp.filter(e => e.type === 'MISS' && e.subtype === 'Penalti').length;
+            const offTargets = allOpp.filter(e => ['Luar Kiri','Luar Atas','Luar Kanan','Tiang/Mistar'].includes(e.zone)).length;
+            let extra = '';
+            if (missPen > 0) extra += ` · ${missPen}x Miss Penalti`;
+            if (offTargets > 0) extra += ` · ${offTargets}x Off-target/Tiang`;
+            
+            goalMetaText = `Dihadapi: ${totalFaced} shot · 🧤${totalSaved} Save · ⚽${totalConceded} Gol · <strong>${savePct}% Save Rate</strong>${extra}`;
         } else {
             const pShots = allPlayerEvents.filter(e => (e.type === 'GOAL' || e.type === 'MISS') && pFilter(e));
             const goalMap = {}, missMap = {};
@@ -3709,9 +3717,13 @@ function buildPlayerActivitySection(player, teamChar, isGK) {
             const totalS = totalG + totalM;
             const acc = totalS > 0 ? Math.round((totalG / totalS) * 100) : 0;
             
-            const offTargets = pShots.filter(e => ['Luar Kiri','Luar Atas','Luar Kanan','Tiang/Mistar'].includes(e.zone));
-            const offText = offTargets.length ? ` · Off: ${offTargets.length}` : '';
-            goalMetaText = `Total: ${totalS} shot · ⚽${totalG} Gol · ✕${totalM} Miss · <strong>${acc}% Acc</strong>${offText}`;
+            const missPen = pShots.filter(e => e.type === 'MISS' && e.subtype === 'Penalti').length;
+            const offTargets = pShots.filter(e => ['Luar Kiri','Luar Atas','Luar Kanan','Tiang/Mistar'].includes(e.zone)).length;
+            let extra = '';
+            if (missPen > 0) extra += ` · ${missPen}x Miss Penalti`;
+            if (offTargets > 0) extra += ` · ${offTargets}x Off-target/Tiang`;
+            
+            goalMetaText = `Total: ${totalS} shot · ⚽${totalG} Gol · ✕${totalM} Miss · <strong>${acc}% Acc</strong>${extra}`;
         }
 
         return {
@@ -3909,17 +3921,25 @@ function printAllPlayers() {
         const pFilter = (e) => (!period || period === 'all' || e.period == period);
         let metaText = '';
         if (isGK) {
-            const shots = evs.filter(e => (e.type === 'GOAL' || e.type === 'MISS') && e.team === oppTc && GK_INNER_ZONES.includes(e.zone) && pFilter(e));
+            const allOppShots = evs.filter(e => (e.type === 'GOAL' || e.type === 'MISS') && e.team === oppTc && pFilter(e));
+            const innerShots = allOppShots.filter(e => GK_INNER_ZONES.includes(e.zone));
             const saveMap = {}, conMap = {};
-            shots.forEach(e => {
+            innerShots.forEach(e => {
                 if (e.type === 'MISS') saveMap[e.zone] = (saveMap[e.zone] || 0) + 1;
                 if (e.type === 'GOAL') conMap[e.zone] = (conMap[e.zone] || 0) + 1;
             });
-            const tot = shots.length;
-            const saved = shots.filter(e => e.type === 'MISS').length;
+            const tot = innerShots.length;
+            const saved = innerShots.filter(e => e.type === 'MISS').length;
             const conc = tot - saved;
             const pct = tot > 0 ? Math.round((saved / tot) * 100) : 0;
-            metaText = `Hadapi: ${tot} · 🧤${saved} · ⚽${conc} · ${pct}% SR`;
+            
+            const missPen = allOppShots.filter(e => e.type === 'MISS' && e.subtype === 'Penalti').length;
+            const offTargets = allOppShots.filter(e => ['Luar Kiri', 'Luar Kanan', 'Luar Atas', 'Tiang/Mistar'].includes(e.zone)).length;
+            let extra = '';
+            if (missPen > 0) extra += ` · ${missPen}x Miss Penalti`;
+            if (offTargets > 0) extra += ` · ${offTargets}x Off-target/Tiang`;
+            
+            metaText = `Hadapi: ${tot} · 🧤${saved} · ⚽${conc} · ${pct}% SR${extra}`;
             const cells = GOAL_ZONE_ORDER_P.map(zk => {
                 const s = saveMap[zk] || 0;
                 const c = conMap[zk] || 0;
@@ -3936,17 +3956,25 @@ function printAllPlayers() {
             }).join('');
             return { cells, metaText };
         } else {
-            const pShots = playerEvents.filter(e => (e.type === 'GOAL' || e.type === 'MISS') && GK_INNER_ZONES.includes(e.zone) && pFilter(e));
+            const allPlayerShots = playerEvents.filter(e => (e.type === 'GOAL' || e.type === 'MISS') && pFilter(e));
+            const innerShots = allPlayerShots.filter(e => GK_INNER_ZONES.includes(e.zone));
             const goalMap = {}, missMap = {};
-            pShots.forEach(e => {
+            innerShots.forEach(e => {
                 if (e.type === 'GOAL' && e.zone) goalMap[e.zone] = (goalMap[e.zone] || 0) + 1;
                 if (e.type === 'MISS' && e.zone) missMap[e.zone] = (missMap[e.zone] || 0) + 1;
             });
-            const tot = pShots.length;
-            const g = pShots.filter(e => e.type === 'GOAL').length;
-            const m = tot - g;
+            const tot = allPlayerShots.length;
+            const g = allPlayerShots.filter(e => e.type === 'GOAL').length;
+            const m = allPlayerShots.filter(e => e.type === 'MISS').length;
             const acc = tot > 0 ? Math.round((g / tot) * 100) : 0;
-            metaText = `Shot: ${tot} · ⚽${g} · ✕${m} · ${acc}% Acc`;
+            
+            const missPen = allPlayerShots.filter(e => e.type === 'MISS' && e.subtype === 'Penalti').length;
+            const offTargets = allPlayerShots.filter(e => ['Luar Kiri', 'Luar Kanan', 'Luar Atas', 'Tiang/Mistar'].includes(e.zone)).length;
+            let extra = '';
+            if (missPen > 0) extra += ` · ${missPen}x Miss Penalti`;
+            if (offTargets > 0) extra += ` · ${offTargets}x Off-target/Tiang`;
+            
+            metaText = `Shot: ${tot} · ⚽${g} · ✕${m} · ${acc}% Acc${extra}`;
             const cells = GOAL_ZONE_ORDER_P.map(zk => {
                 const gv = goalMap[zk] || 0;
                 const mv = missMap[zk] || 0;
