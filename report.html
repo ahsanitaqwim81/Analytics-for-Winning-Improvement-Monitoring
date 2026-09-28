@@ -789,6 +789,9 @@
             border-radius: 6px;
             overflow: hidden;
             background: #152e47;
+            flex: 1;
+            display: flex;
+            align-items: center;
         }
         .player-mini-court-wrap svg {
             width: 100%;
@@ -817,30 +820,39 @@
         .legend-dot.red { background: #e74c3c; }
         .legend-dot.yellow { background: #f1c40f; }
 
-        /* Mini Goal Grid */
+        /* Mini Goal Grid — Fit-to-Width */
+        .player-mini-goal-wrap {
+            width: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
         .player-mini-goal-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 3px;
+            gap: 4px;
             background: #334155;
-            padding: 3px;
+            padding: 4px;
             border-radius: 6px;
             border: 2px solid #1e293b;
-            margin: 0 auto;
-            max-width: 180px;
+            margin: 0;
+            width: 100%;
+            box-sizing: border-box;
         }
         .player-mini-goal-cell {
             background: #ffffff;
-            height: 32px;
-            border-radius: 3px;
+            height: 38px;
+            border-radius: 4px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: 8px;
+            font-size: 8.5px;
             font-weight: 700;
             color: #475569;
             position: relative;
+            box-sizing: border-box;
         }
         .player-mini-goal-cell.has-goal {
             background: #ecfdf5;
@@ -1240,7 +1252,13 @@
         @media print {
             @page {
                 size: A4 portrait;
-                margin: 12mm 10mm;
+                margin: 0;
+            }
+
+            body {
+                padding: 8mm 10mm !important;
+                background: white !important;
+                box-sizing: border-box !important;
             }
 
             * {
@@ -1749,23 +1767,37 @@
                 grid-template-columns: 1fr 1fr !important;
                 gap: 8px !important;
                 margin-top: 2px !important;
+                width: 100% !important;
             }
             body.print-single-player .player-activity-card {
                 padding: 4px 6px !important;
                 border-radius: 6px !important;
                 background: #f8fafc !important;
                 border: 1px solid #e2e8f0 !important;
+                display: flex !important;
+                flex-direction: column !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
             }
             body.print-single-player .player-activity-card-title {
-                font-size: 8px !important;
+                font-size: 8.5px !important;
                 margin-bottom: 2px !important;
+                font-weight: 700 !important;
             }
             body.print-single-player .player-activity-count {
-                font-size: 7.5px !important;
+                font-size: 8px !important;
+            }
+            body.print-single-player .player-mini-court-wrap {
+                width: 100% !important;
+                flex: 1 !important;
+                display: flex !important;
+                align-items: center !important;
             }
             body.print-single-player .player-mini-court-wrap svg {
-                max-height: 52px !important;
+                max-height: 65px !important;
                 width: 100% !important;
+                height: auto !important;
+                display: block !important;
             }
             body.print-single-player .player-mini-court-legend {
                 margin-top: 2px !important;
@@ -1776,31 +1808,46 @@
                 width: 5px !important;
                 height: 5px !important;
             }
+            body.print-single-player .player-mini-goal-wrap {
+                width: 100% !important;
+                flex: 1 !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+            }
             body.print-single-player .player-mini-goal-grid {
-                max-width: 140px !important;
-                gap: 1.5px !important;
-                padding: 2px !important;
+                width: 100% !important;
+                max-width: none !important;
+                gap: 2px !important;
+                padding: 2.5px !important;
                 border-width: 1.5px !important;
                 border-radius: 4px !important;
-                margin: 0 auto !important;
+                margin: 0 !important;
+                box-sizing: border-box !important;
+                display: grid !important;
+                grid-template-columns: repeat(3, 1fr) !important;
             }
             body.print-single-player .player-mini-goal-cell {
-                height: 16px !important;
-                min-height: 16px !important;
+                height: 19px !important;
+                min-height: 19px !important;
                 padding: 0 !important;
                 border-radius: 2px !important;
-                font-size: 6.5px !important;
+                font-size: 7px !important;
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                justify-content: center !important;
             }
             body.print-single-player .player-mini-goal-cell-val {
-                font-size: 8px !important;
+                font-size: 9px !important;
                 line-height: 1 !important;
             }
             body.print-single-player .player-mini-goal-cell-lbl {
-                font-size: 5.5px !important;
+                font-size: 6px !important;
                 line-height: 1 !important;
             }
             body.print-single-player .player-activity-meta-text {
-                font-size: 7px !important;
+                font-size: 7.5px !important;
                 margin-top: 2px !important;
                 line-height: 1.1 !important;
             }
@@ -1915,6 +1962,7 @@
                 grid-template-columns: 1fr 1fr !important;
                 gap: 8px !important;
                 margin-top: 2px !important;
+                width: 100% !important;
             }
 
             .print-player-activity-card {
@@ -1923,6 +1971,10 @@
                 overflow: hidden !important;
                 background: #f8fafc !important;
                 padding: 4px 6px !important;
+                display: flex !important;
+                flex-direction: column !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
@@ -1930,7 +1982,7 @@
             .print-player-activity-header {
                 background: none !important;
                 padding: 0 0 2px 0 !important;
-                font-size: 8px !important;
+                font-size: 8.5px !important;
                 font-weight: 700 !important;
                 color: #4a5a6b !important;
                 text-transform: uppercase !important;
@@ -1945,7 +1997,8 @@
             .print-player-activity-card svg {
                 width: 100% !important;
                 display: block !important;
-                max-height: 52px !important;
+                max-height: 65px !important;
+                height: auto !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
@@ -1953,10 +2006,14 @@
             .print-player-mini-goal-grid {
                 display: grid !important;
                 grid-template-columns: repeat(3, 1fr) !important;
-                gap: 1.5px !important;
-                padding: 2px !important;
-                max-width: 140px !important;
-                margin: 0 auto !important;
+                gap: 2px !important;
+                padding: 2.5px !important;
+                width: 100% !important;
+                max-width: none !important;
+                margin: 0 !important;
+                box-sizing: border-box !important;
+                flex: 1 !important;
+                align-content: center !important;
             }
 
             .print-player-mini-goal-cell {
@@ -1964,14 +2021,14 @@
                 border-radius: 2px !important;
                 padding: 0 !important;
                 text-align: center !important;
-                font-size: 6.5px !important;
-                min-height: 16px !important;
-                height: 16px !important;
+                font-size: 7px !important;
+                min-height: 19px !important;
+                height: 19px !important;
                 display: flex !important;
                 flex-direction: column !important;
                 align-items: center !important;
                 justify-content: center !important;
-                gap: 1px !important;
+                gap: 0.5px !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
@@ -3681,21 +3738,39 @@ function buildPlayerActivitySection(player, teamChar, isGK) {
         </div>`;
     };
 
+    // Urutan Babak Dinamis: SEMUA BABAK (TOTAL) di urutan paling atas, diikuti BABAK 1, BABAK 2, dst
+    const infoPeriods = parseInt(md?.info?.periods, 10);
+    const maxEvPeriod = Math.max(0, ...evs.map(e => parseInt(e.period, 10) || 0));
+    const totalPeriods = infoPeriods > 0 ? Math.max(infoPeriods, maxEvPeriod) : (maxEvPeriod > 0 ? maxEvPeriod : 2);
+
+    const periodsConfig = [
+        { key: 'all', label: 'SEMUA BABAK (TOTAL)', tabLabel: 'Semua Babak' }
+    ];
+    for (let p = 1; p <= totalPeriods; p++) {
+        periodsConfig.push({
+            key: p,
+            label: `BABAK ${p}`,
+            tabLabel: `Babak ${p}`
+        });
+    }
+
+    const tabsHtml = periodsConfig.map(p => `
+        <button type="button" class="player-activity-tab-btn ${p.key === 'all' ? 'active' : ''}" onclick="switchPlayerActivityTab(this, '${p.key}')">${p.tabLabel}</button>
+    `).join('');
+
+    const panelsHtml = periodsConfig.map(p => renderPanel(p.key, p.label, p.key === 'all')).join('\n');
+
     return `
     <div class="player-activity-section">
         <div class="player-stats-section-title">Aktivitas Lapangan &amp; Target Gawang</div>
         
         <!-- Tab Bar Navigasi Interaktif (Layar) -->
         <div class="player-activity-tabs">
-            <button type="button" class="player-activity-tab-btn active" onclick="switchPlayerActivityTab(this, 'all')">Semua Babak</button>
-            <button type="button" class="player-activity-tab-btn" onclick="switchPlayerActivityTab(this, '1')">Babak 1</button>
-            <button type="button" class="player-activity-tab-btn" onclick="switchPlayerActivityTab(this, '2')">Babak 2</button>
+            ${tabsHtml}
         </div>
 
-        <!-- 3 Panel Babak (Baris 1: Babak 1, Baris 2: Babak 2, Baris 3: Semua Babak) -->
-        ${renderPanel(1, 'Babak 1', false)}
-        ${renderPanel(2, 'Babak 2', false)}
-        ${renderPanel('all', 'Semua Babak (Total)', true)}
+        <!-- Panel Babak Dinamis: Baris 1: Total, Baris 2: Babak 1, Baris 3: Babak 2, dst -->
+        ${panelsHtml}
     </div>`;
 }
 
@@ -3973,11 +4048,16 @@ function printAllPlayers() {
             <span style="${badgeStyle('rgba(41,128,185,.1)','rgba(41,128,185,.4)')}">${cardDot('#2980b9')} Biru: ${bCard ? 'YA' : 'TDK'}</span>
         </div>`;
 
+        const infoPeriods = parseInt(md?.info?.periods, 10);
+        const maxEvPeriod = Math.max(0, ...(evs || []).map(e => parseInt(e.period, 10) || 0));
+        const totalPeriods = infoPeriods > 0 ? Math.max(infoPeriods, maxEvPeriod) : (maxEvPeriod > 0 ? maxEvPeriod : 2);
+
         const periodsConfig = [
-            { key: 1, label: 'BABAK 1' },
-            { key: 2, label: 'BABAK 2' },
             { key: 'all', label: 'SEMUA BABAK (TOTAL)' }
         ];
+        for (let p = 1; p <= totalPeriods; p++) {
+            periodsConfig.push({ key: p, label: `BABAK ${p}` });
+        }
 
         const periodPanelsHtml = periodsConfig.map(pConf => {
             const pFilter = (e) => (!pConf.key || pConf.key === 'all' || e.period == pConf.key);
