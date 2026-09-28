@@ -1306,17 +1306,18 @@
                 padding-bottom: 3px !important;
             }
 
-            /* Struktur per lembar laporan (Tepat 4 lembar terstruktur tanpa ruang kosong) */
+            /* Struktur per lembar laporan (Alur fleksibel & cerdas) */
             .report-page {
-                break-after: page !important;
-                page-break-after: always !important;
                 display: block !important;
             }
             .report-page-1,
-            .report-page-2,
             .report-page-3 {
                 break-after: page !important;
                 page-break-after: always !important;
+            }
+            .report-page-2 {
+                break-after: auto !important;
+                page-break-after: auto !important;
             }
             .report-page:last-child,
             .report-page-4 {
@@ -1328,7 +1329,6 @@
             .report-page-1 {
                 display: flex !important;
                 flex-direction: column !important;
-                min-height: 245mm !important;
                 box-sizing: border-box !important;
                 gap: 0 !important;
                 break-after: page !important;
@@ -1490,6 +1490,8 @@
                 display: flex !important;
                 flex-direction: column !important;
                 gap: 0 !important;
+                break-after: auto !important;
+                page-break-after: auto !important;
             }
             .court-map-section {
                 margin-bottom: 6px !important;
@@ -1608,9 +1610,16 @@
             /* ── Halaman 3: Tabel Pemain Bersebelahan ── */
             .report-page-3 {
                 display: block !important;
+                margin-top: 16px !important;
+                break-before: auto !important;
+                page-break-before: auto !important;
             }
             .report-players-main-title {
                 display: block !important;
+                margin-top: 0 !important;
+                margin-bottom: 8px !important;
+                break-after: avoid !important;
+                page-break-after: avoid !important;
             }
             .player-table-title {
                 display: none !important;
@@ -1621,7 +1630,10 @@
                 gap: 8px !important;
                 align-items: start !important;
             }
-            .player-table-card {
+            .player-table-card,
+            .player-table-wrapper {
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
                 box-shadow: none !important;
                 border: 1px solid #e2e8f0 !important;
                 border-radius: 8px !important;
